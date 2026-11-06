@@ -1,0 +1,7 @@
+random_seed: 2026
+cv_splits: 5
+inner_cv_splits: 3
+cv_repeats: 3
+bootstrap_iterations: 1000
+allow_user_microphone_inference: false
+

@@ -1,0 +1,12 @@
+target_sample_rate: 16000
+min_duration_seconds: 1.0
+max_duration_seconds: 30.0
+min_rms: 0.003
+max_peak: 0.999
+clipping_fraction_limit: 0.01
+# Maximum allowed clipped-sample fraction; equality passes and 0 means no clipped samples.
+silence_relative_db: 35.0
+frame_ms: 20
+min_voiced_fraction: 0.15
+mono_policy: average_with_phase_check
+

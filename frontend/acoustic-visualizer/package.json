@@ -1,0 +1,19 @@
+{
+  "name": "voxneuro-acoustic-visualizer",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Locally bundled 3D waveform and spectrogram view for the VoxNeuro Streamlit app",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --minify --format=iife --global-name=VoxNeuro3D --outfile=dist/visualizer.bundle.js",
+    "smoke": "node smoke-test.mjs",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright-core": "1.65.0"
+  }
+}

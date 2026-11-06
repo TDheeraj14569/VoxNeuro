@@ -1,0 +1,12 @@
+schema_version: voxneuro.voice.v3
+pitch_floor_hz: 75
+pitch_ceiling_hz: 500
+pitch_step_seconds: 0.01
+mfcc_count: 13
+mel_bands: 40
+fft_window_samples: 1024
+hop_samples: 160
+mel_min_hz: 50
+common_max_hz: 3800
+spectral_rolloff_fraction: 0.85
+

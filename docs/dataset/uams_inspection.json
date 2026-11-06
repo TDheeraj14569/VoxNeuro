@@ -1,0 +1,178 @@
+{
+  "source": "Figshare DOI 10.6084/m9.figshare.23849127.v1",
+  "license": "CC BY 4.0 per Figshare API record",
+  "archive_checksums_md5": {
+    "HC_AH.zip": "55fd33d365380372dcfbae4f7f520246",
+    "PD_AH.zip": "2e525e419abdad509e5cbf201e30ef36"
+  },
+  "archive_checksums_match_figshare": true,
+  "wav_count": 81,
+  "class_counts_from_archive_directory": {
+    "HC": 41,
+    "PD": 40
+  },
+  "format_subtype_counts": {
+    "WAVEX/FLOAT": 81
+  },
+  "sample_rate_counts_hz": {
+    "8000": 81
+  },
+  "channel_counts": {
+    "1": 81
+  },
+  "duration_seconds": {
+    "min": 1.516125,
+    "median": 3.101875,
+    "max": 7.208
+  },
+  "corrupt_wav_count": 0,
+  "duplicate_waveform_hash_groups": 0,
+  "demographics_workbook_sheets": {
+    "Parselmouth": {
+      "rows": 81,
+      "columns": [
+        "Sample ID",
+        "Label",
+        "Age",
+        "Sex"
+      ]
+    },
+    "LPC_means": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "LPC1",
+        "LPC2",
+        "LPC3",
+        "LPC4",
+        "LPC5",
+        "LPC6",
+        "LPC7",
+        "LPC8",
+        "LPC9",
+        "LPC10",
+        "Label"
+      ]
+    },
+    "LAR_means": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "LAR1",
+        "LAR2",
+        "LAR3",
+        "LAR4",
+        "LAR5",
+        "LAR6",
+        "LAR7",
+        "LAR8",
+        "LAR9",
+        "LAR10",
+        "Label"
+      ]
+    },
+    "Cep_means": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "Cep1",
+        "Cep2",
+        "Cep3",
+        "Cep4",
+        "Cep5",
+        "Cep6",
+        "Cep7",
+        "Cep8",
+        "Cep9",
+        "Cep10",
+        "Label"
+      ]
+    },
+    "MFCC_means": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "MFCC1",
+        "MFCC2",
+        "MFCC3",
+        "MFCC4",
+        "MFCC5",
+        "MFCC6",
+        "MFCC7",
+        "MFCC8",
+        "MFCC9",
+        "MFCC10",
+        "Label"
+      ]
+    },
+    "LPC_vars": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "LPC1",
+        "LPC2",
+        "LPC3",
+        "LPC4",
+        "LPC5",
+        "LPC6",
+        "LPC7",
+        "LPC8",
+        "LPC9",
+        "LPC10",
+        "Label"
+      ]
+    },
+    "LAR_vars": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "LAR1",
+        "LAR2",
+        "LAR3",
+        "LAR4",
+        "LAR5",
+        "LAR6",
+        "LAR7",
+        "LAR8",
+        "LAR9",
+        "LAR10",
+        "Label"
+      ]
+    },
+    "Cep_vars": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "Cep1",
+        "Cep2",
+        "Cep3",
+        "Cep4",
+        "Cep5",
+        "Cep6",
+        "Cep7",
+        "Cep8",
+        "Cep9",
+        "Cep10",
+        "Label"
+      ]
+    },
+    "MFCC_vars": {
+      "rows": 81,
+      "columns": [
+        "Sample",
+        "MFCC1",
+        "MFCC2",
+        "MFCC3",
+        "MFCC4",
+        "MFCC5",
+        "MFCC6",
+        "MFCC7",
+        "MFCC8",
+        "MFCC9",
+        "MFCC10",
+        "Label"
+      ]
+    }
+  },
+  "filename_privacy_review": "Names are pseudonymous-looking codes/UUIDs, not participant names; source folders encode diagnosis class. Paths are kept out of the report."
+}
