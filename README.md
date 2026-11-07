@@ -14,7 +14,7 @@ VoxNeuro is a private, local voice-signal quality control and 39-parameter acous
 # 1. Install dependencies
 uv sync --all-extras --locked
 
-# 2. Run analysis directly on any 16-bit WAV recording
+# 2. Run analysis on a supported WAV/WAVEX recording (8–48 kHz, mono/stereo, sustained vowel /a/)
 .\.venv\Scripts\python.exe scripts\analyze_voice.py --audio path\to\vowel.wav
 
 # 3. Or launch the interactive Streamlit workspace

@@ -58,9 +58,12 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     expected_f0 = f"{feat_dict['f0_mean_hz']:.1f} Hz"
     expected_jitter = f"{feat_dict['jitter_local'] * 100.0:.3f}%"
     expected_shimmer = f"{feat_dict['shimmer_local'] * 100.0:.2f}%"
+    expected_hnr = f"{feat_dict['hnr_mean_db']:.1f} dB"
     assert any(expected_f0 in md.value for md in app.markdown)
     assert any(expected_jitter in md.value for md in app.markdown)
     assert any(expected_shimmer in md.value for md in app.markdown)
+    assert any(expected_hnr in md.value for md in app.markdown)
+    assert any("CLINICAL DECISION ARCHITECTURE" in md.value for md in app.markdown)
 
     app.sidebar.radio[0].set_value("Signal analysis").run()
     assert not app.exception

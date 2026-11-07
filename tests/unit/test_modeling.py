@@ -263,3 +263,42 @@ def test_elastic_net_candidate_configures_l1_ratio_correctly():
     pipe.fit(X, y)
     preds = pipe.predict(X)
     assert len(preds) == len(y)
+
+
+def test_evaluation_rejects_identifier_only_predictor_tables():
+    voice, y, groups = binary_groups(10, 2)
+    id_only = pd.DataFrame(
+        {"participant_id": groups, "sample_id": [f"s_{i}" for i in range(len(groups))]}
+    )
+    pipeline = Pipeline(
+        [
+            ("imputer", SimpleImputer(strategy="median")),
+            ("classifier", LogisticRegression()),
+        ]
+    )
+    with pytest.raises(ValueError, match="must contain at least one feature column"):
+        evaluate_grouped(id_only, y, groups, n_splits=2)
+
+    with pytest.raises(ValueError, match="must contain at least one feature column"):
+        evaluate_grouped(
+            voice,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"id_only": (id_only, pipeline)},
+        )
+
+
+@pytest.mark.parametrize("invalid_iter", [1.5, True, False, -1, "100"])
+def test_nested_evaluation_rejects_invalid_bootstrap_iterations(invalid_iter):
+    X, y, groups = binary_groups(10, 2)
+    with pytest.raises(ValueError, match="bootstrap_iterations must be a non-negative integer"):
+        evaluate_nested_grouped(
+            X,
+            y,
+            groups,
+            outer_splits=2,
+            inner_splits=2,
+            random_seeds=(42,),
+            bootstrap_iterations=invalid_iter,
+        )

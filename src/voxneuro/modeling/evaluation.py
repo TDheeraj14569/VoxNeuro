@@ -162,6 +162,16 @@ def _validate_additional_predictors(
             raise ValueError(
                 f"Additional predictor sample_id sequence for {name!r} does not match X."
             )
+    elif "sample_id" in predictors.columns:
+        if predictors["sample_id"].isna().any():
+            raise ValueError(f"Additional predictor sample_id for {name!r} contains NaN values.")
+
+    feature_cols = [c for c in predictors.columns if c not in ("participant_id", "sample_id")]
+    if not feature_cols:
+        raise ValueError(
+            f"Predictor table for {name!r} must contain at least one feature column "
+            "besides identifier metadata."
+        )
 
 
 def evaluate_nested_grouped(
@@ -189,12 +199,19 @@ def evaluate_nested_grouped(
         raise ValueError("X must be a pandas DataFrame.")
     if len(X) != len(labels):
         raise ValueError("X and y must contain the same number of rows.")
+    x_feature_cols = [c for c in X.columns if c not in ("participant_id", "sample_id")]
+    if not x_feature_cols:
+        raise ValueError("X must contain at least one feature column besides identifier metadata.")
     if "participant_id" in X.columns and not np.array_equal(
         X["participant_id"].to_numpy(), group_values
     ):
         raise ValueError("X['participant_id'] does not match the supplied groups array.")
-    if bootstrap_iterations < 0:
-        raise ValueError("bootstrap_iterations cannot be negative.")
+    if (
+        isinstance(bootstrap_iterations, bool)
+        or not isinstance(bootstrap_iterations, (int, np.integer))
+        or bootstrap_iterations < 0
+    ):
+        raise ValueError("bootstrap_iterations must be a non-negative integer.")
     if not random_seeds or len(set(random_seeds)) != len(random_seeds):
         raise ValueError("random_seeds must be non-empty and unique.")
 
@@ -371,6 +388,23 @@ def evaluate_nested_grouped(
                 score_participant if score_ok else None,
                 probability_participant if probability_ok else None,
             )
+            model_folds = [
+                r for r in fold_metric_rows if r["model"] == name and r["repeat_seed"] == seed
+            ]
+            fold_aucs = [
+                float(r["roc_auc"])
+                for r in model_folds
+                if "roc_auc" in r and np.isfinite(r["roc_auc"])
+            ]
+            fold_aps = [
+                float(r["average_precision"])
+                for r in model_folds
+                if "average_precision" in r and np.isfinite(r["average_precision"])
+            ]
+            outer_auc_mean = float(np.mean(fold_aucs)) if fold_aucs else float("nan")
+            outer_auc_sd = float(np.std(fold_aucs, ddof=1)) if len(fold_aucs) > 1 else float("nan")
+            outer_ap_mean = float(np.mean(fold_aps)) if fold_aps else float("nan")
+            outer_ap_sd = float(np.std(fold_aps, ddof=1)) if len(fold_aps) > 1 else float("nan")
             intervals = (
                 _participant_bootstrap_intervals(
                     y_participant,
@@ -389,6 +423,10 @@ def evaluate_nested_grouped(
                     "repeat_seed": seed,
                     "n_participants": len(participants),
                     "score_kind": str(participants["score_kind"].iloc[0]),
+                    "outer_fold_roc_auc_mean": outer_auc_mean,
+                    "outer_fold_roc_auc_sd": outer_auc_sd,
+                    "outer_fold_ap_mean": outer_ap_mean,
+                    "outer_fold_ap_sd": outer_ap_sd,
                     **metrics,
                     **intervals,
                 }
@@ -422,6 +460,9 @@ def evaluate_grouped(
         raise ValueError("X must be a pandas DataFrame.")
     if len(X) != len(labels):
         raise ValueError("X and y must contain the same number of rows.")
+    x_feature_cols = [c for c in X.columns if c not in ("participant_id", "sample_id")]
+    if not x_feature_cols:
+        raise ValueError("X must contain at least one feature column besides identifier metadata.")
     if "participant_id" in X.columns and not np.array_equal(
         X["participant_id"].to_numpy(), group_values
     ):

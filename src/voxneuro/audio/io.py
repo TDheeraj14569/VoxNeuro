@@ -10,6 +10,9 @@ import soundfile as sf
 
 from voxneuro.exceptions import AudioReadError
 
+MIN_SUPPORTED_SAMPLE_RATE: int = 8000
+MAX_SUPPORTED_SAMPLE_RATE: int = 48000
+
 
 @dataclass(frozen=True)
 class AudioRecord:
@@ -19,13 +22,30 @@ class AudioRecord:
     subtype: str
     format: str
 
+    def __post_init__(self) -> None:
+        if isinstance(self.sample_rate, bool) or not isinstance(
+            self.sample_rate, (int, np.integer)
+        ):
+            raise TypeError(
+                f"sample_rate must be an integer, not {type(self.sample_rate).__name__}."
+            )
+        if not (MIN_SUPPORTED_SAMPLE_RATE <= int(self.sample_rate) <= MAX_SUPPORTED_SAMPLE_RATE):
+            raise ValueError(
+                f"sample_rate must be an integer between {MIN_SUPPORTED_SAMPLE_RATE} "
+                f"and {MAX_SUPPORTED_SAMPLE_RATE} Hz, got {self.sample_rate}."
+            )
+        if isinstance(self.channels, bool) or not isinstance(self.channels, (int, np.integer)):
+            raise TypeError(f"channels must be an integer, not {type(self.channels).__name__}.")
+        if self.channels not in (1, 2):
+            raise ValueError(f"channels must be 1 (mono) or 2 (stereo), got {self.channels}.")
+        if not isinstance(self.subtype, str) or not self.subtype.strip():
+            raise TypeError("subtype must be a non-empty string.")
+        if not isinstance(self.format, str) or not self.format.strip():
+            raise TypeError("format must be a non-empty string.")
+
     @property
     def duration_seconds(self) -> float:
         return float(len(self.samples) / self.sample_rate)
-
-
-MIN_SUPPORTED_SAMPLE_RATE: int = 8000
-MAX_SUPPORTED_SAMPLE_RATE: int = 48000
 
 
 def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:

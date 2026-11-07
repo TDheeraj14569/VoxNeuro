@@ -219,3 +219,15 @@ def test_praat_pitch_failure_with_zero_min_voiced_fraction_returns_clean_result(
     result = validate_audio(record(sustained_vowel()), cfg)
     assert isinstance(result, AudioQuality)
     assert result.voiced_fraction == 0.0
+
+
+def test_validate_audio_rejects_invalid_sample_rate():
+    from unittest.mock import MagicMock
+
+    mock_rec = MagicMock()
+    mock_rec.sample_rate = 16000.5
+    mock_rec.samples = sustained_vowel().reshape(-1, 1)
+    mock_rec.channels = 1
+    result = validate_audio(mock_rec)
+    assert not result.valid
+    assert any("Source sample rate must be an integer" in err for err in result.errors)

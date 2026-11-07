@@ -8,7 +8,11 @@ from dataclasses import dataclass, field
 import numpy as np
 import parselmouth
 
-from voxneuro.audio.io import AudioRecord
+from voxneuro.audio.io import (
+    MAX_SUPPORTED_SAMPLE_RATE,
+    MIN_SUPPORTED_SAMPLE_RATE,
+    AudioRecord,
+)
 
 
 @dataclass(frozen=True)
@@ -97,9 +101,19 @@ def validate_audio(
 ) -> AudioQuality:
     """Check shape, finiteness, duration, level, clipping, and voiced-frame ratio."""
     cfg = config or AudioValidationConfig()
-    x = np.asarray(record.samples, dtype=np.float64)
     errors: list[str] = []
     warnings: list[str] = []
+    if (
+        isinstance(record.sample_rate, bool)
+        or not isinstance(record.sample_rate, (int, np.integer))
+        or not MIN_SUPPORTED_SAMPLE_RATE <= int(record.sample_rate) <= MAX_SUPPORTED_SAMPLE_RATE
+    ):
+        errors.append(
+            f"Source sample rate must be an integer between {MIN_SUPPORTED_SAMPLE_RATE} "
+            f"and {MAX_SUPPORTED_SAMPLE_RATE} Hz."
+        )
+        return AudioQuality(valid=False, errors=errors, warnings=warnings)
+    x = np.asarray(record.samples, dtype=np.float64)
     if cfg.mono_policy != "average_with_phase_check":
         errors.append(f"Unsupported mono conversion policy: {cfg.mono_policy!r}.")
     if x.ndim != 2 or x.shape[1] not in (1, 2):

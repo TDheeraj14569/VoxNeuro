@@ -66,3 +66,28 @@ def test_unsupported_sample_rate_is_rejected():
     sf.write(out_high, sustained_vowel(sample_rate=96000), 96000, format="WAV", subtype="PCM_16")
     with pytest.raises(AudioReadError, match="Unsupported sample rate: 96000 Hz"):
         decode_audio(out_high.getvalue())
+
+
+@pytest.mark.parametrize(
+    ("sr", "err_type", "match"),
+    [
+        (16000.5, TypeError, "sample_rate must be an integer"),
+        (8000.0, TypeError, "sample_rate must be an integer"),
+        (True, TypeError, "sample_rate must be an integer"),
+        (4000, ValueError, "sample_rate must be an integer between 8000 and 48000 Hz"),
+        (96000, ValueError, "sample_rate must be an integer between 8000 and 48000 Hz"),
+    ],
+)
+def test_audio_record_rejects_invalid_sample_rate(sr, err_type, match):
+    import numpy as np
+
+    from voxneuro.audio.io import AudioRecord
+
+    with pytest.raises(err_type, match=match):
+        AudioRecord(
+            samples=np.zeros((100, 1)),
+            sample_rate=sr,
+            channels=1,
+            subtype="PCM_16",
+            format="WAV",
+        )

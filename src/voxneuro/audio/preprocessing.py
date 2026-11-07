@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import numpy as np
 from scipy.signal import resample_poly
 
-from voxneuro.audio.io import AudioRecord
+from voxneuro.audio.io import (
+    MAX_SUPPORTED_SAMPLE_RATE,
+    MIN_SUPPORTED_SAMPLE_RATE,
+    AudioRecord,
+)
 from voxneuro.audio.validation import AudioValidationConfig, validate_audio
 from voxneuro.exceptions import AudioValidationError
 
@@ -41,9 +46,19 @@ def preprocess_audio(
     if (
         isinstance(target_sample_rate, bool)
         or not isinstance(target_sample_rate, (int, np.integer))
-        or not 8000 <= int(target_sample_rate) <= 48000
+        or not MIN_SUPPORTED_SAMPLE_RATE <= int(target_sample_rate) <= MAX_SUPPORTED_SAMPLE_RATE
     ):
-        raise ValueError("Target sample rate must be an integer between 8000 and 48000 Hz.")
+        raise ValueError(
+            f"Target sample rate must be an integer between {MIN_SUPPORTED_SAMPLE_RATE} "
+            f"and {MAX_SUPPORTED_SAMPLE_RATE} Hz."
+        )
+    if (
+        isinstance(silence_relative_db, bool)
+        or not isinstance(silence_relative_db, (int, float))
+        or not math.isfinite(silence_relative_db)
+        or not (0.0 <= float(silence_relative_db) <= 100.0)
+    ):
+        raise ValueError("silence_relative_db must be a finite number between 0.0 and 100.0 dB.")
     if mono_policy != "average_with_phase_check":
         raise ValueError(f"Unsupported mono conversion policy: {mono_policy!r}.")
     original = record.samples
