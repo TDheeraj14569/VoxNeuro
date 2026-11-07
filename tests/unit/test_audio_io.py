@@ -128,3 +128,41 @@ def test_three_channel_wav_is_rejected_with_audio_read_error():
     sf.write(out, tri, 16000, format="WAV", subtype="PCM_16")
     with pytest.raises(AudioReadError, match="Unsupported channel count: 3"):
         decode_audio(out.getvalue())
+
+
+def test_audio_record_converts_list_samples_to_numpy_array():
+    import numpy as np
+
+    from voxneuro.audio.io import AudioRecord
+
+    record = AudioRecord(
+        samples=[[0.1], [0.2], [-0.1]],
+        sample_rate=16000,
+        channels=1,
+        subtype="PCM_16",
+        format="WAV",
+    )
+    assert isinstance(record.samples, np.ndarray)
+    assert record.samples.shape == (3, 1)
+
+
+def test_decode_audio_rejects_audio_exceeding_duration_limit(monkeypatch):
+    import soundfile as sf
+
+    from voxneuro.audio.io import decode_audio
+    from voxneuro.exceptions import AudioReadError
+
+    dummy_wav = wav_bytes(sustained_vowel(duration=0.1), 16000)
+
+    class FakeInfo:
+        format = "WAV"
+        subtype = "PCM_16"
+        samplerate = 16000
+        channels = 1
+        frames = 16000 * 305
+        duration = 305.0
+
+    monkeypatch.setattr(sf, "info", lambda _: FakeInfo())
+    with pytest.raises(AudioReadError, match="Audio duration of 305.0 s exceeds maximum"):
+        decode_audio(dummy_wav)
+

@@ -41,7 +41,19 @@
 - Used the configured frame duration in silence trimming, corrected supported WAV/WAVEX instructions, and fixed the traceability test paths.
 - Reconciled verification and test documentation with the current source snapshot; earlier pass reports are marked as historical.
 
-## Latest verification completed — 2026-11-07
+## Latest verification completed — 2026-11-07 (252-test suite)
+
+- **Test Suite & Coverage:** Expanded to **252 passed tests** (244 non-UI tests plus 8 Streamlit AppTests) with **87.12% statement coverage** across 2,027 statements in `src/voxneuro`.
+- **HNR Formula Correction:** Filtered out Praat's unvoiced/undefined frame marker (`-200 dB`) in `parselmouth_features.py` with `hnr > -199.0`, matching Praat's native `Get mean` harmonicity exactly.
+- **Feature Schema & Provenance:** Updated `hnr_mean_db` definition in `schema.py` to "mean valid voiced frames". New schema fingerprint: `a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f`.
+- **Evaluation Hardening:** Replaced `groups[test]` indexing with `group_values[test]` in `evaluate_grouped()` to support lists and Series. Enforced strict `sample_id` uniqueness check in `_validate_additional_predictors()`.
+- **Model Bundle TOCTOU Protection:** Closed TOCTOU gap in `model_bundle.load_bundle()` by hashing and deserializing from single-read in-memory bytes (`io.BytesIO(payload)`).
+- **Matplotlib Memory Leak Elimination:** Converted all Matplotlib figure builders in `waveform.py`, `spectrogram.py`, `metrics.py`, and `app.py` to `Figure(figsize=...).subplots()`, preventing global pyplot figure dictionary accumulation.
+- **Cross-Platform Line Ending Determinism:** Added `.gitattributes` (`* text=auto eol=lf`) and CRLF-to-LF normalization in `project_code_fingerprint()`.
+- **Full Retraining & Artifact Re-Verification:** Successfully re-extracted 78 UAMS recordings, ran grouped and repeated nested CV (Extra Trees 0.762 ± 0.020 BA, age-only logistic 0.839 ± 0.007 BA), trained research logistic reference, and verified bundle reload and sidecar hashes.
+- **Deterministic Release Bundles:** Rebuilt `VoxNeuro_source_audit.zip` (181 files) and `VoxNeuro_AI_review_bundle.zip` (192 files) with verified checksums.
+
+### Historical verification snapshot (224-test suite)
 
 - Locked environment: CPython 3.12.14; uv 0.12.5; `uv sync --all-extras --locked` checked 71 packages.
 - Full suite: **224 passed** (218 non-UI tests plus six Streamlit AppTests); **87% coverage** across 1,934 statements.

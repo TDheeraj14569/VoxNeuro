@@ -1,0 +1,21 @@
+# Auto-detect text files and normalize line endings to LF on commit/checkout
+* text=auto eol=lf
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.csv text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+
+# Binary files
+*.wav binary
+*.joblib binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.ico binary

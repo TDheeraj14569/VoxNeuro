@@ -56,7 +56,7 @@ def extract_praat_features(
             periods_per_window=1.0,
         )
         hnr = np.asarray(harmonicity.values, dtype=np.float64).reshape(-1)
-        hnr = hnr[np.isfinite(hnr)]
+        hnr = hnr[np.isfinite(hnr) & (hnr > -199.0)]
         if hnr.size:
             values["hnr_mean_db"] = float(np.mean(hnr))
     except (parselmouth.PraatError, ValueError, RuntimeError):

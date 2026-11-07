@@ -8,13 +8,13 @@ import json
 import logging
 from numbers import Real
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
+from matplotlib.figure import Figure
 from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
 
-from voxneuro.audio.io import AudioRecord, decode_audio
+from voxneuro.audio.io import decode_audio
 from voxneuro.audio.preprocessing import preprocess_audio
 from voxneuro.audio.validation import AudioQuality, AudioValidationConfig, validate_audio
 from voxneuro.config import PROJECT_ROOT, load_config
@@ -596,9 +596,6 @@ section[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked
   color: #FFFFFF;
   box-shadow: 0 0 16px rgba(85, 217, 193, 0.2);
 }
-  border-color: rgba(85, 217, 193, 0.65);
-  box-shadow: 0 0 14px rgba(85, 217, 193, 0.15);
-}
 .stApp [data-baseweb="tab-list"] {
   background: rgba(10, 25, 34, 0.6);
   backdrop-filter: blur(12px);
@@ -758,6 +755,7 @@ def _analyze(payload: bytes) -> None:
             "voiced_fraction": quality.voiced_fraction,
             "active_fraction": quality.active_fraction,
             "warnings": quality.warnings,
+            "audio_sha256": hashlib.sha256(payload).hexdigest(),
         },
         features,
         {
@@ -977,7 +975,7 @@ def _show_assessment() -> None:
     if uploaded is not None and st.session_state.get("voxneuro_features") is not None:
         _render_acoustic_benchmark_cards(st.session_state["voxneuro_features"])
         if quality is not None and record is not None:
-            _render_decision_gate_panel(st.session_state["voxneuro_features"], quality, record)
+            _render_decision_gate_panel(st.session_state["voxneuro_features"], quality)
         st.caption(
             f"Feature schema {SCHEMA_VERSION} · measurements are descriptive "
             "and not disease-specific."
@@ -1308,7 +1306,7 @@ def _render_quality_cards(quality: dict) -> None:
         )
 
 
-def _render_decision_gate_panel(features: dict, quality: AudioQuality, record: AudioRecord) -> None:
+def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
     finite_count = sum(
         1 for v in features.values() if isinstance(v, Real) and np.isfinite(float(v))
     )
@@ -1329,12 +1327,12 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality, record: A
         '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">PASS</div>'
         f'<div class="vox-qc-sub">{quality.duration_seconds:.1f}s · '
         f"{quality.voiced_fraction:.0%} voiced · "
-        f"{quality.clipping_fraction * 100:.4f}% clipping</div>"
+        f"{quality.clipping_fraction:.2%} clipped</div>"
         "</div>"
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Stage 2 · Speech Verification</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">VERIFIED</div>'
-        '<div class="vox-qc-sub">Phonation resonance &amp; task criteria confirmed</div>'
+        '<div class="vox-qc-label">Stage 2 · Task Plausibility</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">HEURISTIC PASS</div>'
+        '<div class="vox-qc-sub">Phonated-vowel criteria met (acoustic screening)</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 3 · Feature Extraction</div>'
@@ -1592,7 +1590,8 @@ def _model_comparison_figure(metrics: pd.DataFrame):
         "#E5B56D" if "age" in model else "#68746F" if model == "dummy" else "#55D9C1"
         for model in grouped.index
     ]
-    fig, ax = plt.subplots(figsize=(8.4, 3.8))
+    fig = Figure(figsize=(8.4, 3.8))
+    ax = fig.subplots()
     fig.patch.set_facecolor("#0C1D27")
     fig.patch.set_alpha(0.92)
     ax.set_facecolor("#08151D")
@@ -1633,7 +1632,8 @@ def _nested_model_comparison_figure(nested_df: pd.DataFrame):
         if "model_label" in df_sorted.columns
         else df_sorted["model"].tolist()
     )
-    fig, ax = plt.subplots(figsize=(9.2, 4.4))
+    fig = Figure(figsize=(9.2, 4.4))
+    ax = fig.subplots()
     fig.patch.set_facecolor("#0C1D27")
     fig.patch.set_alpha(0.92)
     ax.set_facecolor("#08151D")
@@ -1675,7 +1675,8 @@ def _out_of_fold_confusion_figure(predictions: pd.DataFrame):
         selected["y_pred"].astype(int),
         labels=[0, 1],
     )
-    fig, ax = plt.subplots(figsize=(4.3, 3.4))
+    fig = Figure(figsize=(4.3, 3.4))
+    ax = fig.subplots()
     fig.patch.set_facecolor("#0C1D27")
     fig.patch.set_alpha(0.92)
     ax.set_facecolor("#08151D")
@@ -1718,7 +1719,8 @@ def _out_of_fold_roc_figure(predictions: pd.DataFrame):
         return None
     false_positive, true_positive, _ = roc_curve(y_true, score)
     auc = roc_auc_score(y_true, score)
-    fig, ax = plt.subplots(figsize=(4.3, 3.4))
+    fig = Figure(figsize=(4.3, 3.4))
+    ax = fig.subplots()
     fig.patch.set_facecolor("#0C1D27")
     fig.patch.set_alpha(0.92)
     ax.set_facecolor("#08151D")
@@ -1823,11 +1825,11 @@ def _show_model_assessment() -> None:
                 "<strong>Top Voice Model:</strong> Extra Trees achieved the highest voice-only "
                 "discrimination at <strong>76.6% balanced accuracy</strong> (0.766 ± 0.019) and "
                 "<strong>0.797 ROC-AUC</strong>.<br>"
-                "<strong>Demographic Confounding:</strong> The age-only logistic baseline achieved "
-                "<strong>83.9% balanced accuracy</strong> due to marked age imbalance in UAMS "
-                "(PD participants were older on average). This demonstrates that voice "
-                "discrimination alone must not be mistaken for diagnostic specificity without "
-                "age-matched controls."
+                "<strong>Demographic Confounding:</strong> The age-only logistic baseline "
+                "achieved <strong>83.9% balanced accuracy</strong> in this markedly "
+                "age-imbalanced cohort in UAMS (PD participants were older on average). This "
+                "demonstrates that voice discrimination alone must not be mistaken for diagnostic "
+                "specificity without age-matched controls."
                 "</p></div>"
             )
             st.markdown(findings_html, unsafe_allow_html=True)
@@ -2007,8 +2009,8 @@ def _show_reports() -> None:
         '<div style="display:flex; justify-content:space-between; align-items:center; '
         'margin-bottom:0.75rem;">'
         '<span style="font-size:0.78rem; font-weight:700; color:#55D9C1; '
-        'letter-spacing:0.06em;">CRYPTOGRAPHIC INTEGRITY &amp; HASH TELEMETRY</span>'
-        '<span class="vox-badge-ok">VERIFIED</span>'
+        'letter-spacing:0.06em;">PROVENANCE TELEMETRY &amp; AUDIT RECORD</span>'
+        '<span class="vox-badge-ok">HASH RECORDED</span>'
         "</div>"
         '<div style="font-family:ui-monospace, SFMono-Regular, monospace; '
         'font-size:0.82rem; color:#C1D5D2; line-height:1.75;">'
@@ -2174,6 +2176,17 @@ def main() -> None:
         _show_reports()
     else:
         _show_method_privacy()
+
+    st.markdown(
+        '<div style="margin-top:3.5rem; padding-top:1.25rem; '
+        'border-top:1px solid rgba(85, 217, 193, 0.15); '
+        'color:#7B928E; font-size:0.76rem; text-align:center; line-height:1.6;">'
+        "VoxNeuro Research Prototype is an independent academic research project "
+        "and is not affiliated with, sponsored by, or related to VoxNeuro Inc. "
+        "(makers of EEG cognitive assessments). · Non-diagnostic research software."
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 main()

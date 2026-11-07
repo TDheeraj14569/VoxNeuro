@@ -9,12 +9,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from voxneuro.config import PROJECT_ROOT
+
 EXPECTED_UCI_SHAPE = (756, 755)
 EXPECTED_UCI_PARTICIPANTS = 252
 EXPECTED_UCI_RECORDINGS_PER_PARTICIPANT = 3
 EXPECTED_UCI_PARTICIPANT_CLASS_COUNTS = {0: 64, 1: 188}
 UCI_METADATA_COLUMNS = {"id", "class", "gender"}
-UCI_SCHEMA_PATH = Path(__file__).resolve().parents[3] / "configs" / "uci470_schema.json"
+UCI_SCHEMA_PATH = PROJECT_ROOT / "configs" / "uci470_schema.json"
 EXPECTED_UCI_ORDERED_HEADER_SHA256 = (
     "55311b3a9f947d378df1a92b83dd322aff98553c951048cba127dc55cb0a647b"
 )

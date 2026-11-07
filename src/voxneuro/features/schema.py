@@ -58,8 +58,8 @@ VOICE = [
     FeatureDefinition(
         "hnr_mean_db",
         "dB",
-        "Praat cross-correlation harmonicity; mean finite frames",
-        "At least one finite harmonicity frame",
+        "Praat cross-correlation harmonicity; mean valid voiced frames",
+        "At least one valid voiced harmonicity frame (> -199 dB)",
     ),
 ]
 MFCC = [

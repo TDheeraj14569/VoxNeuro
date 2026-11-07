@@ -145,6 +145,13 @@ def main() -> int:
         mono_policy=str(audio_config["mono_policy"]),
         pitch_floor_hz=float(feature_config["pitch_floor_hz"]),
         pitch_ceiling_hz=float(feature_config["pitch_ceiling_hz"]),
+        min_harmonic_overtone_fraction=float(
+            audio_config.get("min_harmonic_overtone_fraction", 0.005)
+        ),
+        min_second_harmonic_fraction=float(
+            audio_config.get("min_second_harmonic_fraction", 0.0003)
+        ),
+        min_waveform_kurtosis=float(audio_config.get("min_waveform_kurtosis", 1.15)),
     )
     feature_rows, statuses = [], []
     for row in manifest.to_dict("records"):

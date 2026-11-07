@@ -122,3 +122,27 @@ def test_mfcc_units_and_standard_deviation_validity_are_explicit():
     mfcc_sd = next(item for item in FEATURE_DEFINITIONS if item.name == "mfcc_00_sd")
     assert mfcc_sd.units == "dimensionless numerical coefficient"
     assert mfcc_sd.validity == "At least two frames"
+
+
+def test_hnr_calculation_excludes_praat_undefined_unvoiced_frames():
+    import parselmouth
+
+    fs = 16000
+    vowel = sustained_vowel(duration=1.0)
+    silence = np.zeros(fs)
+    interrupted_signal = np.concatenate([vowel, silence])
+
+    values = extract_praat_features(interrupted_signal, fs)
+    assert np.isfinite(values["hnr_mean_db"])
+    assert values["hnr_mean_db"] > 0.0
+
+    sound = parselmouth.Sound(interrupted_signal, sampling_frequency=float(fs))
+    harmonicity = sound.to_harmonicity_cc(
+        time_step=0.01,
+        minimum_pitch=75.0,
+        silence_threshold=0.1,
+        periods_per_window=1.0,
+    )
+    praat_mean = parselmouth.praat.call(harmonicity, "Get mean", 0.0, 0.0)
+    assert np.isclose(values["hnr_mean_db"], praat_mean, atol=1e-4)
+

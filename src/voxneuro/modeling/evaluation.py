@@ -158,6 +158,10 @@ def _validate_additional_predictors(
     if "sample_id" in predictors.columns and "sample_id" in X.columns:
         if predictors["sample_id"].isna().any() or X["sample_id"].isna().any():
             raise ValueError(f"sample_id in {name!r} or X contains missing/NaN values.")
+        if not X["sample_id"].is_unique:
+            raise ValueError("X contains duplicate sample_id values.")
+        if not predictors["sample_id"].is_unique:
+            raise ValueError(f"Predictor table for {name!r} contains duplicate sample_id values.")
         if not predictors["sample_id"].equals(X["sample_id"]):
             raise ValueError(
                 f"Additional predictor sample_id sequence for {name!r} does not match X."
@@ -512,7 +516,7 @@ def evaluate_grouped(
                 score = fitted.decision_function(X_clean.iloc[test])
             fold_records = pd.DataFrame(
                 {
-                    "participant_id": groups[test],
+                    "participant_id": group_values[test],
                     "y_true": labels[test],
                     "y_pred": predicted,
                     "score": score if score is not None else np.nan,

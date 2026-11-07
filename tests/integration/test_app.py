@@ -185,13 +185,14 @@ def test_app_nonzero_permitted_clipping_displays_measured_percentage():
     assert quality is not None
     assert quality.valid
     assert quality.clipping_fraction > 0.0
-    expected_clip_str = f"{quality.clipping_fraction * 100:.4f}% clipping"
+    expected_clip_str = f"{quality.clipping_fraction:.2%} clipped"
     assert any(expected_clip_str in md.value for md in app.markdown)
     # Ensure hard-coded "0% clipping" is NOT rendered
     assert not any("0% clipping" in md.value for md in app.markdown)
 
 
-def test_app_acoustic_benchmark_cards_render_em_dash_for_missing_values():
+def test_app_acoustic_benchmark_cards_render_em_dash_for_missing_values(monkeypatch):
+    import streamlit as st
     from app import _render_acoustic_benchmark_cards
 
     missing_features = {
@@ -200,6 +201,11 @@ def test_app_acoustic_benchmark_cards_render_em_dash_for_missing_values():
         "shimmer_local": None,
         "hnr_mean_db": float("nan"),
     }
-    # Test that rendering with missing values does not throw and renders em dash
-    # We can invoke through streamlit AppTest session state or directly
+    rendered = []
+    monkeypatch.setattr(st, "markdown", lambda markup, **kwargs: rendered.append(markup))
     _render_acoustic_benchmark_cards(missing_features)
+    assert len(rendered) == 1
+    markup = rendered[0]
+    assert "—" in markup
+    # Verify em dash is rendered in the value positions
+    assert markup.count("—") >= 4

@@ -1,11 +1,12 @@
 """Grouped-fold metric visualization."""
 
-import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib.figure import Figure
 
 
 def fold_metric_figure(metrics: pd.DataFrame, metric: str = "balanced_accuracy"):
-    fig, ax = plt.subplots(figsize=(8, 3.5))
+    fig = Figure(figsize=(8, 3.5))
+    ax = fig.subplots()
     metrics.boxplot(column=metric, by="model", ax=ax, grid=False)
     ax.set(
         title=f"Participant-wise cross-validation: {metric}",

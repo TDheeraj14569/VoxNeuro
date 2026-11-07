@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > **Academic Research Software & Independence Notice:**  
-> VoxNeuro is an independent academic software prototype developed for Biodesign Concept & Practice coursework (Voice Signal Analysis). It is completely unrelated to, separate from, and unaffiliated with VoxNeuro Inc. (the commercial cognitive health assessment company). VoxNeuro does not claim medical device status, regulatory authorization, or clinical diagnostic utility.
+> VoxNeuro Research Prototype is an independent academic research project developed for Biodesign Concept & Practice coursework (Voice Signal Analysis). It is not affiliated with, sponsored by, or related to VoxNeuro Inc. (makers of EEG cognitive assessments). VoxNeuro does not claim medical device status, regulatory authorization, or clinical diagnostic utility.
 
 VoxNeuro is a private, local voice-signal quality control and 39-parameter acoustic measurement research prototype. It analyzes a sustained vowel recording (`/a/`), inspects signal quality, renders interactive 3D acoustic views, and exports self-contained HTML/JSON technical reports. It does **not** diagnose or rule out Parkinson's disease. The experimental cohort model is intentionally not exposed to new user microphone recordings because cross-domain compatibility between telephone-collected research datasets and arbitrary laptop/mobile microphones has not been clinically established.
 

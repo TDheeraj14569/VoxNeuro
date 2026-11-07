@@ -8,18 +8,19 @@
 
 ## UAMS nested run provenance
 
-- Source fingerprint: e73319356c3512350d251de512393ccc95f034d49fee25e0043338a608167259.
-- Feature schema: voxneuro.voice.v3; schema fingerprint bd4a145f09ada55b519fae1f06bf4383a1921ff9a2421c7562ddead672eb48f2.
+- Source fingerprint: fe2c1d3954c967ec41de7a96f84a1a7c1287230b9771fef635a489c22761cb5d.
+- Feature schema: voxneuro.voice.v3; schema fingerprint a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f.
 - Feature configuration fingerprint: 190e79c16b8a92f6c7fa8de47956531ade096c43e5f3974d9ce9b5d88b74b5f9.
-- Preprocessing configuration fingerprint: 1db0448d55ee8d02cbbe28691a9e1471cfd678e23ef302c09d632ed42147ed6a.
+- Preprocessing configuration fingerprint: daf06f327e49ae71561d3daf61d40acc1dd0158953a7aa9c458a33ed8304b12c.
 - Manifest SHA-256: 697e422f2631ded7be3b6ac737ce2655747340491ab8a49ab5ba40ed0454264e.
-- Extracted feature-table SHA-256: 9037167ccb69c98e3926573a0de3ec1e922595557c77aaa16617bfd4a1f0b2a6.
+- Extracted feature-table SHA-256: 732202ca2de13e54c7049f4b15775b964265f13931b93c0fb574f6cf9cd43fc0.
 - Outer/inner splits: 5/3; repeats: seeds 2026, 2027, 2028; 1,000 participant bootstrap iterations for the primary repeat.
 - Selection metric: inner-fold balanced accuracy. No outer-fold threshold selection; probability calibration was not fitted.
 - Current results and artifact checksums: data/processed/nested_uams_evaluation_receipt.json. The human-readable report is artifacts/reports/model_evaluation/uams_nested.html.
-- Nested metrics CSV SHA-256: 7e75d9ad7ecf08a3e5dff080725d2de40c1f4c2cae73c893dfd4160742f7c0f4.
-- Participant-level out-of-fold predictions SHA-256: 2bedcc5b7d13dab9cc4316827b2ed0311db63a54d7772bfc7e06b9bef611aac1.
-- Summary CSV SHA-256: e02b75ff85f51002fa87abd980be0a91dd00b68f3411ebf37289a7c3651516ec.
+- Nested metrics CSV SHA-256: 31a73576ce85080554da86b1d55fafca132a8fce7246e8bb9e6f583022ed4ae8.
+- Participant-level out-of-fold predictions SHA-256: 915f2621b9fa93864b88e9198dd51f7e0ba3568755bab5459679df709ae1463a.
+- Fold metrics CSV SHA-256: c8e0726d4a2ff3b3e5c1af5d4b993a5d2c6881845ad6bd490b213f8b1233993d.
+- Summary CSV SHA-256: ba6bcda4d9459e2fc046cc093e5a297e50539c5205d8fd797e09326bd56efa67.
 
 ## Reproduction commands
 

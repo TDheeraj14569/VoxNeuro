@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import json
 from functools import lru_cache
-from pathlib import Path
 from typing import Any
 
 import numpy as np
 from scipy.signal import stft
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+from voxneuro.config import PROJECT_ROOT
+
 VISUALIZER_BUNDLE = (
     PROJECT_ROOT / "frontend" / "acoustic-visualizer" / "dist" / "visualizer.bundle.js"
 )

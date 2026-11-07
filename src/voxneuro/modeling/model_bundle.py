@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import re
 from datetime import UTC, datetime
 from pathlib import Path
@@ -149,10 +150,11 @@ def load_bundle(path: Path) -> dict:
     if not path.is_file() or not checksum_path.is_file():
         raise ValueError("Trusted model artifact or its SHA-256 sidecar is missing.")
     expected_checksum = checksum_path.read_text(encoding="ascii").strip().casefold()
-    actual_checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+    payload = path.read_bytes()
+    actual_checksum = hashlib.sha256(payload).hexdigest()
     if expected_checksum != actual_checksum:
         raise ValueError("Model artifact SHA-256 does not match its integrity sidecar.")
-    bundle = joblib.load(path)
+    bundle = joblib.load(io.BytesIO(payload))
     if not isinstance(bundle, dict):
         raise ValueError("Model bundle must be a metadata dictionary.")
     required = {

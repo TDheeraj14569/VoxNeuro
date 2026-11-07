@@ -374,3 +374,36 @@ def test_additional_predictors_strict_participant_id_contract():
             n_splits=2,
             additional_models={"demo": (pred_swapped_pid, pipeline)},
         )
+
+
+def test_evaluate_grouped_accepts_groups_as_list_and_series():
+    X, y, groups = binary_groups(20, 2)
+    # Test groups as a Python list
+    groups_list = list(groups)
+    metrics, predictions = evaluate_grouped(X, y, groups_list, n_splits=3)
+    assert not metrics.empty
+    assert not predictions.empty
+
+    # Test groups as a pandas Series
+    groups_series = pd.Series(groups)
+    metrics_s, predictions_s = evaluate_grouped(X, y, groups_series, n_splits=3)
+    assert not metrics_s.empty
+    assert not predictions_s.empty
+
+
+def test_validate_additional_predictors_rejects_duplicate_sample_ids():
+    X, y, groups = binary_groups(10, 2)
+    # Give non-unique sample_ids
+    sample_ids = [f"s_{i // 2}" for i in range(len(groups))]
+    X_dups = X.assign(sample_id=sample_ids)
+    preds = pd.DataFrame({"feat_demo": np.random.randn(len(groups)), "sample_id": sample_ids})
+    pipeline = Pipeline([("clf", LogisticRegression())])
+    with pytest.raises(ValueError, match="contains duplicate sample_id values"):
+        evaluate_grouped(
+            X_dups,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (preds, pipeline)},
+        )
+

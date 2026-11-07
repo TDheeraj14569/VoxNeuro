@@ -5,7 +5,7 @@
 ## Software and application checks
 
 - uv 0.12.5; uv sync --all-extras --locked checked 71 locked Python packages.
-- Full Python suite: **247 passed** (239 non-UI tests plus eight Streamlit AppTests). Coverage is **87.12% across 2,011 statements** in `src/voxneuro`.
+- Full Python suite: **252 passed** (244 non-UI tests plus eight Streamlit AppTests). Coverage is **87.12% across 2,027 statements** in `src/voxneuro`.
 - Ruff lint passed. Ruff format --check passed with 153 files already formatted.
 - Project verification passed: 11 required imports and 8 required files.
 - Model verification passed: bundle sidecar, current data/evaluation/code/config receipts, feature schema, deterministic reload prediction, and research-only/domain-incompatible metadata.
@@ -21,10 +21,10 @@
 - Feature extraction: 78/81 recordings accepted under the explicit reviewed exclusion policy. The three excluded recordings are clipped PD samples. Class-specific missingness can bias model estimates.
 - Current Core39 feature table: 78 participants (37 PD, 41 HC), one recording per participant. Feature schema is voxneuro.voice.v3.
 - UCI #470: strict validation passed for 756 source rows, 252 participants, three repeats per participant, binary and participant-consistent metadata, and finite predictors. There is one exact duplicate row for one participant; a separate deduplication sensitivity analysis was run.
-- Source/model provenance fingerprint: e73319356c3512350d251de512393ccc95f034d49fee25e0043338a608167259.
-- UAMS feature schema fingerprint: bd4a145f09ada55b519fae1f06bf4383a1921ff9a2421c7562ddead672eb48f2.
+- Source/model provenance fingerprint: fe2c1d3954c967ec41de7a96f84a1a7c1287230b9771fef635a489c22761cb5d.
+- UAMS feature schema fingerprint: a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f.
 - UAMS manifest SHA-256: 697e422f2631ded7be3b6ac737ce2655747340491ab8a49ab5ba40ed0454264e.
-- UAMS extracted feature-table SHA-256: 9037167ccb69c98e3926573a0de3ec1e922595557c77aaa16617bfd4a1f0b2a6.
+- UAMS extracted feature-table SHA-256: 732202ca2de13e54c7049f4b15775b964265f13931b93c0fb574f6cf9cd43fc0.
 
 ## UAMS nested model evaluation
 
@@ -33,8 +33,8 @@ The current model-family comparison uses repeated nested participant-grouped eva
 Across the three pooled repeat estimates:
 
 - Age-only logistic comparator: balanced accuracy **0.839 ± 0.007**, precision **0.807 ± 0.012**, sensitivity **0.865**, specificity **0.813 ± 0.014**, ROC-AUC **0.849 ± 0.013**.
-- Highest mean voice-only candidate, Extra Trees: balanced accuracy **0.766 ± 0.019**, precision **0.738 ± 0.027**, sensitivity **0.784 ± 0.027**, specificity **0.748 ± 0.037**, ROC-AUC **0.797 ± 0.014**.
-- Age-plus-voice logistic: balanced accuracy **0.778 ± 0.014**, ROC-AUC **0.837 ± 0.022**.
+- Highest mean voice-only candidate, Extra Trees: balanced accuracy **0.762 ± 0.020**, precision **0.727 ± 0.023**, sensitivity **0.793 ± 0.027**, specificity **0.732 ± 0.038**, ROC-AUC **0.784 ± 0.016**.
+- Age-plus-voice logistic: balanced accuracy **0.771 ± 0.012**, ROC-AUC **0.817 ± 0.018**.
 - Extra Trees primary-seed participant-bootstrap 95% interval for balanced accuracy: **0.678–0.861**. Age-only comparator interval: **0.754–0.911**. These intervals condition on the fitted outer-fold models and do not represent external or clinical uncertainty.
 
 The cohort has a large age imbalance: HC mean age 47.73 (SD 14.33), PD 67.04 (SD 8.98), standardized mean difference -1.61, Mann–Whitney p=1.75e-8. Age-only exceeds every voice-only candidate. Age-plus-voice does not exceed age-only balanced accuracy or ROC-AUC. This cohort therefore cannot establish that the model has isolated a Parkinson-specific acoustic signal. The three PD-only clipping exclusions are another limitation.

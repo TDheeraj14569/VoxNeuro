@@ -1,5 +1,6 @@
 Included file counts by top-level path (same source-archive rules):
 
+.gitattributes: 1
 .github: 1
 .gitignore: 1
 .streamlit: 1
@@ -19,4 +20,4 @@ tests: 36
 uv.lock: 1
 WORK_LOG.md: 1
 
-Total: 180
+Total: 181

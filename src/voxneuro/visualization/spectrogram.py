@@ -2,15 +2,16 @@
 
 import librosa
 import librosa.display
-import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.figure import Figure
 
 
 def spectrogram_figure(samples: np.ndarray, sample_rate: int):
     x = np.asarray(samples, dtype=np.float32).reshape(-1)
     spectrum = librosa.stft(x, n_fft=1024, hop_length=160)
     db = librosa.amplitude_to_db(np.abs(spectrum), ref=np.max)
-    fig, ax = plt.subplots(figsize=(10, 3.2))
+    fig = Figure(figsize=(10, 3.2))
+    ax = fig.subplots()
     fig.patch.set_facecolor("#0C1D27")
     fig.patch.set_alpha(0.92)
     ax.set_facecolor("#08151D")

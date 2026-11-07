@@ -2,6 +2,7 @@
 
 Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. The source ZIP, separately-added AI review bundle evidence, local datasets, model artifacts, secrets, caches, and virtual environments are excluded.
 
+- `.gitattributes`
 - `.github/workflows/ci.yml`
 - `.gitignore`
 - `.streamlit/config.toml`
@@ -183,4 +184,4 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. 
 - `uv.lock`
 - `WORK_LOG.md`
 
-Total included source/documentation files: **180**.
+Total included source/documentation files: **181**.

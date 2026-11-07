@@ -50,6 +50,7 @@ class AudioRecord:
             raise TypeError("samples cannot be complex-valued.")
         if not np.issubdtype(arr.dtype, np.number):
             raise TypeError(f"samples must have a real numeric dtype, got {arr.dtype}.")
+        object.__setattr__(self, "samples", arr)
 
     @property
     def duration_seconds(self) -> float:
@@ -60,33 +61,41 @@ def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:
     """Decode an audio byte stream while retaining the original channel layout."""
     try:
         data = payload.getvalue() if isinstance(payload, BytesIO) else bytes(payload)
-        raw, sample_rate = sf.read(BytesIO(data), dtype="float64", always_2d=True)
         info = sf.info(BytesIO(data))
     except (RuntimeError, ValueError, TypeError, sf.LibsndfileError) as exc:
         raise AudioReadError(
             "Could not read this audio file. Check that it is a supported WAV or WAVEX file."
         ) from exc
-    if raw.size == 0 or sample_rate <= 0:
-        raise AudioReadError("The WAV file contains no usable audio samples.")
-    if sample_rate < MIN_SUPPORTED_SAMPLE_RATE or sample_rate > MAX_SUPPORTED_SAMPLE_RATE:
-        raise AudioReadError(
-            f"Unsupported sample rate: {sample_rate} Hz. Supported range is "
-            f"{MIN_SUPPORTED_SAMPLE_RATE} Hz to {MAX_SUPPORTED_SAMPLE_RATE} Hz."
-        )
     # libsndfile distinguishes the WAVE extensible variant as WAVEX. It is
     # still a RIFF/WAVE container and is used by the public UAMS recordings.
     if str(info.format).upper() not in {"WAV", "WAVEX"}:
         raise AudioReadError("Unsupported audio container. Upload a WAV file.")
-    channels = int(raw.shape[1])
-    if channels not in (1, 2):
+    if info.frames == 0 or info.samplerate <= 0:
+        raise AudioReadError("The WAV file contains no usable audio samples.")
+    if info.samplerate < MIN_SUPPORTED_SAMPLE_RATE or info.samplerate > MAX_SUPPORTED_SAMPLE_RATE:
         raise AudioReadError(
-            f"Unsupported channel count: {channels}. Only mono (1) and stereo (2) "
+            f"Unsupported sample rate: {info.samplerate} Hz. Supported range is "
+            f"{MIN_SUPPORTED_SAMPLE_RATE} Hz to {MAX_SUPPORTED_SAMPLE_RATE} Hz."
+        )
+    if info.channels not in (1, 2):
+        raise AudioReadError(
+            f"Unsupported channel count: {info.channels}. Only mono (1) and stereo (2) "
             "WAV files are supported."
         )
+    if info.duration > 300.0:
+        raise AudioReadError(
+            f"Audio duration of {info.duration:.1f} s exceeds maximum allowed 300 s."
+        )
+    try:
+        raw, sample_rate = sf.read(BytesIO(data), dtype="float64", always_2d=True)
+    except (RuntimeError, ValueError, TypeError, sf.LibsndfileError) as exc:
+        raise AudioReadError("Could not decode audio samples from file.") from exc
+    if raw.size == 0 or sample_rate <= 0:
+        raise AudioReadError("The WAV file contains no usable audio samples.")
     return AudioRecord(
         samples=np.asarray(raw),
         sample_rate=int(sample_rate),
-        channels=channels,
+        channels=int(raw.shape[1]),
         subtype=str(info.subtype),
         format=str(info.format),
     )

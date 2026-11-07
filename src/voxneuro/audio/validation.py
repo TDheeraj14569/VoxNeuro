@@ -28,7 +28,7 @@ class AudioValidationConfig:
     pitch_floor_hz: float = 75.0
     pitch_ceiling_hz: float = 500.0
     min_harmonic_overtone_fraction: float = 0.005
-    min_second_harmonic_fraction: float = 0.002
+    min_second_harmonic_fraction: float = 0.0003
     min_waveform_kurtosis: float = 1.15
 
     def __post_init__(self) -> None:
