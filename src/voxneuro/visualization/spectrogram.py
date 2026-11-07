@@ -67,9 +67,8 @@ def spectrogram_figure(
     db = librosa.amplitude_to_db(np.abs(spectrum), ref=np.max)
     fig = Figure(figsize=(10, 3.2))
     ax = fig.subplots()
-    fig.patch.set_facecolor("#0C1D27")
-    fig.patch.set_alpha(0.92)
-    ax.set_facecolor("#08151D")
+    fig.patch.set_facecolor("#FBFAF6")
+    ax.set_facecolor("#FFFFFF")
     image = librosa.display.specshow(
         db,
         sr=sample_rate,
@@ -77,16 +76,17 @@ def spectrogram_figure(
         x_axis="time",
         y_axis="linear",
         ax=ax,
-        cmap="magma",
+        cmap="cividis",
     )
-    ax.set_title("Magnitude spectrogram", color="#55D9C1", fontsize=11, fontweight="600")
-    ax.set_xlabel("Time (s)", color="#EDF6F7")
-    ax.set_ylabel("Frequency (Hz)", color="#EDF6F7")
-    ax.tick_params(colors="#A7B8B5")
+    ax.set_title("Magnitude spectrogram", color="#20232B", fontsize=11, fontweight="650")
+    ax.set_xlabel("Time (s)", color="#676970", fontsize=9.5)
+    ax.set_ylabel("Frequency (Hz)", color="#676970", fontsize=9.5)
+    ax.tick_params(colors="#676970", labelsize=9)
     for spine in ax.spines.values():
-        spine.set_color("#263E47")
+        spine.set_color("#D8D3C8")
     cbar = fig.colorbar(image, ax=ax, label="Magnitude (dB relative)")
-    cbar.ax.yaxis.label.set_color("#EDF6F7")
-    cbar.ax.tick_params(colors="#A7B8B5")
+    cbar.ax.yaxis.label.set_color("#676970")
+    cbar.ax.tick_params(colors="#676970", labelsize=9)
+    cbar.outline.set_edgecolor("#D8D3C8")
     fig.tight_layout()
     return fig

@@ -165,28 +165,30 @@ def viewer_html(data: dict[str, Any]) -> str:
 <style>
 * {{ box-sizing: border-box; }}
 html, body {{
-  margin: 0; width: 100%; height: 100%; background: #0a1922; color: #e7f2ef;
-  font: 12px 'Segoe UI', sans-serif; overflow: hidden;
+  margin: 0; width: 100%; height: 100%; background: #1C232B; color: #F3F0E8;
+  font: 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden;
 }}
 #viewer {{
-  height: 100%; min-height: 240px; position: relative; border: 1px solid #21414a;
-  border-radius: 12px; overflow: hidden; background: #0a1922;
+  height: 100%; min-height: 240px; position: relative; border: 1px solid #D8D3C8;
+  border-radius: 10px; overflow: hidden; background: #1C232B;
 }}
 canvas {{ display: block; width: 100%; height: 100%; }}
-.toolbar {{ position: absolute; z-index: 2; top: 10px; right: 12px; display: flex; gap: 8px; }}
+.toolbar {{ position: absolute; z-index: 2; top: 12px; right: 14px; display: flex; gap: 8px; }}
 .toolbar[hidden] {{ display: none; }}
 button {{
-  background: #122733; color: #d8eeea; border: 1px solid #31515a; border-radius: 6px;
-  padding: 6px 9px; font: inherit; cursor: pointer;
+  background: #FBFAF6; color: #20232B; border: 1px solid #D8D3C8; border-radius: 6px;
+  padding: 6px 12px; font: inherit; font-weight: 600; cursor: pointer;
+  transition: all 0.15s ease;
 }}
-button:hover {{ border-color: #55d9c1; }}
-button:focus-visible {{ outline: 2px solid #70b9e8; outline-offset: 2px; }}
+button:hover {{ border-color: #B95E46; color: #B95E46; background: #FFFFFF; }}
+button:focus-visible {{ outline: 2px solid #B95E46; outline-offset: 2px; }}
 .note, .axes {{
-  position: absolute; left: 12px; z-index: 2; max-width: 75%;
-  background: #0a1922cc; padding: 5px 8px; border-radius: 4px;
+  position: absolute; left: 14px; z-index: 2; max-width: 80%;
+  background: rgba(28, 35, 43, 0.88); border: 1px solid rgba(216, 211, 200, 0.22);
+  border-radius: 6px; backdrop-filter: blur(8px); padding: 6px 10px;
 }}
-.note {{ bottom: 10px; color: #a7b8b5; }}
-.axes {{ top: 11px; color: #b9f0df; }}
+.note {{ bottom: 12px; color: #A3A8AF; font-size: 11px; }}
+.axes {{ top: 12px; color: #FFFFFF; font-size: 11px; }}
 @media (prefers-reduced-motion: reduce) {{ * {{ scroll-behavior: auto !important; }} }}
 </style></head><body>
 <div id="viewer" role="group" aria-label="Interactive three-dimensional acoustic visualization">

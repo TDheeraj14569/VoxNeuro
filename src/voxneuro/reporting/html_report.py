@@ -43,8 +43,8 @@ def _waveform_svg(samples: np.ndarray, sample_rate: int) -> str:
         "xmlns='http://www.w3.org/2000/svg'>"
         "<title>Processed voice waveform</title>"
         f"<line x1='{left:g}' y1='{top + plot_height / 2:g}' "
-        f"x2='{left + plot_width:g}' y2='{top + plot_height / 2:g}' stroke='#d3e0e2'/>"
-        f"<g stroke='#087f83' stroke-width='1.1'>"
+        f"x2='{left + plot_width:g}' y2='{top + plot_height / 2:g}' stroke='#D8D3C8'/>"
+        f"<g stroke='#526A91' stroke-width='1.1'>"
         f"{''.join(f'<polyline points="{p}" fill="none"/>' for p in points)}</g>"
         f"<text x='{left:g}' y='{height - 12:g}' font-size='12'>0 s</text>"
         f"<text x='{left + plot_width:g}' y='{height - 12:g}' text-anchor='end' "
@@ -77,7 +77,7 @@ def _spectrogram_svg(samples: np.ndarray, sample_rate: int) -> str:
     selected = magnitude_db[rows[frequency_indices]][:, time_indices]
     high = float(np.max(selected))
     level = np.clip((selected - (high - 60.0)) / 60.0, 0.0, 1.0)
-    palette = [(8, 35, 57), (10, 106, 126), (38, 175, 151), (224, 206, 114)]
+    palette = [(32, 35, 43), (82, 106, 145), (185, 94, 70), (229, 181, 109)]
     width, height, left, top = 960.0, 300.0, 68.0, 18.0
     plot_width, plot_height = width - left - 18.0, height - 72.0
     cell_width = plot_width / max(1, len(time_indices))
@@ -202,56 +202,190 @@ def render_voice_report_html(
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VoxNeuro acoustic analysis report</title>
 <style>
-:root{color-scheme:light;--ink:#132b35;--muted:#526a73;--line:#d7e1e5;--accent:#087f83}
-*{box-sizing:border-box}
-body{margin:0;background:#edf3f4;color:var(--ink);
-font:15px/1.6 Segoe UI,Arial,sans-serif}
-main{max-width:1100px;margin:0 auto;padding:28px 18px 50px}
-header{background:#102a36;color:white;border-radius:14px;padding:24px}
-h1{margin:0;font-size:28px}
-header p{margin:6px 0;color:#d4e5e8}
-section{background:white;margin-top:18px;padding:20px;border:1px solid var(--line);
-border-radius:12px}
-h2{margin:0 0 12px;font-size:20px}
-table{border-collapse:collapse;width:100%}
-th,td{text-align:left;vertical-align:top;padding:8px;border-bottom:1px solid var(--line)}
-th{font-weight:650}
-code{overflow-wrap:anywhere}
-.scroll{overflow-x:auto}
-.charts svg{width:100%;height:auto}
-.notice{padding:12px 15px;border-left:4px solid #b56d14;background:#fff8eb}
-.muted,.empty,footer{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-@media(max-width:600px){main{padding:12px 8px 30px}section{padding:14px}h1{font-size:23px}}
+:root {
+  color-scheme: light;
+  --vox-canvas: #F3F0E8;
+  --vox-surface: #FFFFFF;
+  --vox-surface-alt: #FBFAF6;
+  --vox-ink: #20232B;
+  --vox-secondary: #676970;
+  --vox-muted: #898982;
+  --vox-line: #D8D3C8;
+  --vox-line-subtle: #EBE7DE;
+  --vox-vermilion: #B95E46;
+  --vox-aubergine: #51445D;
+  --vox-blue: #526A91;
+  --vox-olive: #788064;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--vox-canvas);
+  color: var(--vox-ink);
+  font: 14.5px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+main {
+  max-width: 980px;
+  margin: 36px auto;
+  padding: 42px 48px;
+  background: var(--vox-surface);
+  border: 1px solid var(--vox-line);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(32, 35, 43, 0.05);
+}
+.kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vox-vermilion);
+  margin-bottom: 6px;
+}
+header {
+  border-bottom: 2px solid var(--vox-ink);
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+}
+h1 {
+  margin: 0 0 8px 0;
+  font-family: "Newsreader", "Charter", "Georgia", serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--vox-ink);
+}
+header p {
+  margin: 4px 0;
+  color: var(--vox-secondary);
+  font-size: 13.5px;
+}
+section {
+  background: var(--vox-surface-alt);
+  margin-top: 24px;
+  padding: 24px 26px;
+  border: 1px solid var(--vox-line);
+  border-radius: 6px;
+}
+h2 {
+  margin: 0 0 14px 0;
+  font-family: "Newsreader", "Charter", "Georgia", serif;
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--vox-ink);
+  border-bottom: 1px solid var(--vox-line);
+  padding-bottom: 8px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13.5px;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--vox-line-subtle);
+}
+th[scope="col"] {
+  background: #EDE8DE;
+  color: var(--vox-aubergine);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--vox-line);
+}
+tr:nth-child(even) td { background: #FAF8F3; }
+th { font-weight: 600; }
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: var(--vox-aubergine);
+  background: #F3F0E8;
+  border: 1px solid var(--vox-line);
+  padding: 2px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+.scroll { overflow-x: auto; }
+.charts svg {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--vox-line);
+  border-radius: 4px;
+  background: #FFFFFF;
+}
+figure { margin: 0; }
+figcaption {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vox-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.notice {
+  padding: 14px 18px;
+  border-left: 4px solid var(--vox-vermilion);
+  background: #FAF5EC;
+  border: 1px solid #E5D3B8;
+  border-left-width: 4px;
+  border-radius: 4px;
+  color: var(--vox-ink);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.muted, .empty, footer { color: var(--vox-muted); font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+footer {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--vox-line);
+  text-align: center;
+  line-height: 1.6;
+}
+@media (max-width: 680px) {
+  main { padding: 22px 18px; margin: 12px; }
+  section { padding: 16px; }
+  h1 { font-size: 24px; }
+}
 </style></head><body><main>
-<header><h1>VoxNeuro · Voice acoustic analysis</h1>
-<p>Report generated: ${REPORT_ID} · Feature schema: ${SCHEMA_VERSION}</p>
-<p>Research prototype; no diagnosis is produced.</p></header>
+<header>
+<div class="kicker">VOXNEURO · SCIENTIFIC RESEARCH ARCHIVE</div>
+<h1>VoxNeuro · Voice acoustic analysis</h1>
+<p>Report generated: ${REPORT_ID} · Feature schema: <code>${SCHEMA_VERSION}</code></p>
+<p>Research prototype; no diagnosis is produced. Fail-closed safety boundary applied.</p>
+</header>
 <section><h2>Recording quality</h2>
 <div class="scroll"><table><tbody>${QUALITY_ROWS}</tbody></table></div>
-<p><b>Quality outcome:</b> ${QUALITY_STATUS}</p><ul>${WARNINGS}</ul></section>
+<p style="margin-top:14px;"><b>Quality outcome:</b> ${QUALITY_STATUS}</p>
+<ul>${WARNINGS}</ul></section>
 <section><h2>Preprocessing</h2>
 <div class="scroll"><table><tbody>${PREPROCESSING_ROWS}</tbody></table></div>
 </section>
 <section><h2>Waveform and spectrogram</h2>
 <div class="grid charts">${WAVEFORM} ${SPECTROGRAM}</div>
-<p class="muted">The spectrogram shows short-time magnitude relative to digital full scale;
+<p class="muted" style="margin-top:12px;">
+The spectrogram shows short-time magnitude relative to digital full scale;
 it is not calibrated sound-pressure level.</p></section>
 <section><h2>Acoustic feature measurements</h2>
-<p>All ${FEATURE_COUNT} measurements in schema ${SCHEMA_VERSION} are listed.
+<p>All ${FEATURE_COUNT} measurements in schema <code>${SCHEMA_VERSION}</code> are listed.
 Undefined values remain unavailable; no clinical normal range is applied.</p>
 <div class="scroll"><table><caption>Measured features and extraction definitions</caption>
 <thead><tr><th scope="col">Feature</th><th scope="col">Value</th>
 <th scope="col">Unit</th><th scope="col">Status</th>
 <th scope="col">Method and validity</th></tr></thead>
 <tbody>${FEATURE_ROWS}</tbody></table></div>
-<p class="muted">Schema fingerprint: <code>${SCHEMA_FINGERPRINT}</code></p></section>
+<p class="muted" style="margin-top:12px;">Schema fingerprint:
+<code>${SCHEMA_FINGERPRINT}</code></p></section>
 <section><h2>Model assessment</h2><p>${MODEL_STATUS}</p>
-<p class="notice">${DISCLAIMER}</p>
-<p>No calibrated disease probability, clinical threshold, diagnosis, or rule-out
-result is provided.</p></section>
+<div class="notice"><p style="margin:0;">${DISCLAIMER}</p></div>
+<p style="margin-top:12px;">No calibrated disease probability, clinical threshold,
+diagnosis, or rule-out result is provided.</p></section>
 <footer>Report contents are generated from this session's measured audio and feature values.
-The application does not store recordings or reports by default.</footer>
+The application does not store recordings or reports by default.
+Non-diagnostic research software.</footer>
 </main></body></html>"""
     )
     return tmpl.substitute(

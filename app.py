@@ -63,338 +63,445 @@ load_config("reviewed_exclusions.yaml")
 if APP_CONFIG.get("store_recordings") or APP_CONFIG.get("store_reports_by_default"):
     raise RuntimeError("Persistent audio/report storage is not implemented in this prototype.")
 configure_logging()
-st.set_page_config(page_title="VoxNeuro · Voice analysis", page_icon="∿", layout="wide")
+st.set_page_config(
+    page_title="VoxNeuro · Voice Acoustic Analysis",
+    page_icon="∿",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 _STYLE = """
 <style>
 :root {
-  --vox-ink: #F3F7F5;
-  --vox-muted: #A7B8B5;
-  --vox-teal: #55D9C1;
-  --vox-teal-glow: rgba(85, 217, 193, 0.35);
-  --vox-teal-wash: #122733;
-  --vox-amber: #E5B56D;
-  --vox-red: #E27F80;
-  --vox-rule: #263E47;
-  --vox-paper: #07131B;
-  --vox-surface: #0C1D27;
-  --vox-surface-glass: rgba(12, 29, 39, 0.72);
-  --vox-elevated: #122733;
+  --vox-canvas: #F3F0E8;
+  --vox-canvas-subtle: #EBE7DE;
+  --vox-surface: #FBFAF6;
+  --vox-surface-elevated: #FFFFFF;
+  --vox-ink: #20232B;
+  --vox-secondary: #676970;
+  --vox-muted: #898982;
+  --vox-border: #D8D3C8;
+  --vox-border-subtle: #E8E4DA;
+  --vox-vermilion: #B95E46;
+  --vox-vermilion-hover: #A34F39;
+  --vox-vermilion-tint: rgba(185, 94, 70, 0.08);
+  --vox-aubergine: #51445D;
+  --vox-aubergine-tint: rgba(81, 68, 93, 0.08);
+  --vox-blue: #526A91;
+  --vox-blue-tint: rgba(82, 106, 145, 0.09);
+  --vox-olive: #788064;
+  --vox-success: #39745A;
+  --vox-warning: #A76F24;
+  --vox-error: #A3423D;
+  --vox-radius: 6px;
+  --vox-shadow-sm: 0 1px 3px rgba(32, 35, 43, 0.05);
+  --vox-shadow-md: 0 4px 14px rgba(32, 35, 43, 0.06);
 }
+
+/* Global resets & canvas */
 .stApp {
-  background: radial-gradient(circle at 18% 12%, rgba(20, 52, 66, 0.45) 0%, transparent 48%),
-              radial-gradient(circle at 82% 88%, rgba(14, 40, 52, 0.38) 0%, transparent 52%),
-              var(--vox-paper) !important;
-  color: var(--vox-ink);
+  background-color: var(--vox-canvas) !important;
+  color: var(--vox-ink) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
 }
-header[data-testid="stHeader"] { background: transparent; }
+
+header[data-testid="stHeader"] {
+  background: transparent !important;
+}
+
 main .block-container {
   max-width: 1220px;
-  padding: 2.2rem 3.1rem 4rem;
+  padding: 2.2rem 3rem 4rem;
 }
+
+/* Sidebar styling */
 section[data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #0A1922 0%, #08151D 100%) !important;
-  border-right: 1px solid rgba(85, 217, 193, 0.16) !important;
+  background-color: var(--vox-canvas-subtle) !important;
+  border-right: 1px solid var(--vox-border) !important;
 }
+
+section[data-testid="stSidebar"] .block-container {
+  padding: 1.8rem 1.25rem 2rem;
+}
+
+/* Typography hierarchy */
+h1, h2, h3 {
+  font-family: "Newsreader", "Charter", "Georgia", "Cambria", serif !important;
+  color: var(--vox-ink) !important;
+  letter-spacing: -0.02em !important;
+  font-weight: 650 !important;
+}
+
+h1 {
+  font-size: 2.25rem !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0.5rem !important;
+}
+h2 {
+  font-size: 1.55rem !important;
+  line-height: 1.25 !important;
+  margin-top: 1.8rem !important;
+  margin-bottom: 0.75rem !important;
+}
+h3 {
+  font-size: 1.2rem !important;
+  line-height: 1.3 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+p, li, label, .stApp p, .stApp li {
+  color: var(--vox-ink);
+  line-height: 1.6;
+}
+
+.stApp [data-testid="stCaptionContainer"] {
+  color: var(--vox-secondary) !important;
+  font-size: 0.82rem;
+}
+
+/* Brand Wordmark */
 .vox-wordmark {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
   color: var(--vox-ink);
-  font-size: 1.12rem;
-  font-weight: 650;
-  letter-spacing: -0.035em;
+  font-family: "Newsreader", "Charter", "Georgia", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.2rem;
 }
+
 .vox-wave {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 2.5px;
   height: 22px;
-  color: var(--vox-teal);
+  color: var(--vox-vermilion);
 }
+
 .vox-wave i {
   display: block;
-  width: 2px;
+  width: 2.5px;
   border-radius: 2px;
   background: currentColor;
 }
+
 .vox-wave i:nth-child(1), .vox-wave i:nth-child(7) { height: 6px; }
 .vox-wave i:nth-child(2), .vox-wave i:nth-child(6) { height: 12px; }
 .vox-wave i:nth-child(3), .vox-wave i:nth-child(5) { height: 17px; }
-.vox-wave i:nth-child(4) { height: 22px; }
+.vox-wave i:nth-child(4) { height: 22px; color: var(--vox-aubergine); }
+
 .vox-kicker {
-  color: var(--vox-teal);
-  font-size: 0.76rem;
-  font-weight: 650;
+  color: var(--vox-vermilion);
+  font-size: 0.74rem;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.4rem 0;
 }
+
 .vox-lede {
-  color: var(--vox-muted);
-  font-size: 1.08rem;
-  max-width: 780px;
-  line-height: 1.6;
+  color: var(--vox-secondary);
+  font-size: 1.06rem;
+  max-width: 820px;
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
 }
+
 .vox-rule {
   border: 0;
-  border-top: 1px solid var(--vox-rule);
+  border-top: 1px solid var(--vox-border);
   margin: 1.35rem 0;
 }
-.vox-step {
-  color: var(--vox-muted);
-  font-size: 0.83rem;
-  letter-spacing: 0.025em;
-}
-.vox-step strong {
-  color: var(--vox-teal);
-  font-size: 0.76rem;
-  letter-spacing: 0.09em;
-  margin-right: 0.45rem;
-}
-.vox-note {
-  border-left: 3px solid var(--vox-teal);
-  padding: 0.15rem 0 0.15rem 0.9rem;
-  color: var(--vox-muted);
-  line-height: 1.55;
-}
+
 .vox-status {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: var(--vox-teal);
-  font-size: 0.76rem;
-  font-weight: 650;
-  letter-spacing: 0.07em;
+  color: var(--vox-success);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
 .vox-status::before {
   content: "";
   width: 7px;
   height: 7px;
-  background: currentColor;
+  background: var(--vox-success);
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--vox-teal);
 }
-h1, h2, h3 {
+
+.vox-note {
+  border-left: 3px solid var(--vox-vermilion);
+  padding: 0.25rem 0 0.25rem 0.95rem;
+  color: var(--vox-secondary);
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+/* Sidebar navigation styling */
+section[data-testid="stSidebar"] [data-testid="stRadio"] > div {
+  gap: 0.45rem;
+}
+
+section[data-testid="stSidebar"] [data-testid="stRadio"] label {
+  background: var(--vox-surface);
+  border: 1px solid var(--vox-border);
+  border-radius: var(--vox-radius);
+  padding: 0.55rem 0.85rem;
+  transition: all 0.18s ease;
+  cursor: pointer;
   color: var(--vox-ink);
-  letter-spacing: -0.035em;
+  font-size: 0.88rem;
+  font-weight: 500;
 }
-.stApp, .stApp p, .stApp label, .stApp li { color: var(--vox-ink); }
-.stApp [data-testid="stCaptionContainer"] { color: var(--vox-muted); }
-.stApp input, .stApp textarea, .stApp [data-baseweb="select"] > div {
-  color: var(--vox-ink); background: var(--vox-surface); border-color: var(--vox-rule);
+
+section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+  background: var(--vox-surface-elevated);
+  border-color: var(--vox-vermilion);
+  color: var(--vox-vermilion);
+  transform: translateX(2px);
 }
-.stApp button:focus-visible, .stApp input:focus-visible, .stApp textarea:focus-visible {
-  outline: 2px solid var(--vox-teal); outline-offset: 2px;
+
+section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-checked="true"],
+section[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+  background: var(--vox-surface-elevated);
+  border-color: var(--vox-vermilion);
+  border-left: 3.5px solid var(--vox-vermilion);
+  color: var(--vox-vermilion);
+  font-weight: 650;
+  box-shadow: var(--vox-shadow-sm);
 }
+
+/* Streamlit Metric boxes */
 div[data-testid="stMetric"] {
-  background: rgba(12, 29, 39, 0.7) !important;
-  border: 1px solid rgba(85, 217, 193, 0.2) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border-radius: 10px !important;
-  padding: 0.85rem 1rem !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25) !important;
+  background: var(--vox-surface-elevated) !important;
+  border: 1px solid var(--vox-border) !important;
+  border-radius: var(--vox-radius) !important;
+  padding: 0.85rem 1.1rem !important;
+  box-shadow: var(--vox-shadow-sm) !important;
 }
-.stApp [data-testid="stDataFrame"],
-.stApp [data-testid="stTable"],
-.stApp table:not(.vox-table),
-.stApp .glideDataGridUl,
-.stApp .dvn-scroller,
-.stApp [data-testid="stDataFrame"] > div {
-  background: rgba(10, 25, 34, 0.95) !important;
-  background-color: rgba(10, 25, 34, 0.95) !important;
-  color: #F3F7F5 !important;
-  border: 1px solid rgba(85, 217, 193, 0.25) !important;
-  border-radius: 12px !important;
+
+div[data-testid="stMetric"] label {
+  color: var(--vox-secondary) !important;
+  font-size: 0.74rem !important;
+  font-weight: 650 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
 }
-.stApp [data-testid="stJson"], .react-json-view {
-  background: rgba(10, 25, 34, 0.92) !important;
-  background-color: rgba(10, 25, 34, 0.92) !important;
-  border: 1px solid rgba(85, 217, 193, 0.28) !important;
-  border-radius: 12px !important;
-  padding: 1.15rem !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
-  color: #E2F5F1 !important;
+
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+  color: var(--vox-ink) !important;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace !important;
+  font-weight: 700 !important;
 }
-.stApp [data-testid="stJson"] * {
-  color: #55D9C1 !important;
+
+/* Editorial Hero & Feature Containers */
+.vox-editorial-hero {
+  background: var(--vox-surface-elevated);
+  border: 1px solid var(--vox-border);
+  border-left: 4px solid var(--vox-vermilion);
+  border-radius: var(--vox-radius);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.35rem;
+  box-shadow: var(--vox-shadow-sm);
 }
-.vox-glass-card {
-  background: rgba(12, 29, 39, 0.65);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(85, 217, 193, 0.16);
-  border-radius: 12px;
+
+.vox-editorial-card {
+  background: var(--vox-surface-elevated);
+  border: 1px solid var(--vox-border);
+  border-radius: var(--vox-radius);
   padding: 1.25rem 1.4rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
-  margin-bottom: 1.15rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--vox-shadow-sm);
 }
-.vox-glass-hero {
-  background: linear-gradient(135deg, rgba(16, 42, 54, 0.7), rgba(8, 22, 30, 0.85));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(85, 217, 193, 0.25);
-  border-radius: 14px;
-  padding: 1.5rem 1.8rem;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.35);
+
+.vox-step-num {
+  font-family: "Newsreader", "Georgia", serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--vox-vermilion);
+  line-height: 1;
+  margin-bottom: 0.35rem;
 }
+
+/* Scientific Table System */
 .vox-table-wrapper {
-  border: 1px solid rgba(85, 217, 193, 0.32);
-  border-radius: 14px;
+  border: 1px solid var(--vox-border);
+  border-radius: var(--vox-radius);
   overflow-x: auto;
-  background: linear-gradient(135deg, rgba(12, 29, 39, 0.85) 0%, rgba(7, 19, 27, 0.92) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08),
-              0 0 25px rgba(85, 217, 193, 0.1);
-  margin: 1rem 0 1.35rem;
+  background: var(--vox-surface-elevated);
+  box-shadow: var(--vox-shadow-sm);
+  margin: 0.85rem 0 1.25rem;
 }
+
 .vox-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.86rem;
-  color: #EDF6F7;
+  color: var(--vox-ink);
   text-align: left;
 }
+
 .vox-table th {
-  background: linear-gradient(90deg, rgba(18, 48, 62, 0.98) 0%, rgba(12, 34, 45, 0.98) 100%);
-  color: #55D9C1;
-  padding: 0.85rem 1.25rem;
-  font-size: 0.74rem;
+  background: #EDE8DE;
+  color: var(--vox-aubergine);
+  padding: 0.75rem 1.15rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-bottom: 2px solid rgba(85, 217, 193, 0.35);
+  border-bottom: 2px solid var(--vox-border);
   white-space: nowrap;
 }
+
 .vox-table td {
-  padding: 0.8rem 1.25rem;
-  border-bottom: 1px solid rgba(38, 62, 71, 0.5);
+  padding: 0.75rem 1.15rem;
+  border-bottom: 1px solid var(--vox-border-subtle);
   vertical-align: middle;
 }
-.vox-table tr:nth-child(even) { background: rgba(16, 38, 50, 0.35); }
+
+.vox-table tr:nth-child(even) { background: #FAF8F3; }
 .vox-table tr:last-child td { border-bottom: 0; }
 .vox-table tr:hover td {
-  background: linear-gradient(90deg, rgba(85, 217, 193, 0.15) 0%, rgba(85, 217, 193, 0.05) 100%)
-              !important;
-  transition: background 0.18s ease;
+  background: #F1ECE2 !important;
+  transition: background 0.15s ease;
 }
+
 .vox-val-num {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  color: #67E2CE;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--vox-ink);
   font-weight: 600;
   white-space: nowrap;
 }
+
 .vox-code-pill {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  background: rgba(85, 217, 193, 0.1);
-  color: #E2F5F1;
-  border: 1px solid rgba(85, 217, 193, 0.2);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  background: #EFECE4;
+  color: var(--vox-aubergine);
+  border: 1px solid var(--vox-border);
   border-radius: 4px;
   padding: 0.15rem 0.45rem;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
   white-space: nowrap;
 }
-.vox-unit-pill { color: #A7B8B5; font-size: 0.78rem; }
+
+.vox-unit-pill {
+  color: var(--vox-secondary);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
 .vox-badge-ok {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: rgba(85, 217, 193, 0.12);
-  color: #55D9C1;
-  border: 1px solid rgba(85, 217, 193, 0.35);
-  border-radius: 9999px;
-  padding: 0.18rem 0.6rem;
+  background: rgba(57, 116, 90, 0.08);
+  color: var(--vox-success);
+  border: 1px solid rgba(57, 116, 90, 0.3);
+  border-radius: 4px;
+  padding: 0.15rem 0.55rem;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 650;
   white-space: nowrap;
 }
+
 .vox-badge-ok::before {
   content: "";
   width: 5px;
   height: 5px;
-  background: #55D9C1;
+  background: var(--vox-success);
   border-radius: 50%;
-  box-shadow: 0 0 6px #55D9C1;
 }
+
 .vox-badge-na {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: rgba(229, 181, 109, 0.12);
-  color: #E5B56D;
-  border: 1px solid rgba(229, 181, 109, 0.35);
-  border-radius: 9999px;
-  padding: 0.18rem 0.6rem;
+  background: rgba(167, 111, 36, 0.08);
+  color: var(--vox-warning);
+  border: 1px solid rgba(167, 111, 36, 0.35);
+  border-radius: 4px;
+  padding: 0.15rem 0.55rem;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 650;
   white-space: nowrap;
 }
+
+/* Quality Telemetry Grid */
 .vox-quality-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 0.85rem;
-  margin: 0.85rem 0 1.25rem;
+  gap: 0.75rem;
+  margin: 0.85rem 0 1.15rem;
 }
+
 .vox-quality-card {
-  background: rgba(12, 29, 39, 0.7);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(85, 217, 193, 0.18);
-  border-radius: 10px;
+  background: var(--vox-surface-elevated);
+  border: 1px solid var(--vox-border);
+  border-radius: var(--vox-radius);
   padding: 0.85rem 1rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--vox-shadow-sm);
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
+
 .vox-quality-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(85, 217, 193, 0.45);
+  transform: translateY(-1px);
+  border-color: var(--vox-vermilion);
 }
+
 .vox-qc-label {
-  color: #A7B8B5;
-  font-size: 0.72rem;
-  font-weight: 600;
+  color: var(--vox-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
+
 .vox-qc-value {
-  color: #F3F7F5;
-  font-size: 1.3rem;
+  color: var(--vox-ink);
+  font-size: 1.25rem;
   font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
   line-height: 1.2;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
-.vox-qc-sub { color: #55D9C1; font-size: 0.74rem; font-weight: 500; }
+
+.vox-qc-sub {
+  color: var(--vox-blue);
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
 .vox-json-card {
-  background: rgba(10, 25, 34, 0.85);
-  border: 1px solid rgba(85, 217, 193, 0.22);
-  border-radius: 10px;
+  background: var(--vox-surface);
+  border: 1px solid var(--vox-border);
+  border-radius: var(--vox-radius);
   padding: 1rem 1.25rem;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   overflow-x: auto;
   margin: 0.5rem 0 1rem;
 }
+
 .vox-json-card pre {
   margin: 0;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.84rem;
-  color: #55D9C1;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--vox-ink);
   line-height: 1.55;
   background: transparent !important;
 }
-.vox-json-card code {
-  color: #67E2CE;
-  background: transparent !important;
-}
+
+/* Buttons Design System */
 html body div.stApp button,
 html body div.stApp button[kind="secondary"],
 html body div.stApp a[kind="secondary"],
@@ -412,256 +519,196 @@ html body div.stApp [data-testid*="BaseButton"],
 html body div.stApp [data-testid*="stBaseButton"],
 html body div.stApp div[data-testid="stDownloadButton"] button,
 html body div.stApp div[data-testid="stDownloadButton"] a {
-  background: linear-gradient(135deg, rgba(16, 44, 56, 0.94) 0%, rgba(9, 26, 36, 0.98) 100%)
-              !important;
-  background-color: rgba(14, 34, 45, 0.96) !important;
-  color: #F3F7F5 !important;
-  border: 1px solid rgba(85, 217, 193, 0.45) !important;
-  border-radius: 10px !important;
-  padding: 0.6rem 1.35rem !important;
-  font-weight: 650 !important;
+  background: var(--vox-surface-elevated) !important;
+  background-color: var(--vox-surface-elevated) !important;
+  color: var(--vox-ink) !important;
+  border: 1px solid var(--vox-border) !important;
+  border-radius: var(--vox-radius) !important;
+  padding: 0.55rem 1.25rem !important;
+  font-weight: 600 !important;
   font-size: 0.88rem !important;
-  letter-spacing: 0.025em !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12),
-              0 0 14px rgba(85, 217, 193, 0.12) !important;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  letter-spacing: 0.015em !important;
+  box-shadow: var(--vox-shadow-sm) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0.5rem !important;
+  gap: 0.45rem !important;
 }
+
 html body div.stApp button *,
-html body div.stApp button p,
-html body div.stApp button span,
-html body div.stApp button div,
 html body div.stApp a[kind="secondary"] *,
-html body div.stApp a[kind="secondary"] p,
-html body div.stApp a[kind="secondary"] span,
 html body div.stApp a[role="button"] *,
 html body div.stApp a[download] *,
 html body div.stApp .stButton > button *,
 html body div.stApp .stDownloadButton > button *,
-html body div.stApp .stDownloadButton > a *,
-html body div.stApp [data-testid*="DownloadButton"] *,
-html body div.stApp [data-testid*="downloadButton"] *,
 html body div.stApp div[data-testid="stDownloadButton"] * {
-  color: #F3F7F5 !important;
+  color: var(--vox-ink) !important;
 }
-html body div.stApp button svg,
-html body div.stApp .stDownloadButton svg,
-html body div.stApp div[data-testid="stDownloadButton"] svg {
-  fill: #55D9C1 !important;
-  stroke: #55D9C1 !important;
-}
+
 html body div.stApp button:hover:not(:disabled),
 html body div.stApp button:hover:enabled,
-html body div.stApp button[kind="secondary"]:hover:not(:disabled),
 html body div.stApp a[kind="secondary"]:hover:not(:disabled),
 html body div.stApp a[role="button"]:hover:not(:disabled),
 html body div.stApp a[download]:hover:not(:disabled),
 html body div.stApp [data-testid*="DownloadButton"] button:hover:not(:disabled),
-html body div.stApp [data-testid*="DownloadButton"] a:hover:not(:disabled),
-html body div.stApp [data-testid*="downloadButton"] button:hover:not(:disabled),
-html body div.stApp [data-testid*="downloadButton"] a:hover:not(:disabled),
-html body div.stApp [data-testid*="baseButton"]:hover:not(:disabled),
-html body div.stApp [data-testid*="BaseButton"]:hover:not(:disabled),
-html body div.stApp [data-testid*="stBaseButton"]:hover:not(:disabled),
 html body div.stApp .stButton > button:hover:not(:disabled),
 html body div.stApp .stDownloadButton > button:hover:not(:disabled),
-html body div.stApp .stDownloadButton > a:hover:not(:disabled),
-html body div.stApp div[data-testid="stDownloadButton"] button:hover:not(:disabled),
-html body div.stApp div[data-testid="stDownloadButton"] a:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(26, 82, 100, 0.98) 0%, rgba(14, 52, 68, 0.98) 100%)
-              !important;
-  background-color: rgba(20, 64, 78, 0.98) !important;
-  border: 1px solid #55D9C1 !important;
-  border-color: #55D9C1 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(85, 217, 193, 0.5),
-              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-  transform: translateY(-2px) !important;
+html body div.stApp div[data-testid="stDownloadButton"] button:hover:not(:disabled) {
+  background: #FAF8F3 !important;
+  background-color: #FAF8F3 !important;
+  border-color: var(--vox-vermilion) !important;
+  color: var(--vox-vermilion) !important;
+  box-shadow: var(--vox-shadow-md) !important;
+  transform: translateY(-1px) !important;
 }
-html body div.stApp button:disabled,
-html body div.stApp button[disabled],
-html body div.stApp .stButton > button:disabled,
-html body div.stApp .stDownloadButton > button:disabled,
-html body div.stApp div[data-testid="stDownloadButton"] button:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: none !important;
-  border-color: rgba(43, 90, 107, 0.4) !important;
-}
-html body div.stApp button:hover *,
+
 html body div.stApp button:hover:not(:disabled) *,
-html body div.stApp a[kind="secondary"]:hover *,
-html body div.stApp a[role="button"]:hover *,
-html body div.stApp a[download]:hover *,
-html body div.stApp [data-testid*="DownloadButton"] *:hover,
-html body div.stApp [data-testid*="downloadButton"] *:hover,
-html body div.stApp .stDownloadButton *:hover,
-html body div.stApp div[data-testid="stDownloadButton"] *:hover,
-html body div.stApp div[data-testid="stDownloadButton"] button:hover *,
-html body div.stApp div[data-testid="stDownloadButton"] a:hover * {
-  color: #FFFFFF !important;
-  fill: #55D9C1 !important;
+html body div.stApp a[kind="secondary"]:hover * {
+  color: var(--vox-vermilion) !important;
 }
-html body div.stApp button:focus,
-html body div.stApp button:focus-visible,
-html body div.stApp div[data-testid="stDownloadButton"] button:focus,
-html body div.stApp div[data-testid="stDownloadButton"] a:focus {
-  background: linear-gradient(135deg, rgba(20, 68, 84, 0.98) 0%, rgba(12, 44, 58, 0.98) 100%)
-              !important;
-  background-color: rgba(16, 56, 70, 0.98) !important;
-  border-color: #55D9C1 !important;
-  outline: 2px solid rgba(85, 217, 193, 0.6) !important;
-  outline-offset: 2px !important;
-  color: #FFFFFF !important;
-}
-html body div.stApp button:active,
-html body div.stApp [data-testid*="DownloadButton"] button:active,
-html body div.stApp [data-testid*="DownloadButton"] a:active,
-html body div.stApp div[data-testid="stDownloadButton"] button:active,
-html body div.stApp div[data-testid="stDownloadButton"] a:active {
-  background: rgba(16, 50, 64, 0.98) !important;
-  border-color: #55D9C1 !important;
-  color: #FFFFFF !important;
-  transform: translateY(0px) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 12px rgba(85, 217, 193, 0.25) !important;
-}
+
 html body div.stApp button[kind="primary"],
 html body div.stApp [data-testid="baseButton-primary"],
 html body div.stApp [data-testid="stBaseButton-primary"],
 html body div.stApp button[data-testid*="primary"] {
-  background: linear-gradient(135deg, #136359 0%, #0B423B 100%) !important;
-  background-color: #136359 !important;
-  border: 1px solid rgba(85, 217, 193, 0.75) !important;
+  background: var(--vox-vermilion) !important;
+  background-color: var(--vox-vermilion) !important;
+  border: 1px solid var(--vox-vermilion-hover) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 4px 20px rgba(19, 99, 89, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2),
-              0 0 14px rgba(85, 217, 193, 0.25) !important;
+  box-shadow: 0 2px 8px rgba(185, 94, 70, 0.25) !important;
 }
-html body div.stApp button[kind="primary"]:hover,
-html body div.stApp button[kind="primary"]:hover:not(:disabled),
-html body div.stApp [data-testid="baseButton-primary"]:hover,
-html body div.stApp [data-testid="stBaseButton-primary"]:hover,
-html body div.stApp button[data-testid*="primary"]:hover {
-  background: linear-gradient(135deg, #187D70 0%, #0E5249 100%) !important;
-  background-color: #187D70 !important;
-  border-color: #55D9C1 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 8px 30px rgba(85, 217, 193, 0.5), 0 0 26px rgba(85, 217, 193, 0.4),
-              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-  transform: translateY(-2px) !important;
-}
+
 html body div.stApp button[kind="primary"] *,
 html body div.stApp [data-testid="baseButton-primary"] *,
 html body div.stApp [data-testid="stBaseButton-primary"] * {
   color: #FFFFFF !important;
 }
-.stApp [data-testid="stAlert"] {
-  background: rgba(10, 25, 34, 0.78) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1px solid rgba(85, 217, 193, 0.3) !important;
-  border-radius: 12px !important;
-  color: #EDF6F7 !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+
+html body div.stApp button[kind="primary"]:hover:not(:disabled),
+html body div.stApp [data-testid="baseButton-primary"]:hover,
+html body div.stApp button[data-testid*="primary"]:hover {
+  background: var(--vox-vermilion-hover) !important;
+  background-color: var(--vox-vermilion-hover) !important;
+  border-color: #8F422E !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(185, 94, 70, 0.35) !important;
+  transform: translateY(-1px) !important;
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] > div { gap: 0.38rem; }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label {
-  background: rgba(12, 29, 39, 0.45);
-  border: 1px solid rgba(38, 62, 71, 0.45);
-  border-radius: 9px;
-  padding: 0.5rem 0.85rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  color: #C1D5D2;
+
+html body div.stApp button:disabled,
+html body div.stApp button[disabled],
+html body div.stApp .stButton > button:disabled,
+html body div.stApp .stDownloadButton > button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: var(--vox-border) !important;
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-  background: rgba(85, 217, 193, 0.1);
-  border-color: rgba(85, 217, 193, 0.4);
-  color: #FFFFFF;
-  transform: translateX(2px);
+
+html body div.stApp button:focus-visible {
+  outline: 2px solid var(--vox-vermilion) !important;
+  outline-offset: 2px !important;
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-checked="true"],
-section[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
-  background: linear-gradient(90deg, rgba(85, 217, 193, 0.24), rgba(85, 217, 193, 0.08));
-  border-color: rgba(85, 217, 193, 0.75);
-  color: #FFFFFF;
-  box-shadow: 0 0 16px rgba(85, 217, 193, 0.2);
-}
+
+/* Tabs & Segmented Controls */
 .stApp [data-baseweb="tab-list"] {
-  background: rgba(10, 25, 34, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(38, 62, 71, 0.6);
-  border-radius: 10px;
-  padding: 0.3rem;
-  gap: 0.35rem;
+  background: var(--vox-canvas-subtle) !important;
+  border: 1px solid var(--vox-border) !important;
+  border-radius: var(--vox-radius) !important;
+  padding: 0.25rem !important;
+  gap: 0.25rem !important;
 }
+
 .stApp [data-baseweb="tab"] {
-  border-radius: 7px;
-  padding: 0.45rem 1rem;
-  color: #A7B8B5;
-  font-weight: 550;
-  transition: all 0.2s ease;
-  border: 0;
+  border-radius: 4px !important;
+  padding: 0.45rem 1rem !important;
+  color: var(--vox-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  transition: all 0.15s ease !important;
+  border: 0 !important;
 }
+
 .stApp [data-baseweb="tab"]:hover {
-  color: #FFFFFF;
-  background: rgba(85, 217, 193, 0.1);
+  color: var(--vox-ink) !important;
+  background: var(--vox-surface) !important;
 }
+
 .stApp [data-baseweb="tab"][aria-selected="true"] {
-  background: rgba(85, 217, 193, 0.2);
-  color: #55D9C1;
-  box-shadow: 0 0 12px rgba(85, 217, 193, 0.2);
+  background: var(--vox-surface-elevated) !important;
+  color: var(--vox-vermilion) !important;
+  box-shadow: var(--vox-shadow-sm) !important;
 }
-.stApp [data-baseweb="tab-highlight"] { display: none; }
+
+.stApp [data-baseweb="tab-highlight"] { display: none !important; }
+
+/* Alerts & Notices */
+.stApp [data-testid="stAlert"] {
+  background: var(--vox-surface-elevated) !important;
+  border: 1px solid var(--vox-border) !important;
+  border-left: 4px solid var(--vox-blue) !important;
+  border-radius: var(--vox-radius) !important;
+  color: var(--vox-ink) !important;
+  box-shadow: var(--vox-shadow-sm) !important;
+}
+
+.stApp [data-testid="stAlert"] p {
+  color: var(--vox-ink) !important;
+  font-size: 0.88rem !important;
+}
+
+/* Expanders */
 .stApp [data-testid="stExpander"] {
-  background: rgba(10, 25, 34, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(38, 62, 71, 0.7);
-  border-radius: 10px;
+  background: var(--vox-surface-elevated) !important;
+  border: 1px solid var(--vox-border) !important;
+  border-radius: var(--vox-radius) !important;
+  box-shadow: var(--vox-shadow-sm) !important;
 }
+
 .stApp [data-testid="stExpander"] summary {
-  color: #EDF6F7;
-  font-weight: 550;
+  color: var(--vox-ink) !important;
+  font-weight: 600 !important;
 }
-.stApp [data-testid="stExpander"] summary:hover { color: #55D9C1; }
+
+/* Audio Player */
 audio {
-  filter: invert(0.92) hue-rotate(180deg) brightness(0.95);
-  border-radius: 28px;
-  margin: 0.6rem 0;
+  border-radius: 24px;
+  margin: 0.5rem 0;
   width: 100%;
 }
+
+/* Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
+
 ::-webkit-scrollbar-track {
-  background: rgba(7, 19, 27, 0.7);
-  border-radius: 4px;
+  background: var(--vox-canvas);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(85, 217, 193, 0.3);
+  background: var(--vox-border);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(85, 217, 193, 0.6);
+  background: var(--vox-secondary);
 }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
+
 @media (max-width: 720px) {
   main .block-container {
-    padding: 1.3rem 1rem 2.5rem;
+    padding: 1.25rem 1rem 2.5rem;
   }
 }
 </style>
@@ -778,11 +825,14 @@ def _show_overview() -> None:
         "VoxNeuro",
         "A careful research workspace for recording or reviewing a sustained vowel, "
         "checking signal quality, and exploring acoustic measurements in Parkinson’s research.",
-        kicker="VOICE SIGNAL ANALYSIS · RESEARCH SOFTWARE",
+        kicker="VOICE SIGNAL ANALYSIS · RESEARCH INSTRUMENTATION",
     )
     st.markdown(
-        '<div class="vox-glass-hero">'
-        '<p class="vox-lede" style="margin-top:0;">'
+        '<div class="vox-editorial-hero">'
+        '<div class="vox-kicker">EDITORIAL RESEARCH PROTOTYPE</div>'
+        '<h3 style="margin: 0.2rem 0 0.5rem 0; font-size: 1.4rem;">'
+        "Understanding neurological signals through the human voice.</h3>"
+        '<p class="vox-lede" style="margin-top:0.4rem; margin-bottom: 0;">'
         "Inspect sustained-vowel audio quality, extract 39 versioned acoustic parameters, "
         "render interactive 3D signal scenes, and generate auditable research reports."
         "</p></div>",
@@ -822,9 +872,12 @@ def _show_overview() -> None:
     ):
         with column:
             st.markdown(
-                f'<div class="vox-glass-card" style="height:100%;">'
-                f'<div class="vox-step"><strong>{number}</strong>{label}</div>'
-                f'<p style="margin-top:0.4rem; color:#A7B8B5; font-size:0.9rem;">{explanation}</p>'
+                f'<div class="vox-editorial-card" style="height:100%;">'
+                f'<div class="vox-step-num">{number}</div>'
+                '<div style="font-weight:700; font-size:1.05rem; '
+                f'color:#20232B; margin-bottom:0.35rem;">{label}</div>'
+                f'<p style="margin:0; color:#676970; font-size:0.88rem; '
+                f'line-height:1.55;">{explanation}</p>'
                 "</div>",
                 unsafe_allow_html=True,
             )
@@ -832,8 +885,8 @@ def _show_overview() -> None:
     left, right = st.columns([1.2, 1])
     with left:
         st.markdown(
-            '<div class="vox-glass-card">'
-            '<p style="margin:0; line-height:1.6; color:#EDF6F7;">'
+            '<div class="vox-editorial-card">'
+            '<p style="margin:0; line-height:1.65; color:#20232B; font-size:0.92rem;">'
             "The application checks a WAV recording, trims leading and trailing silence, "
             "resamples the usable segment, and extracts Praat/Parselmouth and Librosa measures. "
             "Reports remain in the current session unless the user downloads them."
@@ -842,7 +895,7 @@ def _show_overview() -> None:
         )
     with right:
         st.markdown(
-            '<div class="vox-glass-card">'
+            '<div class="vox-editorial-card">'
             '<p class="vox-note" style="margin:0;">'
             "Technical quality passing means the signal can be analyzed. "
             "It says nothing about a person’s health."
@@ -1138,7 +1191,7 @@ def _render_glass_table(df: pd.DataFrame) -> None:
             f'<td><span class="vox-code-pill">{feat}</span></td>'
             f'<td class="vox-val-num">{val_str}</td>'
             f'<td><span class="vox-unit-pill">{units}</span></td>'
-            f'<td style="color:#D6E5E3; font-size:0.83rem;">{method}</td>'
+            f'<td style="color:#676970; font-size:0.83rem;">{method}</td>'
             f"<td>{status_html}</td>"
             "</tr>"
         )
@@ -1295,11 +1348,12 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
     )
     schema_ver = html.escape(str(features.get("schema_version", "voxneuro.voice.v3")))
     html_markup = (
-        '<div class="vox-glass-card" style="margin-top:1.15rem; '
-        'border-color: rgba(85, 217, 193, 0.35);">'
+        '<div class="vox-editorial-card" style="margin-top:1.15rem; '
+        'border-color: var(--vox-border);">'
         '<div class="vox-kicker" style="margin-bottom:0.35rem;">'
         "RESEARCH WORKFLOW &amp; DOMAIN SAFETY AUDIT</div>"
-        '<p style="color:#A7B8B5; font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">'
+        '<p style="color:var(--vox-secondary); font-size:0.86rem; '
+        'margin-bottom:1rem; line-height:1.55;">'
         "Evaluates the 5-stage software intake and domain verification workflow before any "
         "downstream analysis."
         "</p>"
@@ -1307,36 +1361,41 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
         'gap:0.75rem; margin-bottom:1rem;">'
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 1 · Quality Gate</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">PASS</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; color:var(--vox-success);">PASS</div>'
         f'<div class="vox-qc-sub">{quality.duration_seconds:.1f}s · '
         f"{quality.voiced_fraction:.0%} voiced · "
         f"{quality.clipping_fraction:.2%} clipped</div>"
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 2 · Task Plausibility</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">HEURISTIC PASS</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; '
+        'color:var(--vox-success);">HEURISTIC PASS</div>'
         '<div class="vox-qc-sub">Phonated-vowel criteria met (acoustic screening)</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 3 · Feature Extraction</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">PROCESSED</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; '
+        'color:var(--vox-success);">PROCESSED</div>'
         f'<div class="vox-qc-sub">{finite_count}/39 finite measures ({schema_ver})</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 4 · Domain Verification</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#E5B56D;">NOT VALIDATED</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; '
+        'color:var(--vox-warning);">NOT VALIDATED</div>'
         '<div class="vox-qc-sub">Recording-domain compatibility unestablished</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 5 · Safety Policy</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">ABSTAIN</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; '
+        'color:var(--vox-vermilion);">ABSTAIN</div>'
         '<div class="vox-qc-sub">Diagnosis withheld (Fail-closed protocol)</div>'
         "</div>"
         "</div>"
-        '<div style="background:rgba(229, 181, 109, 0.08); '
-        "border:1px solid rgba(229, 181, 109, 0.28); border-radius:8px; padding:0.85rem 1rem; "
-        'font-size:0.84rem; color:#EDF6F7; line-height:1.55;">'
-        '<strong style="color:#E5B56D;">Protocol Rationale:</strong> The UAMS research baseline '
+        '<div style="background:#FAF5EC; '
+        "border:1px solid #E5D3B8; border-left:3px solid var(--vox-vermilion); border-radius:4px; "
+        'padding:0.85rem 1rem; font-size:0.84rem; color:var(--vox-ink); line-height:1.6;">'
+        '<strong style="color:var(--vox-vermilion);">Protocol Rationale:</strong> '
+        "The UAMS research baseline "
         "was collected over telephone lines (8 kHz PSTN) in an uncontrolled clinical trial. "
         "External recording devices (microphones, consumer headsets, audio interfaces) exhibit "
         "distinct acoustic transfer functions and frequency responses. To prevent uncalibrated "
@@ -1364,11 +1423,12 @@ def _render_acoustic_benchmark_cards(features: dict) -> None:
     )
     hnr_str = f"{hnr:.1f} dB" if isinstance(hnr, Real) and np.isfinite(hnr) else "—"
 
-    html = (
-        '<div class="vox-glass-card" style="margin-top:1.25rem;">'
+    html_str = (
+        '<div class="vox-editorial-card" style="margin-top:1.25rem;">'
         '<div class="vox-kicker" style="margin-bottom:0.4rem;">'
         "CORE ACOUSTIC MEASUREMENTS · SUSTAINED /A/ PHONATION</div>"
-        '<p style="color:#A7B8B5; font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">'
+        '<p style="color:var(--vox-secondary); font-size:0.86rem; '
+        'margin-bottom:1rem; line-height:1.55;">'
         "Descriptive vocal stability and harmonic measurements extracted from the recording. "
         "Strictly exploratory for bioengineering analysis; no universal normal range or "
         "diagnostic disease threshold is assigned."
@@ -1397,7 +1457,7 @@ def _render_acoustic_benchmark_cards(features: dict) -> None:
         "</div>"
         "</div>"
     )
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(html_str, unsafe_allow_html=True)
 
 
 def _feature_frame(features: dict) -> pd.DataFrame:
@@ -1570,36 +1630,35 @@ def _current_nested_evaluation_html() -> str | None:
 def _model_comparison_figure(metrics: pd.DataFrame):
     grouped = metrics.groupby("model")["balanced_accuracy"].agg(["mean", "std"]).sort_values("mean")
     colors = [
-        "#E5B56D" if "age" in model else "#68746F" if model == "dummy" else "#55D9C1"
+        "#B95E46" if "age" in model else "#898982" if model == "dummy" else "#526A91"
         for model in grouped.index
     ]
     fig = Figure(figsize=(8.4, 3.8))
     ax = fig.subplots()
-    fig.patch.set_facecolor("#0C1D27")
-    fig.patch.set_alpha(0.92)
-    ax.set_facecolor("#08151D")
+    fig.patch.set_facecolor("#FBFAF6")
+    ax.set_facecolor("#FFFFFF")
     ax.barh(
         grouped.index,
         grouped["mean"],
         xerr=grouped["std"].fillna(0),
         color=colors,
-        alpha=0.9,
+        alpha=0.92,
         capsize=3,
-        error_kw={"ecolor": "#EDF6F7", "elinewidth": 1.2},
+        error_kw={"ecolor": "#20232B", "elinewidth": 1.1},
     )
     ax.set_xlim(0, 1)
     ax.set_xlabel(
         "Balanced accuracy · mean ± SD across grouped folds",
-        color="#EDF6F7",
-        fontsize=10,
+        color="#676970",
+        fontsize=9.5,
     )
-    ax.set_title("Internal UAMS comparison", color="#55D9C1", fontsize=11.5, fontweight="600")
-    ax.grid(axis="x", color="#55D9C1", alpha=0.18, linewidth=0.7)
+    ax.set_title("Internal UAMS comparison", color="#20232B", fontsize=11, fontweight="650")
+    ax.grid(axis="x", color="#D8D3C8", alpha=0.55, linewidth=0.6, linestyle=":")
     ax.set_axisbelow(True)
     ax.spines[["top", "right", "left"]].set_visible(False)
-    ax.spines["bottom"].set_color("#263E47")
-    ax.tick_params(axis="y", length=0, labelcolor="#F3F7F5", labelsize=9.5)
-    ax.tick_params(axis="x", colors="#A7B8B5", labelsize=9)
+    ax.spines["bottom"].set_color("#D8D3C8")
+    ax.tick_params(axis="y", length=0, labelcolor="#20232B", labelsize=9.5)
+    ax.tick_params(axis="x", colors="#676970", labelsize=9)
     fig.tight_layout()
     return fig
 
@@ -1607,7 +1666,7 @@ def _model_comparison_figure(metrics: pd.DataFrame):
 def _nested_model_comparison_figure(nested_df: pd.DataFrame):
     df_sorted = nested_df.sort_values("balanced_accuracy_mean")
     colors = [
-        "#E5B56D" if "age" in str(m) else "#68746F" if str(m) == "dummy" else "#55D9C1"
+        "#B95E46" if "age" in str(m) else "#898982" if str(m) == "dummy" else "#526A91"
         for m in df_sorted["model"]
     ]
     labels = (
@@ -1617,36 +1676,35 @@ def _nested_model_comparison_figure(nested_df: pd.DataFrame):
     )
     fig = Figure(figsize=(9.2, 4.4))
     ax = fig.subplots()
-    fig.patch.set_facecolor("#0C1D27")
-    fig.patch.set_alpha(0.92)
-    ax.set_facecolor("#08151D")
+    fig.patch.set_facecolor("#FBFAF6")
+    ax.set_facecolor("#FFFFFF")
     ax.barh(
         labels,
         df_sorted["balanced_accuracy_mean"],
         xerr=df_sorted["balanced_accuracy_repeat_sd"].fillna(0),
         color=colors,
-        alpha=0.9,
+        alpha=0.92,
         capsize=3,
-        error_kw={"ecolor": "#EDF6F7", "elinewidth": 1.2},
+        error_kw={"ecolor": "#20232B", "elinewidth": 1.1},
     )
     ax.set_xlim(0, 1)
     ax.set_xlabel(
         "Balanced accuracy · repeated nested-CV mean ± SD",
-        color="#EDF6F7",
-        fontsize=10,
+        color="#676970",
+        fontsize=9.5,
     )
     ax.set_title(
         "Repeated Nested CV: 7 Voice Models vs Confounded Baselines",
-        color="#55D9C1",
+        color="#20232B",
         fontsize=11.5,
-        fontweight="600",
+        fontweight="650",
     )
-    ax.grid(axis="x", color="#55D9C1", alpha=0.18, linewidth=0.7)
+    ax.grid(axis="x", color="#D8D3C8", alpha=0.55, linewidth=0.6, linestyle=":")
     ax.set_axisbelow(True)
     ax.spines[["top", "right", "left"]].set_visible(False)
-    ax.spines["bottom"].set_color("#263E47")
-    ax.tick_params(axis="y", length=0, labelcolor="#F3F7F5", labelsize=9)
-    ax.tick_params(axis="x", colors="#A7B8B5", labelsize=9)
+    ax.spines["bottom"].set_color("#D8D3C8")
+    ax.tick_params(axis="y", length=0, labelcolor="#20232B", labelsize=9)
+    ax.tick_params(axis="x", colors="#676970", labelsize=9)
     fig.tight_layout()
     return fig
 
@@ -1660,36 +1718,37 @@ def _out_of_fold_confusion_figure(predictions: pd.DataFrame):
     )
     fig = Figure(figsize=(4.3, 3.4))
     ax = fig.subplots()
-    fig.patch.set_facecolor("#0C1D27")
-    fig.patch.set_alpha(0.92)
-    ax.set_facecolor("#08151D")
-    image = ax.imshow(matrix, cmap="GnBu", vmin=0)
+    fig.patch.set_facecolor("#FBFAF6")
+    ax.set_facecolor("#FFFFFF")
+    image = ax.imshow(matrix, cmap="Blues", vmin=0)
     for (row, column), value in np.ndenumerate(matrix):
+        text_color = "#FFFFFF" if value > 20 else "#20232B"
         ax.text(
             column,
             row,
             str(value),
             ha="center",
             va="center",
-            color="#FFFFFF",
-            fontsize=13,
+            color=text_color,
+            fontsize=12,
             fontweight="bold",
         )
-    ax.set_xticks([0, 1], labels=["HC", "PD"], color="#EDF6F7")
-    ax.set_yticks([0, 1], labels=["HC", "PD"], color="#EDF6F7")
-    ax.set_xlabel("Predicted group", color="#EDF6F7")
-    ax.set_ylabel("Reference group", color="#EDF6F7")
+    ax.set_xticks([0, 1], labels=["HC", "PD"], color="#20232B")
+    ax.set_yticks([0, 1], labels=["HC", "PD"], color="#20232B")
+    ax.set_xlabel("Predicted group", color="#676970", fontsize=9)
+    ax.set_ylabel("Reference group", color="#676970", fontsize=9)
     ax.set_title(
         "Logistic regression · held-out participants",
-        color="#55D9C1",
-        fontsize=10.5,
-        fontweight="600",
+        color="#20232B",
+        fontsize=10,
+        fontweight="650",
     )
     cbar = fig.colorbar(image, ax=ax, label="Participants")
-    cbar.ax.yaxis.label.set_color("#EDF6F7")
-    cbar.ax.tick_params(colors="#A7B8B5")
+    cbar.ax.yaxis.label.set_color("#676970")
+    cbar.ax.tick_params(colors="#676970")
+    cbar.outline.set_edgecolor("#D8D3C8")
     for spine in ax.spines.values():
-        spine.set_color("#263E47")
+        spine.set_color("#D8D3C8")
     fig.tight_layout()
     return fig
 
@@ -1704,40 +1763,46 @@ def _out_of_fold_roc_figure(predictions: pd.DataFrame):
     auc = roc_auc_score(y_true, score)
     fig = Figure(figsize=(4.3, 3.4))
     ax = fig.subplots()
-    fig.patch.set_facecolor("#0C1D27")
-    fig.patch.set_alpha(0.92)
-    ax.set_facecolor("#08151D")
+    fig.patch.set_facecolor("#FBFAF6")
+    ax.set_facecolor("#FFFFFF")
     ax.plot(
         false_positive,
         true_positive,
-        color="#55D9C1",
-        linewidth=2.2,
+        color="#B95E46",
+        linewidth=2.0,
         label=f"ROC AUC {auc:.3f}",
     )
     ax.plot(
         [0, 1],
         [0, 1],
-        color="#E5B56D",
+        color="#898982",
         linewidth=1,
         linestyle="--",
         label="Chance (0.50)",
     )
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    ax.set_xlabel("False positive rate", color="#EDF6F7")
-    ax.set_ylabel("True positive rate", color="#EDF6F7")
+    ax.set_xlabel("False positive rate", color="#676970", fontsize=9)
+    ax.set_ylabel("True positive rate", color="#676970", fontsize=9)
     ax.set_title(
         "Pooled out-of-fold ranking",
-        color="#55D9C1",
-        fontsize=10.5,
-        fontweight="600",
+        color="#20232B",
+        fontsize=10,
+        fontweight="650",
     )
-    ax.legend(frameon=False, loc="lower right", labelcolor="#EDF6F7")
-    ax.grid(color="#55D9C1", alpha=0.18, linewidth=0.7)
+    ax.legend(
+        frameon=True,
+        facecolor="#FFFFFF",
+        edgecolor="#D8D3C8",
+        loc="lower right",
+        labelcolor="#20232B",
+        fontsize=8.5,
+    )
+    ax.grid(color="#D8D3C8", alpha=0.55, linewidth=0.6, linestyle=":")
     ax.set_axisbelow(True)
-    ax.tick_params(colors="#A7B8B5")
+    ax.tick_params(colors="#676970")
     for spine in ax.spines.values():
-        spine.set_color("#263E47")
+        spine.set_color("#D8D3C8")
     fig.tight_layout()
     return fig
 
@@ -1831,10 +1896,10 @@ def _show_model_assessment() -> None:
                     "Demographic comparators assess age confounding in the retrospective cohort."
                 )
             findings_html = (
-                '<div class="vox-glass-card" style="margin-top:0.85rem;">'
-                '<div class="vox-qc-label" style="color:#55D9C1; margin-bottom:0.25rem;">'
+                '<div class="vox-editorial-card" style="margin-top:0.85rem;">'
+                '<div class="vox-kicker" style="margin-bottom:0.25rem;">'
                 "KEY RESEARCH FINDINGS</div>"
-                '<p style="margin:0; font-size:0.88rem; line-height:1.55; color:#EDF6F7;">'
+                '<p style="margin:0; font-size:0.88rem; line-height:1.6; color:#20232B;">'
                 f"<strong>Top Voice Model:</strong> {top_model_text}<br>"
                 f"<strong>Demographic Confounding:</strong> {age_confound_text}"
                 "</p></div>"
@@ -1915,10 +1980,10 @@ def _show_model_assessment() -> None:
             "The age-only comparator is shown because this cohort has a marked age imbalance."
         )
     demographics_html = (
-        '<div class="vox-glass-card" style="margin-top:1.15rem;">'
+        '<div class="vox-editorial-card" style="margin-top:1.15rem;">'
         '<div class="vox-kicker" style="margin-bottom:0.35rem;">'
         "COHORT DEMOGRAPHICS, QUALITY ATTRITION &amp; CONFOUNDING ANALYSIS</div>"
-        '<p style="color:#A7B8B5; font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">'
+        '<p style="color:#676970; font-size:0.86rem; margin-bottom:1rem; line-height:1.55;">'
         "Transparent reporting of sample retention, class-dependent attrition, and "
         "age confounding in the UAMS telephone-collected dataset."
         "</p>"
@@ -1926,28 +1991,29 @@ def _show_model_assessment() -> None:
         'gap:0.75rem; margin-bottom:1rem;">'
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Healthy Controls (HC)</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#67E2CE;">41 / 41 (100%)</div>'
+        '<div class="vox-qc-value" style="font-size:1.15rem; color:#39745A;">41 / 41 (100%)</div>'
         '<div class="vox-qc-sub">Mean Age: 47.73 ± 14.33 yrs · 0% attrition</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Parkinson\'s Cohort (PD)</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#E5B56D;">37 / 40 (92.5%)</div>'
+        '<div class="vox-qc-value" style="font-size:1.15rem; color:#A76F24;">37 / 40 (92.5%)</div>'
         '<div class="vox-qc-sub">Mean Age: 67.04 ± 8.98 yrs · 7.5% clipping attrition</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Demographic Disparity</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#E27F80;">Δ = 19.3 Years</div>'
+        '<div class="vox-qc-value" style="font-size:1.15rem; color:#B95E46;">Δ = 19.3 Years</div>'
         '<div class="vox-qc-sub">Standardized diff: d = -1.61 (p &lt; 0.001)</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Confounding Implication</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#EDF6F7;">Age &gt; Voice</div>'
-        '<div class="vox-qc-sub">Age baseline (83.9% BA) &gt; Extra Trees (76.6% BA)</div>'
+        '<div class="vox-qc-value" style="font-size:1.15rem; color:#20232B;">Age &gt; Voice</div>'
+        '<div class="vox-qc-sub">Age baseline (83.9% BA) &gt; Extra Trees (76.2% BA)</div>'
         "</div>"
         "</div>"
-        '<div style="background:rgba(18, 39, 51, 0.6); border:1px solid rgba(85, 217, 193, 0.2); '
-        "border-radius:8px; padding:0.85rem 1rem; font-size:0.84rem; color:#EDF6F7; "
-        'line-height:1.55;">'
+        '<div style="background:#FAF5EC; border:1px solid #E5D3B8; '
+        "border-left:3px solid var(--vox-vermilion); "
+        "border-radius:4px; padding:0.85rem 1rem; font-size:0.84rem; color:#20232B; "
+        'line-height:1.6;">'
         "<strong>Methodological Note:</strong> All 3 excluded UAMS recordings "
         "(uams-045, uams-046, uams-047) belonged to the PD class and were rejected for "
         "digital clipping. The observed performance is consistent with potential age "
@@ -1979,12 +2045,12 @@ def _show_reports() -> None:
         1 for v in features.values() if isinstance(v, Real) and np.isfinite(float(v))
     )
     summary_banner = (
-        '<div class="vox-glass-hero" style="margin-bottom:1.35rem;">'
+        '<div class="vox-editorial-hero" style="margin-bottom:1.35rem;">'
         '<div class="vox-kicker" style="margin-bottom:0.35rem;">'
         "SESSION TELEMETRY · PROVENANCE TRACEABLE</div>"
-        '<h3 style="margin:0 0 0.5rem 0; font-size:1.35rem; color:#F3F7F5;">'
+        '<h3 style="margin:0 0 0.5rem 0; font-size:1.35rem; color:#20232B;">'
         "Voice Signal Analysis Report</h3>"
-        '<p style="color:#A7B8B5; font-size:0.88rem; margin:0 0 1rem 0; line-height:1.55;">'
+        '<p style="color:#676970; font-size:0.88rem; margin:0 0 1rem 0; line-height:1.55;">'
         f"Generated {html.escape(str(report.get('generated_utc', '')))} · "
         f"Schema: {html.escape(str(report.get('features', {}).get('schema_version', '')))} · "
         "Audio quality checks passed. Schema and configuration fingerprints recorded."
@@ -2015,25 +2081,26 @@ def _show_reports() -> None:
         '<div class="vox-json-card">'
         '<div style="display:flex; justify-content:space-between; align-items:center; '
         'margin-bottom:0.75rem;">'
-        '<span style="font-size:0.78rem; font-weight:700; color:#55D9C1; '
+        '<span style="font-size:0.78rem; font-weight:700; color:#51445D; '
         'letter-spacing:0.06em;">PROVENANCE TELEMETRY &amp; AUDIT RECORD</span>'
         '<span class="vox-badge-ok">HASH RECORDED</span>'
         "</div>"
         '<div style="font-family:ui-monospace, SFMono-Regular, monospace; '
-        'font-size:0.82rem; color:#C1D5D2; line-height:1.75;">'
-        f'<div><span style="color:#55D9C1;">report_version:</span> '
+        'font-size:0.82rem; color:#20232B; line-height:1.8;">'
+        f'<div><span style="color:#51445D; font-weight:600;">report_version:</span> '
         f"{html.escape(str(report.get('report_version', '0.3.0')))}</div>"
-        f'<div><span style="color:#55D9C1;">generated_utc:</span> '
+        f'<div><span style="color:#51445D; font-weight:600;">generated_utc:</span> '
         f"{html.escape(str(report.get('generated_utc', '')))}</div>"
-        f'<div><span style="color:#55D9C1;">schema_version:</span> '
+        f'<div><span style="color:#51445D; font-weight:600;">schema_version:</span> '
         f"{html.escape(str(schema_info.get('schema_version', '')))}</div>"
-        f'<div><span style="color:#55D9C1;">schema_fingerprint:</span> '
+        f'<div><span style="color:#51445D; font-weight:600;">schema_fingerprint:</span> '
         f"{html.escape(str(schema_info.get('schema_fingerprint', '')))}</div>"
-        f'<div><span style="color:#55D9C1;">feature_config_fingerprint:</span> '
+        f'<div><span style="color:#51445D; font-weight:600;">feature_config_fingerprint:</span> '
         f"{html.escape(str(schema_info.get('feature_config_fingerprint', '')))}</div>"
-        f'<div><span style="color:#55D9C1;">preprocessing_config_fingerprint:</span> '
+        '<div><span style="color:#51445D; font-weight:600;">'
+        "preprocessing_config_fingerprint:</span> "
         f"{html.escape(str(schema_info.get('preprocessing_config_fingerprint', '')))}</div>"
-        f'<div><span style="color:#55D9C1;">audio_sha256:</span> '
+        f'<div><span style="color:#51445D; font-weight:600;">audio_sha256:</span> '
         f"{html.escape(str(audio_q.get('audio_sha256', 'n/a')))}</div>"
         "</div>"
         "</div>"
@@ -2109,9 +2176,14 @@ def _show_method_privacy() -> None:
     ]
     for num, title, desc in steps:
         st.markdown(
-            f'<div class="vox-glass-card" style="margin-bottom:0.75rem;">'
-            f'<div class="vox-step"><strong>{num}</strong>{html.escape(title)}</div>'
-            f'<p style="margin:0.35rem 0 0 0; color:#A7B8B5; font-size:0.88rem; line-height:1.5;">'
+            f'<div class="vox-editorial-card" style="margin-bottom:0.75rem;">'
+            f'<div style="display:flex; align-items:center; gap:0.6rem; '
+            'margin-bottom:0.25rem;">'
+            f'<span class="vox-code-pill" style="color:var(--vox-vermilion); '
+            f'font-weight:700;">{num}</span>'
+            f'<strong style="color:#20232B; font-size:0.95rem;">{html.escape(title)}</strong>'
+            f"</div>"
+            f'<p style="margin:0.25rem 0 0 0; color:#676970; font-size:0.88rem; line-height:1.55;">'
             f"{html.escape(desc)}</p></div>",
             unsafe_allow_html=True,
         )
@@ -2187,8 +2259,8 @@ def main() -> None:
 
     st.markdown(
         '<div style="margin-top:3.5rem; padding-top:1.25rem; '
-        "border-top:1px solid rgba(85, 217, 193, 0.15); "
-        'color:#7B928E; font-size:0.76rem; text-align:center; line-height:1.6;">'
+        "border-top:1px solid #D8D3C8; "
+        'color:#898982; font-size:0.76rem; text-align:center; line-height:1.6;">'
         "VoxNeuro Research Prototype is an independent academic research project "
         "and is not affiliated with, sponsored by, or related to VoxNeuro Inc. "
         "(makers of EEG cognitive assessments). · Non-diagnostic research software."
