@@ -2179,7 +2179,7 @@ def main() -> None:
 
     st.markdown(
         '<div style="margin-top:3.5rem; padding-top:1.25rem; '
-        'border-top:1px solid rgba(85, 217, 193, 0.15); '
+        "border-top:1px solid rgba(85, 217, 193, 0.15); "
         'color:#7B928E; font-size:0.76rem; text-align:center; line-height:1.6;">'
         "VoxNeuro Research Prototype is an independent academic research project "
         "and is not affiliated with, sponsored by, or related to VoxNeuro Inc. "

@@ -165,4 +165,3 @@ def test_decode_audio_rejects_audio_exceeding_duration_limit(monkeypatch):
     monkeypatch.setattr(sf, "info", lambda _: FakeInfo())
     with pytest.raises(AudioReadError, match="Audio duration of 305.0 s exceeds maximum"):
         decode_audio(dummy_wav)
-

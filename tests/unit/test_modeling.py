@@ -406,4 +406,3 @@ def test_validate_additional_predictors_rejects_duplicate_sample_ids():
             n_splits=2,
             additional_models={"demo": (preds, pipeline)},
         )
-

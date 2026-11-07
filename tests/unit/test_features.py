@@ -145,4 +145,3 @@ def test_hnr_calculation_excludes_praat_undefined_unvoiced_frames():
     )
     praat_mean = parselmouth.praat.call(harmonicity, "Get mean", 0.0, 0.0)
     assert np.isclose(values["hnr_mean_db"], praat_mean, atol=1e-4)
-
