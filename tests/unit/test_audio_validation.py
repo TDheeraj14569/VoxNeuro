@@ -268,3 +268,29 @@ def test_validate_audio_rejects_boolean_samples():
     result = validate_audio(mock_rec)
     assert not result.valid
     assert any("real numeric values" in err for err in result.errors)
+
+
+def test_audio_validation_config_from_dict_and_thresholds():
+    audio_cfg = {
+        "min_duration_seconds": 1.0,
+        "max_duration_seconds": 30.0,
+        "min_rms": 0.003,
+        "max_peak": 0.999,
+        "clipping_fraction_limit": 0.01,
+        "min_voiced_fraction": 0.15,
+        "frame_ms": 20,
+        "mono_policy": "average_with_phase_check",
+        "min_harmonic_overtone_fraction": 0.005,
+        "min_second_harmonic_fraction": 0.0003,
+        "min_waveform_kurtosis": 1.15,
+        "second_harmonic_min_factor": 1.7,
+        "second_harmonic_max_factor": 2.3,
+        "second_harmonic_trigger_overtone_fraction": 0.06,
+    }
+    feature_cfg = {"pitch_floor_hz": 80.0, "pitch_ceiling_hz": 480.0}
+    cfg = AudioValidationConfig.from_dict(audio_cfg, feature_cfg)
+    assert cfg.pitch_floor_hz == 80.0
+    assert cfg.pitch_ceiling_hz == 480.0
+    assert cfg.second_harmonic_min_factor == 1.7
+    assert cfg.second_harmonic_max_factor == 2.3
+    assert cfg.second_harmonic_trigger_overtone_fraction == 0.06

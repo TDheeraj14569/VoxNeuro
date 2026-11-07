@@ -33,7 +33,30 @@ def extract_features(
     preprocessing_config_fingerprint: str | None = None,
 ) -> dict[str, float | str | None]:
     """Extract schema-ordered measures. Failed voice measures remain NaN, never zero."""
-    x = np.asarray(samples, dtype=np.float64)
+    if (
+        isinstance(sample_rate, (bool, np.bool_))
+        or not isinstance(sample_rate, (int, np.integer))
+        or not (8000 <= int(sample_rate) <= 48000)
+    ):
+        raise FeatureExtractionError(
+            "Feature extraction requires an integer sample rate between 8,000 and 48,000 Hz; "
+            f"got {sample_rate!r}."
+        )
+    try:
+        raw = np.asarray(samples)
+    except (TypeError, ValueError) as exc:
+        raise FeatureExtractionError(
+            "Audio samples must form a rectangular numeric array."
+        ) from exc
+    if (
+        isinstance(raw, (bool, np.bool_))
+        or raw.dtype == np.bool_
+        or not np.issubdtype(raw.dtype, np.number)
+        or np.iscomplexobj(raw)
+        or np.issubdtype(raw.dtype, np.complexfloating)
+    ):
+        raise FeatureExtractionError("Feature extraction requires real numeric audio samples.")
+    x = raw.astype(np.float64, copy=False)
     if x.ndim != 1:
         raise FeatureExtractionError(
             "Feature extraction requires mono audio as a one-dimensional array. "
@@ -47,7 +70,7 @@ def extract_features(
         raise FeatureExtractionError(
             "The current feature schema requires exactly 13 MFCC coefficients."
         )
-    if sample_rate <= 0 or x.size == 0 or not np.isfinite(x).all():
+    if x.size == 0 or not np.isfinite(x).all():
         raise FeatureExtractionError(
             "Feature input must be finite, non-empty audio with a valid sample rate."
         )

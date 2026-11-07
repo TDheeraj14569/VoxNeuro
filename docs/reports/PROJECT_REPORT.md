@@ -45,11 +45,12 @@ The principal UAMS comparison is repeated nested participant-grouped cross-valid
 | Candidate | Balanced accuracy | ROC-AUC |
 |---|---:|---:|
 | Age-only logistic comparator | 0.839 ± 0.007 | 0.849 ± 0.013 |
-| Age-plus-voice logistic comparator | 0.778 ± 0.014 | 0.837 ± 0.022 |
-| Voice-only Extra Trees | 0.766 ± 0.019 | 0.797 ± 0.014 |
-| Voice-only L2 logistic | 0.751 ± 0.021 | 0.785 ± 0.012 |
+| Age-plus-voice logistic comparator | 0.771 ± 0.012 | 0.817 ± 0.024 |
+| Voice-only Extra Trees | 0.762 ± 0.020 | 0.784 ± 0.014 |
+| Voice-only Random forest | 0.755 ± 0.015 | 0.786 ± 0.017 |
+| Voice-only L2 logistic | 0.739 ± 0.007 | 0.771 ± 0.006 |
 
-The age-only baseline exceeds the voice-only results, and age-plus-voice does not improve on age-only. This small, age-confounded cohort does not establish a disease-specific voice contribution. For the primary-seed nested evaluation, internal class-stratified participant-bootstrap intervals are available; for example, Extra Trees balanced accuracy is 0.678–0.861. These intervals are conditional on already-fitted outer-fold models and are not external or clinical confidence intervals. No clinical threshold was selected, and probability outputs are uncalibrated.
+The age-only baseline exceeds the voice-only results, and age-plus-voice does not improve on age-only. This small, age-confounded cohort does not establish a disease-specific voice contribution. For the primary-seed nested evaluation, internal class-stratified participant-bootstrap intervals are available; for example, Extra Trees balanced accuracy is 0.664–0.850. These intervals are conditional on already-fitted outer-fold models and are not external or clinical confidence intervals. No clinical threshold was selected, and probability outputs are uncalibrated.
 
 The earlier fixed-pipeline grouped results are retained as a **historical descriptive baseline** only: age-only logistic 0.825 (0.074), age-plus-voice logistic 0.784 (0.145), voice logistic 0.659 (0.134), random forest 0.758 (0.094), RBF SVM 0.760 (0.066), and dummy 0.500. They are a separate earlier analysis and should not be combined with or substituted for the nested results above.
 

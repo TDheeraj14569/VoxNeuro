@@ -45,6 +45,12 @@ def main() -> int:
         importlib.import_module(name)
         print(f"PASS import {name}")
     print(f"PASS required files ({len(REQUIRED)})")
+    prov_mod = importlib.import_module("voxneuro.provenance")
+    prov = prov_mod.release_provenance()
+    print(
+        f"PASS release provenance (pipeline={prov['model_pipeline_fingerprint'][:8]}..., "
+        f"frontend={prov['frontend_fingerprint'][:8]}...)"
+    )
     return 0
 
 

@@ -676,21 +676,7 @@ def _analysis_config() -> tuple[AudioValidationConfig, dict, dict]:
     audio_cfg = dict(AUDIO_CONFIG)
     feature_cfg = dict(FEATURE_CONFIG)
     feature_cfg.pop("schema_version", None)
-    validation = AudioValidationConfig(
-        min_duration_seconds=float(audio_cfg["min_duration_seconds"]),
-        max_duration_seconds=float(audio_cfg["max_duration_seconds"]),
-        min_rms=float(audio_cfg["min_rms"]),
-        max_peak=float(audio_cfg["max_peak"]),
-        clipping_fraction_limit=float(audio_cfg["clipping_fraction_limit"]),
-        min_voiced_fraction=float(audio_cfg["min_voiced_fraction"]),
-        frame_ms=int(audio_cfg["frame_ms"]),
-        mono_policy=str(audio_cfg["mono_policy"]),
-        pitch_floor_hz=float(feature_cfg["pitch_floor_hz"]),
-        pitch_ceiling_hz=float(feature_cfg["pitch_ceiling_hz"]),
-        min_harmonic_overtone_fraction=float(audio_cfg["min_harmonic_overtone_fraction"]),
-        min_second_harmonic_fraction=float(audio_cfg["min_second_harmonic_fraction"]),
-        min_waveform_kurtosis=float(audio_cfg["min_waveform_kurtosis"]),
-    )
+    validation = AudioValidationConfig.from_dict(audio_cfg, feature_cfg)
     return validation, feature_cfg, audio_cfg
 
 
@@ -800,8 +786,8 @@ def _show_overview() -> None:
     st.markdown(
         '<div class="vox-glass-hero">'
         '<p class="vox-lede" style="margin-top:0;">'
-        "A careful research workspace for recording or reviewing a sustained vowel, "
-        "checking signal quality, and exploring acoustic measurements in Parkinson’s research."
+        "Inspect sustained-vowel audio quality, extract 39 versioned acoustic parameters, "
+        "render interactive 3D signal scenes, and generate auditable research reports."
         "</p></div>",
         unsafe_allow_html=True,
     )

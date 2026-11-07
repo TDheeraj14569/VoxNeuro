@@ -75,13 +75,13 @@ def _load_uci_table(path: Path) -> pd.DataFrame:
 
 def _extract_uci_rar(archive: Path, output: Path, csv_path: Path) -> pd.DataFrame:
     """Extract into an isolated staging directory and atomically replace only a valid CSV."""
+    tar_cmd = shutil.which("bsdtar") or shutil.which("tar") or "tar"
     try:
-        listing = subprocess.run(
-            ["tar", "-tf", str(archive)], check=True, capture_output=True, text=True
-        ).stdout.splitlines()
-        verbose = subprocess.run(
-            ["tar", "-tvf", str(archive)], check=True, capture_output=True, text=True
-        ).stdout
+        verbose_proc = subprocess.run(
+            [tar_cmd, "-tvf", str(archive)], check=True, capture_output=True, text=True
+        )
+        verbose = verbose_proc.stdout
+        listing = [line.strip().split()[-1] for line in verbose.splitlines() if line.strip()]
     except FileNotFoundError as exc:
         raise RuntimeError(
             "A bsdtar-compatible tar command is required to inspect the UCI RAR archive."
@@ -89,15 +89,16 @@ def _extract_uci_rar(archive: Path, output: Path, csv_path: Path) -> pd.DataFram
     except subprocess.CalledProcessError as exc:
         raise RuntimeError(
             "Could not inspect the UCI RAR archive. Install a RAR-capable bsdtar/libarchive "
-            "tar command and ensure it is available as 'tar' on PATH."
+            "tar command and ensure it is available as 'tar' or 'bsdtar' on PATH."
         ) from exc
     _validate_uci_members(listing, verbose)
     output.parent.mkdir(parents=True, exist_ok=True)
+    uci_schema = load_uci_schema()
     with tempfile.TemporaryDirectory(prefix=".uci-rar-", dir=output.parent) as temporary:
         staging = Path(temporary)
         try:
             subprocess.run(
-                ["tar", "-xf", str(archive), "-C", str(staging)],
+                [tar_cmd, "-xf", str(archive), "-C", str(staging)],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -106,7 +107,7 @@ def _extract_uci_rar(archive: Path, output: Path, csv_path: Path) -> pd.DataFram
             raise RuntimeError(
                 "Could not extract the UCI RAR archive with the installed tar command."
             ) from exc
-        staged_csv = staging / str(load_uci_schema()["csv_member"])
+        staged_csv = staging / str(uci_schema["csv_member"])
         if staged_csv.is_symlink() or not staged_csv.is_file():
             raise ValueError("UCI archive did not produce a regular feature CSV.")
         if staged_csv.resolve().parent != staging.resolve():
@@ -116,11 +117,11 @@ def _extract_uci_rar(archive: Path, output: Path, csv_path: Path) -> pd.DataFram
         os.replace(staged_csv, csv_path)
     receipt_path = output / "uci_extraction_receipt.json"
     receipt = {
-        "dataset_id": int(load_uci_schema()["dataset_id"]),
-        "doi": str(load_uci_schema()["doi"]),
-        "official_url": str(load_uci_schema()["publisher_page"]),
+        "dataset_id": int(uci_schema["dataset_id"]),
+        "doi": str(uci_schema["doi"]),
+        "official_url": str(uci_schema["publisher_page"]),
         "schema_manifest_sha256": uci_schema_fingerprint(),
-        "publisher_archive_sha256": load_uci_schema()["publisher_archive_sha256"],
+        "publisher_archive_sha256": uci_schema["publisher_archive_sha256"],
         "archive_sha256": sha256(archive),
         "csv_sha256": sha256(csv_path),
         "rows": int(frame.shape[0]),

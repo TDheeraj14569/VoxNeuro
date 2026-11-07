@@ -27,17 +27,17 @@ The table reports mean ± standard deviation across the three repeated participa
 | Candidate | Accuracy | Precision | Sensitivity | Specificity | Balanced accuracy | Primary-seed BA bootstrap 95% interval | ROC-AUC | Trapezoidal PR-AUC | Average precision |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Prior dummy | 0.526 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 1.000 ± 0.000 | 0.500 ± 0.000 | 0.500–0.500 | 0.474 ± 0.000 | 0.506 ± 0.000 | 0.461 ± 0.000 |
-| L2 logistic | 0.752 ± 0.020 | 0.743 ± 0.012 | 0.730 ± 0.047 | 0.772 ± 0.014 | 0.751 ± 0.021 | 0.662–0.846 | 0.785 ± 0.012 | 0.748 ± 0.015 | 0.754 ± 0.015 |
-| Elastic-net logistic | 0.739 ± 0.007 | 0.741 ± 0.015 | 0.694 ± 0.031 | 0.780 ± 0.024 | 0.737 ± 0.008 | 0.650–0.847 | 0.776 ± 0.012 | 0.748 ± 0.007 | 0.754 ± 0.008 |
-| Linear SVM | 0.701 ± 0.030 | 0.695 ± 0.051 | 0.667 ± 0.041 | 0.732 ± 0.073 | 0.699 ± 0.028 | 0.563–0.771 | 0.764 ± 0.022 | 0.735 ± 0.033 | 0.742 ± 0.030 |
-| RBF SVM | 0.744 ± 0.022 | 0.715 ± 0.028 | 0.766 ± 0.016 | 0.724 ± 0.037 | 0.745 ± 0.022 | 0.655–0.842 | 0.768 ± 0.004 | 0.714 ± 0.013 | 0.725 ± 0.009 |
-| Random forest | 0.756 ± 0.022 | 0.718 ± 0.016 | 0.802 ± 0.041 | 0.715 ± 0.014 | 0.759 ± 0.023 | 0.671–0.861 | 0.795 ± 0.006 | 0.739 ± 0.019 | 0.747 ± 0.018 |
-| Extra Trees | 0.765 ± 0.020 | 0.738 ± 0.027 | 0.784 ± 0.027 | 0.748 ± 0.037 | **0.766 ± 0.019** | 0.678–0.861 | 0.797 ± 0.014 | 0.746 ± 0.031 | 0.755 ± 0.029 |
-| Histogram gradient boosting | 0.718 ± 0.013 | 0.677 ± 0.016 | 0.775 ± 0.016 | 0.667 ± 0.028 | 0.721 ± 0.012 | 0.609–0.810 | 0.758 ± 0.026 | 0.701 ± 0.070 | 0.711 ± 0.066 |
-| Age-only logistic comparator | **0.839 ± 0.007** | **0.807 ± 0.012** | **0.865 ± 0.000** | **0.813 ± 0.014** | **0.839 ± 0.007** | 0.754–0.911 | **0.849 ± 0.013** | **0.793 ± 0.015** | 0.799 ± 0.014 |
-| Age-plus-voice logistic comparator | 0.778 ± 0.015 | 0.757 ± 0.026 | 0.784 ± 0.027 | 0.772 ± 0.037 | 0.778 ± 0.014 | 0.671–0.859 | 0.837 ± 0.022 | 0.795 ± 0.035 | **0.801 ± 0.034** |
+| L2 logistic | 0.739 ± 0.007 | 0.723 ± 0.011 | 0.730 ± 0.000 | 0.748 ± 0.014 | 0.739 ± 0.007 | 0.632–0.821 | 0.771 ± 0.006 | 0.707 ± 0.023 | 0.717 ± 0.022 |
+| Elastic-net logistic | 0.735 ± 0.030 | 0.717 ± 0.035 | 0.730 ± 0.027 | 0.740 ± 0.037 | 0.735 ± 0.029 | 0.616–0.821 | 0.776 ± 0.018 | 0.747 ± 0.018 | 0.753 ± 0.017 |
+| Linear SVM | 0.705 ± 0.022 | 0.682 ± 0.035 | 0.712 ± 0.016 | 0.699 ± 0.051 | 0.705 ± 0.021 | 0.591–0.793 | 0.756 ± 0.014 | 0.704 ± 0.019 | 0.715 ± 0.015 |
+| RBF SVM | 0.739 ± 0.007 | 0.705 ± 0.014 | 0.775 ± 0.016 | 0.707 ± 0.024 | 0.741 ± 0.007 | 0.641–0.835 | 0.766 ± 0.014 | 0.695 ± 0.020 | 0.707 ± 0.021 |
+| Random forest | 0.752 ± 0.015 | 0.709 ± 0.012 | 0.811 ± 0.027 | 0.699 ± 0.014 | 0.755 ± 0.015 | 0.671–0.862 | 0.786 ± 0.017 | 0.701 ± 0.062 | 0.715 ± 0.055 |
+| Extra Trees | 0.761 ± 0.020 | 0.727 ± 0.017 | 0.793 ± 0.041 | 0.732 ± 0.024 | **0.762 ± 0.020** | 0.664–0.850 | 0.784 ± 0.014 | 0.713 ± 0.067 | 0.724 ± 0.060 |
+| Histogram gradient boosting | 0.705 ± 0.013 | 0.667 ± 0.016 | 0.757 ± 0.000 | 0.659 ± 0.024 | 0.708 ± 0.012 | 0.606–0.812 | 0.739 ± 0.027 | 0.697 ± 0.069 | 0.705 ± 0.065 |
+| Age-only logistic comparator | **0.838 ± 0.007** | **0.807 ± 0.012** | **0.865 ± 0.000** | **0.813 ± 0.014** | **0.839 ± 0.007** | 0.754–0.911 | **0.849 ± 0.013** | **0.793 ± 0.015** | **0.799 ± 0.014** |
+| Age-plus-voice logistic comparator | 0.769 ± 0.013 | 0.736 ± 0.025 | 0.802 ± 0.016 | 0.740 ± 0.037 | 0.771 ± 0.012 | 0.658–0.851 | 0.817 ± 0.024 | 0.777 ± 0.021 | 0.782 ± 0.021 |
 
-These are small-cohort internal estimates. Extra Trees had the highest mean balanced accuracy among voice-only candidates, but its primary-seed interval is wide. The age-only comparator was higher (0.839 versus 0.766 BA); age-plus-voice did not exceed age-only BA or ROC-AUC. This cohort cannot establish that voice contributes disease-specific information independently of age. Average precision is distinct from trapezoidal PR-AUC.
+These are small-cohort internal estimates. Extra Trees had the highest mean balanced accuracy among voice-only candidates, but its primary-seed interval is wide. The age-only comparator was higher (0.839 versus 0.762 BA); age-plus-voice did not exceed age-only BA or ROC-AUC. This cohort cannot establish that voice contributes disease-specific information independently of age. Average precision is distinct from trapezoidal PR-AUC.
 
 ## Separate UCI feature-table benchmark
 

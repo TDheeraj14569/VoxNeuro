@@ -1,6 +1,6 @@
 # Project source file inventory
 
-Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. The source ZIP, separately-added AI review bundle evidence, local datasets, model artifacts, secrets, caches, and virtual environments are excluded.
+Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-08. The source ZIP, separately-added AI review bundle evidence, local datasets, model artifacts, secrets, caches, and virtual environments are excluded.
 
 - `.gitattributes`
 - `.github/workflows/ci.yml`

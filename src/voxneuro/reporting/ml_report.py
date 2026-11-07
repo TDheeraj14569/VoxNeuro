@@ -226,15 +226,31 @@ def render_nested_evaluation_html(
             f"<td><code>{html.escape(str(row['selected_parameters']))}</code></td>"
             "</tr>"
         )
-    fold_summary = (
-        fold_metrics.groupby("model", as_index=False)["balanced_accuracy"]
-        .agg(["mean", "std"])
-        .reset_index()
-    )
-    fold_note = ", ".join(
+    agg_kwargs = {
+        "ba_mean": ("balanced_accuracy", "mean"),
+        "ba_std": ("balanced_accuracy", "std"),
+    }
+    if "roc_auc" in fold_metrics.columns:
+        agg_kwargs["auc_mean"] = ("roc_auc", "mean")
+        agg_kwargs["auc_std"] = ("roc_auc", "std")
+    if "average_precision" in fold_metrics.columns:
+        agg_kwargs["ap_mean"] = ("average_precision", "mean")
+        agg_kwargs["ap_std"] = ("average_precision", "std")
+    fold_summary = fold_metrics.groupby("model", as_index=False).agg(**agg_kwargs)
+    fold_ba_note = ", ".join(
         f"{MODEL_LABELS.get(str(row['model']), str(row['model']))}: "
-        f"{float(row['mean']):.3f} ± {float(row['std']):.3f}"
+        f"{float(row['ba_mean']):.3f} ± {float(row['ba_std']):.3f}"
         for _, row in fold_summary.iterrows()
+    )
+    fold_auc_note = (
+        ", ".join(
+            f"{MODEL_LABELS.get(str(row['model']), str(row['model']))}: "
+            f"{float(row['auc_mean']):.3f} ± {float(row['auc_std']):.3f}"
+            for _, row in fold_summary.iterrows()
+            if not math.isnan(float(row["auc_mean"]))
+        )
+        if "auc_mean" in fold_summary.columns
+        else ""
     )
     roc_svg = _curve_svg(predictions, primary_seed, "roc")
     pr_svg = _curve_svg(predictions, primary_seed, "pr")
@@ -332,7 +348,15 @@ def render_nested_evaluation_html(
             "estimator decision rule is used; no threshold was optimized on held-out "
             "participants.</p>"
         ),
-        f"<p>Outer-fold balanced accuracy: {html.escape(fold_note)}.</p>",
+        f"<p>Outer-fold balanced accuracy: {html.escape(fold_ba_note)}.</p>",
+        *(
+            [
+                f"<p>Outer-fold ROC-AUC (fold-averaged across outer folds, distinct from pooled "
+                f"OOF): {html.escape(fold_auc_note)}.</p>"
+            ]
+            if fold_auc_note
+            else []
+        ),
         (
             "<p>Repeated recordings are grouped by participant and aggregated before scoring. "
             "Imputation, scaling, fitting and hyperparameter selection occur inside training "

@@ -15,7 +15,6 @@ from voxneuro.audio.preprocessing import preprocess_audio
 from voxneuro.audio.validation import AudioValidationConfig, validate_audio
 from voxneuro.config import load_config
 from voxneuro.dataset.validation import validate_features, validate_manifest
-from voxneuro.exceptions import VoxNeuroError
 from voxneuro.features.extractor import extract_features
 from voxneuro.features.schema import (
     FEATURE_NAMES,
@@ -134,25 +133,7 @@ def main() -> int:
             audio_config,
         )
         return 1
-    quality_config = AudioValidationConfig(
-        min_duration_seconds=float(audio_config["min_duration_seconds"]),
-        max_duration_seconds=float(audio_config["max_duration_seconds"]),
-        min_rms=float(audio_config["min_rms"]),
-        max_peak=float(audio_config["max_peak"]),
-        clipping_fraction_limit=float(audio_config["clipping_fraction_limit"]),
-        min_voiced_fraction=float(audio_config["min_voiced_fraction"]),
-        frame_ms=int(audio_config["frame_ms"]),
-        mono_policy=str(audio_config["mono_policy"]),
-        pitch_floor_hz=float(feature_config["pitch_floor_hz"]),
-        pitch_ceiling_hz=float(feature_config["pitch_ceiling_hz"]),
-        min_harmonic_overtone_fraction=float(
-            audio_config.get("min_harmonic_overtone_fraction", 0.005)
-        ),
-        min_second_harmonic_fraction=float(
-            audio_config.get("min_second_harmonic_fraction", 0.0003)
-        ),
-        min_waveform_kurtosis=float(audio_config.get("min_waveform_kurtosis", 1.15)),
-    )
+    quality_config = AudioValidationConfig.from_dict(audio_config, feature_config)
     feature_rows, statuses = [], []
     for row in manifest.to_dict("records"):
         status = {
@@ -190,8 +171,8 @@ def main() -> int:
                 }
             )
             status["extraction_status"] = "success"
-        except (OSError, ValueError, RuntimeError, VoxNeuroError) as exc:
-            status["failure_reason"] = str(exc)[:300]
+        except Exception as exc:
+            status["failure_reason"] = str(exc)
         statuses.append(status)
     output.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(statuses).to_csv(report_path, index=False)

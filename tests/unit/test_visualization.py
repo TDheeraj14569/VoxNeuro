@@ -40,3 +40,25 @@ def test_grouped_metric_plot_has_research_baseline_labels():
         assert figure.axes[0].get_xlabel() == "Research baseline"
     finally:
         plt.close(figure)
+
+
+def test_waveform_and_spectrogram_handle_multichannel_downmix_safely():
+    import numpy as np
+
+    stereo = np.column_stack([sustained_vowel(), sustained_vowel()])
+    waveform = waveform_figure(stereo, 16000)
+    spectrogram = spectrogram_figure(stereo, 16000)
+    try:
+        assert len(waveform.axes) == 1
+        assert len(spectrogram.axes) == 2
+    finally:
+        plt.close(waveform)
+        plt.close(spectrogram)
+
+    import pytest
+
+    four_channel = np.ones((1600, 4))
+    with pytest.raises(ValueError, match="Multichannel"):
+        waveform_figure(four_channel, 16000)
+    with pytest.raises(ValueError, match="Multichannel"):
+        spectrogram_figure(four_channel, 16000)

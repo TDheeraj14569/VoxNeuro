@@ -14,7 +14,7 @@ The versioned schema contains 39 ordered technical measurements from a sustained
 | 6 | `f0_range_hz` | Hz | Maximum minus minimum voiced F0; at least 3 valid voiced frames. |
 | 7 | `jitter_local` | Ratio | Praat local jitter: mean absolute consecutive period difference divided by mean period; undefined when periodic pulses are insufficient. |
 | 8 | `shimmer_local` | Ratio | Praat local shimmer: mean absolute consecutive pulse-amplitude difference divided by mean amplitude; may be undefined. |
-| 9 | `hnr_mean_db` | dB | Mean finite Praat cross-correlation harmonicity; requires at least one finite frame. |
+| 9 | `hnr_mean_db` | dB | Mean Praat cross-correlation harmonicity across valid voiced frames (> -199 dB); requires at least one valid voiced frame. |
 | 10–35 | `mfcc_00_mean`, `mfcc_00_sd` through `mfcc_12_mean`, `mfcc_12_sd` | Dimensionless numerical coefficient | DCT coefficients derived from the log-Mel power spectrum; indices 0–12 (zero-based); means require one frame and SDs require two; 13×2 measures. |
 | 36 | `spectral_centroid_mean_hz` | Hz | Mean Librosa spectral centroid over frames, within the common 50–3,800 Hz feature band. |
 | 37 | `spectral_rolloff_mean_hz` | Hz | Mean 85% spectral rolloff over frames, with shared 3,800 Hz cap. |

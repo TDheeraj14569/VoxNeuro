@@ -5,7 +5,23 @@ from matplotlib.figure import Figure
 
 
 def waveform_figure(samples: np.ndarray, sample_rate: int, title: str = "Waveform"):
-    x = np.asarray(samples).reshape(-1)
+    arr = np.asarray(samples, dtype=np.float64)
+    if arr.ndim == 2:
+        if arr.shape[1] in (1, 2):
+            x = arr.mean(axis=1)
+        elif arr.shape[0] in (1, 2):
+            x = arr.mean(axis=0)
+        else:
+            raise ValueError(
+                f"Multichannel waveform input has unsupported shape {arr.shape}; "
+                "expected 1 or 2 channels."
+            )
+    elif arr.ndim == 1:
+        x = arr
+    else:
+        raise ValueError(
+            f"Waveform visualization requires 1D or 2-channel audio array, got ndim={arr.ndim}."
+        )
     t = np.arange(len(x)) / sample_rate
     fig = Figure(figsize=(10, 2.7))
     ax = fig.subplots()

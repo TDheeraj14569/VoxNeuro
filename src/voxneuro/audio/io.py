@@ -57,8 +57,22 @@ class AudioRecord:
         return float(len(self.samples) / self.sample_rate)
 
 
-def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:
-    """Decode an audio byte stream while retaining the original channel layout."""
+def decode_audio(
+    payload: bytes | bytearray | BytesIO,
+    *,
+    max_duration_seconds: float = 300.0,
+) -> AudioRecord:
+    """Decode an audio byte stream while retaining the original channel layout.
+
+    Parameters
+    ----------
+    payload : bytes | bytearray | BytesIO
+        Raw audio byte stream to decode.
+    max_duration_seconds : float, default=300.0
+        Coarse file-level container reading ceiling (default 300 s) to guard against
+        decompression memory bombs. Fine-grained vocal task duration (e.g. 30 s) is
+        enforced downstream by AudioValidationConfig during validate_audio.
+    """
     try:
         data = payload.getvalue() if isinstance(payload, BytesIO) else bytes(payload)
         info = sf.info(BytesIO(data))
@@ -82,9 +96,10 @@ def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:
             f"Unsupported channel count: {info.channels}. Only mono (1) and stereo (2) "
             "WAV files are supported."
         )
-    if info.duration > 300.0:
+    if info.duration > max_duration_seconds:
         raise AudioReadError(
-            f"Audio duration of {info.duration:.1f} s exceeds maximum allowed 300 s."
+            f"Audio duration of {info.duration:.1f} s exceeds maximum allowed "
+            f"{max_duration_seconds:.1f} s."
         )
     try:
         raw, sample_rate = sf.read(BytesIO(data), dtype="float64", always_2d=True)

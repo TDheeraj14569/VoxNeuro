@@ -92,14 +92,27 @@ def main() -> int:
     demo = tables["Parselmouth"].copy()
     normalized = {str(c).strip().casefold().replace(" ", "_"): c for c in demo.columns}
     id_col = next(
-        (original for key, original in normalized.items() if "sample" in key and "id" in key), None
+        (
+            original
+            for key, original in normalized.items()
+            if key in {"sample_id", "sampleid", "id", "subject_id", "participant_id"}
+            or ("sample" in key.split("_") and "id" in key.split("_"))
+        ),
+        None,
     )
-    age_col = next((original for key, original in normalized.items() if "age" in key), None)
+    age_col = next(
+        (
+            original
+            for key, original in normalized.items()
+            if key in {"age", "age_years", "age_yr", "age_at_recording"} or "age" in key.split("_")
+        ),
+        None,
+    )
     sex_col = next(
         (
             original
             for key, original in normalized.items()
-            if key in {"sex", "gender"} or "sex" in key
+            if key in {"sex", "gender", "biological_sex"} or "sex" in key.split("_")
         ),
         None,
     )
@@ -107,7 +120,9 @@ def main() -> int:
         (
             original
             for key, original in normalized.items()
-            if key in {"label", "group", "diagnosis", "class"}
+            if key in {"label", "group", "diagnosis", "class", "target", "status"}
+            or "label" in key.split("_")
+            or "group" in key.split("_")
         ),
         None,
     )

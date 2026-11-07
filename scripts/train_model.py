@@ -171,7 +171,7 @@ def main() -> int:
         X,
         y.astype(int),
         frame["participant_id"].to_numpy(),
-        n_splits=int(model_config["cv_splits"]),
+        n_splits=int(model_config["inner_cv_splits"]),
         random_seed=int(model_config["random_seed"]),
     )
     checksum = hashlib.sha256(manifest_path.read_bytes() + path.read_bytes()).hexdigest()

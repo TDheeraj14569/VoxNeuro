@@ -92,24 +92,19 @@ def main() -> int:
         return 1
     labels = frame["class_label"].map({"HC": 0, "PD": 1}).to_numpy(dtype=int)
     groups = frame["participant_id"].to_numpy()
-    # Validate both the outer and inner group counts before starting an expensive search.
-    list(grouped_splits(labels, groups, int(cfg["cv_splits"]), int(cfg["random_seed"])))
-    for fold_seed in range(int(cfg["cv_splits"])):
-        outer = list(
-            grouped_splits(
-                labels,
-                groups,
-                int(cfg["cv_splits"]),
-                int(cfg["random_seed"]) + fold_seed,
-            )
-        )
-        for train, _ in outer:
+    repeat_seeds = tuple(
+        int(cfg["random_seed"]) + offset for offset in range(int(cfg["cv_repeats"]))
+    )
+    # Validate both the outer and inner group counts upfront using the exact seeds of the run.
+    for seed in repeat_seeds:
+        outer = list(grouped_splits(labels, groups, int(cfg["cv_splits"]), seed))
+        for fold_id, (train, _) in enumerate(outer, start=1):
             list(
                 grouped_splits(
                     labels[train],
                     groups[train],
                     int(cfg["inner_cv_splits"]),
-                    int(cfg["random_seed"]) + 1000 + fold_seed,
+                    seed + 1000 * fold_id,
                 )
             )
     age_available = "age" in frame and frame["age"].notna().sum() >= 10
@@ -137,9 +132,6 @@ def main() -> int:
             "age_plus_voice_logistic": (age_plus_voice, age_pipeline, grid),
         }
 
-    repeat_seeds = tuple(
-        int(cfg["random_seed"]) + offset for offset in range(int(cfg["cv_repeats"]))
-    )
     start = time.perf_counter()
     metrics, predictions, fold_metrics = evaluate_nested_grouped(
         frame[FEATURE_NAMES],
@@ -195,8 +187,9 @@ def main() -> int:
         tuning_results=tuning,
         limitations=(
             (
-                "Only 78 participants have usable features: 37 PD and 41 HC. Three clipped source "
-                "recordings are excluded, all from the PD group."
+                f"Only {int(frame['participant_id'].nunique())} participants have usable features: "
+                f"{pd_count} PD and {hc_count} HC. Excluded source recordings are "
+                "documented under the reviewed quality-control policy."
             ),
             (
                 "The HC and PD groups differ substantially in age. The age-only comparator can "

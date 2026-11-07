@@ -6,7 +6,7 @@ Feature order and units are defined in `src/voxneuro/features/schema.py`; `schem
 |---|---|---|
 | F0 | mean, median, sample SD, min, max, range | Praat autocorrelation pitch; Hz; 75 Hz floor, 500 Hz ceiling, 10 ms step; voiced frames only |
 | Perturbation | local jitter, local shimmer | Praat periodic point process; dimensionless ratios; missing if undefined |
-| Noise | mean HNR | Praat cross-correlation harmonicity; dB; finite frames only |
+| Noise | mean HNR | Praat cross-correlation harmonicity; dB; valid voiced frames only (> -199 dB) |
 | Cepstral/spectral | 13 MFCC means and SDs | Dimensionless DCT coefficients derived from log-Mel power; Librosa indices 0–12 (zero-based); 40 Mel bands, 1,024-sample FFT, 160-sample hop |
 | Spectral shape | centroid, 85% rolloff, bandwidth, zero-crossing rate | Librosa frame summaries; Hz for frequency values, fraction for ZCR |
 

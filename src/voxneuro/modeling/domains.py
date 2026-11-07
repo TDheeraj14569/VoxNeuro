@@ -133,7 +133,7 @@ def _validated_domains(report: object) -> list[str]:
     scores = [
         value
         for key, value in results.items()
-        if key != "n_participants" and isinstance(value, Real) and not isinstance(value, bool)
+        if key in RECOGNIZED_METRICS and isinstance(value, Real) and not isinstance(value, bool)
     ]
     if not scores or any(not 0.0 <= float(score) <= 1.0 for score in scores):
         raise ValueError(

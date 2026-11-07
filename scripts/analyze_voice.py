@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -23,21 +24,7 @@ def _analysis_config() -> tuple[AudioValidationConfig, dict, dict]:
     audio_config = load_config("audio_config.yaml")
     feature_config = load_config("feature_config.yaml")
     feature_config.pop("schema_version", None)
-    validation = AudioValidationConfig(
-        min_duration_seconds=float(audio_config["min_duration_seconds"]),
-        max_duration_seconds=float(audio_config["max_duration_seconds"]),
-        min_rms=float(audio_config["min_rms"]),
-        max_peak=float(audio_config["max_peak"]),
-        clipping_fraction_limit=float(audio_config["clipping_fraction_limit"]),
-        min_voiced_fraction=float(audio_config["min_voiced_fraction"]),
-        frame_ms=int(audio_config["frame_ms"]),
-        mono_policy=str(audio_config["mono_policy"]),
-        pitch_floor_hz=float(feature_config["pitch_floor_hz"]),
-        pitch_ceiling_hz=float(feature_config["pitch_ceiling_hz"]),
-        min_harmonic_overtone_fraction=float(audio_config["min_harmonic_overtone_fraction"]),
-        min_second_harmonic_fraction=float(audio_config["min_second_harmonic_fraction"]),
-        min_waveform_kurtosis=float(audio_config["min_waveform_kurtosis"]),
-    )
+    validation = AudioValidationConfig.from_dict(audio_config, feature_config)
     return validation, feature_config, audio_config
 
 
@@ -63,7 +50,9 @@ def main() -> int:
         return 2
     try:
         validation_config, feature_config, audio_config = _analysis_config()
-        record = decode_audio(args.audio.read_bytes())
+        payload = args.audio.read_bytes()
+        record = decode_audio(payload)
+        audio_sha256 = hashlib.sha256(payload).hexdigest()
         quality = validate_audio(record, validation_config)
         if not quality.valid:
             print("Recording failed technical quality checks:")
@@ -103,6 +92,7 @@ def main() -> int:
             "voiced_fraction": quality.voiced_fraction,
             "active_fraction": quality.active_fraction,
             "warnings": quality.warnings,
+            "audio_sha256": audio_sha256,
         },
         features,
         {

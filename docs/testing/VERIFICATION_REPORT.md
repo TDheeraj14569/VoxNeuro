@@ -5,7 +5,7 @@
 ## Software and application checks
 
 - uv 0.12.5; uv sync --all-extras --locked checked 71 locked Python packages.
-- Full Python suite: **252 passed** (244 non-UI tests plus eight Streamlit AppTests). Coverage is **87.12% across 2,027 statements** in `src/voxneuro`.
+- Full Python suite: **265 passed** (257 non-UI tests plus eight Streamlit AppTests). Coverage is **86.81% across 2,085 statements** in `src/voxneuro`.
 - Ruff lint passed. Ruff format --check passed with 153 files already formatted.
 - Project verification passed: 11 required imports and 8 required files.
 - Model verification passed: bundle sidecar, current data/evaluation/code/config receipts, feature schema, deterministic reload prediction, and research-only/domain-incompatible metadata.
@@ -63,10 +63,10 @@ These are results on the UCI pre-extracted table, not VoxNeuro raw WAV features.
 
 ## Source archive
 
-`VoxNeuro_source_audit.zip` was rebuilt using the repository inclusion rules and passed ZIP integrity and inventory checks. It contains 180 source, configuration, test, and documentation files, including the bundled local visualizer and synthetic-only browser smoke test assets. It excludes `.venv`, `.git`, caches, `node_modules`, raw/processed datasets, trained model artifacts, generated reports, and AI-review-only attachments.
+`VoxNeuro_source_audit.zip` was rebuilt using the repository inclusion rules and passed ZIP integrity and inventory checks. It contains 181 source, configuration, test, and documentation files, including the bundled local visualizer and synthetic-only browser smoke test assets. It excludes `.venv`, `.git`, caches, `node_modules`, raw/processed datasets, trained model artifacts, generated reports, and AI-review-only attachments.
 
-`VoxNeuro_AI_review_bundle.zip` contains those same 180 source files plus 11 review attachments (191 members total). The evidence includes aggregate fold metrics, result summaries, provenance receipts, and a dataset audit with counts only; the feature-extraction receipt replaces its sample-ID list with an exclusion count. It excludes recordings, participant-level prediction rows, participant-level feature tables, and trained model binaries. Its README lists SHA-256 hashes for every evidence attachment.
+`VoxNeuro_AI_review_bundle.zip` contains those same 181 source files plus 11 review attachments (192 members total). The evidence includes aggregate fold metrics, result summaries, provenance receipts, and a dataset audit with counts only; the feature-extraction receipt replaces its sample-ID list with an exclusion count. It excludes recordings, participant-level prediction rows, participant-level feature tables, and trained model binaries. Its README lists SHA-256 hashes for every evidence attachment.
 
-The entire 247-test suite was also run from a clean extraction of the AI review ZIP with the extracted `src/` forced to the front of `PYTHONPATH`; all tests passed and coverage reached 87.12%. This confirms the fixed source-inventory test and the package contents rather than relying only on a test run in the development workspace.
+The entire 252-test suite was also run from a clean extraction of the AI review ZIP with the extracted `src/` forced to the front of `PYTHONPATH`; all tests passed and coverage reached 87%. This confirms the fixed source-inventory test and the package contents rather than relying only on a test run in the development workspace.
 
 Reproducing the cohort results requires separately obtaining and verifying the source datasets. Passing software tests and internal cross-validation do not establish clinical effectiveness.

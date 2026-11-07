@@ -13,6 +13,7 @@ from voxneuro.audio.io import (
     MIN_SUPPORTED_SAMPLE_RATE,
     AudioRecord,
 )
+from voxneuro.audio.quality import frame_rms
 
 
 @dataclass(frozen=True)
@@ -30,6 +31,38 @@ class AudioValidationConfig:
     min_harmonic_overtone_fraction: float = 0.005
     min_second_harmonic_fraction: float = 0.0003
     min_waveform_kurtosis: float = 1.15
+    second_harmonic_min_factor: float = 1.8
+    second_harmonic_max_factor: float = 2.2
+    second_harmonic_trigger_overtone_fraction: float = 0.05
+
+    @classmethod
+    def from_dict(cls, audio_cfg: dict, feature_cfg: dict | None = None) -> AudioValidationConfig:
+        """Construct a validated AudioValidationConfig from parsed yaml configuration mappings."""
+        feature_cfg = feature_cfg or {}
+        return cls(
+            min_duration_seconds=float(audio_cfg["min_duration_seconds"]),
+            max_duration_seconds=float(audio_cfg["max_duration_seconds"]),
+            min_rms=float(audio_cfg["min_rms"]),
+            max_peak=float(audio_cfg["max_peak"]),
+            clipping_fraction_limit=float(audio_cfg["clipping_fraction_limit"]),
+            min_voiced_fraction=float(audio_cfg["min_voiced_fraction"]),
+            frame_ms=int(audio_cfg["frame_ms"]),
+            mono_policy=str(audio_cfg["mono_policy"]),
+            pitch_floor_hz=float(
+                feature_cfg.get("pitch_floor_hz", audio_cfg.get("pitch_floor_hz", 75.0))
+            ),
+            pitch_ceiling_hz=float(
+                feature_cfg.get("pitch_ceiling_hz", audio_cfg.get("pitch_ceiling_hz", 500.0))
+            ),
+            min_harmonic_overtone_fraction=float(audio_cfg["min_harmonic_overtone_fraction"]),
+            min_second_harmonic_fraction=float(audio_cfg["min_second_harmonic_fraction"]),
+            min_waveform_kurtosis=float(audio_cfg["min_waveform_kurtosis"]),
+            second_harmonic_min_factor=float(audio_cfg.get("second_harmonic_min_factor", 1.8)),
+            second_harmonic_max_factor=float(audio_cfg.get("second_harmonic_max_factor", 2.2)),
+            second_harmonic_trigger_overtone_fraction=float(
+                audio_cfg.get("second_harmonic_trigger_overtone_fraction", 0.05)
+            ),
+        )
 
     def __post_init__(self) -> None:
         numeric_fields = (
@@ -44,6 +77,9 @@ class AudioValidationConfig:
             "min_harmonic_overtone_fraction",
             "min_second_harmonic_fraction",
             "min_waveform_kurtosis",
+            "second_harmonic_min_factor",
+            "second_harmonic_max_factor",
+            "second_harmonic_trigger_overtone_fraction",
         )
         for field_name in numeric_fields:
             val = getattr(self, field_name)
@@ -81,6 +117,14 @@ class AudioValidationConfig:
             raise ValueError("min_second_harmonic_fraction must be in range [0.0, 1.0].")
         if not (0.0 <= self.min_waveform_kurtosis <= 10.0):
             raise ValueError("min_waveform_kurtosis must be in range [0.0, 10.0].")
+        if not (1.0 <= self.second_harmonic_min_factor < self.second_harmonic_max_factor <= 4.0):
+            raise ValueError(
+                "second_harmonic_min_factor must be less than second_harmonic_max_factor."
+            )
+        if not (0.0 <= self.second_harmonic_trigger_overtone_fraction <= 1.0):
+            raise ValueError(
+                "second_harmonic_trigger_overtone_fraction must be in range [0.0, 1.0]."
+            )
 
 
 @dataclass
@@ -163,12 +207,13 @@ def validate_audio(
     rms = float(np.sqrt(np.mean(np.square(x)))) if x.size else 0.0
     clipping = float(np.mean(np.abs(x) >= cfg.max_peak)) if x.size else 0.0
     mono = x.mean(axis=1) if x.ndim == 2 and x.size else np.asarray([], dtype=np.float64)
-    frame = max(1, int(record.sample_rate * cfg.frame_ms / 1000))
-    n_frames = len(mono) // frame
-    if n_frames:
-        framed = mono[: n_frames * frame].reshape(n_frames, frame)
-        levels = np.sqrt(np.mean(np.square(framed), axis=1))
-        active = float(np.mean(levels >= max(cfg.min_rms * 0.25, float(levels.max()) * 0.03)))
+    if mono.size and record.sample_rate > 0:
+        _, levels = frame_rms(mono, record.sample_rate, cfg.frame_ms)
+        active = (
+            float(np.mean(levels >= max(cfg.min_rms * 0.25, float(levels.max()) * 0.03)))
+            if levels.size
+            else 0.0
+        )
     else:
         active = 0.0
     voiced = 0.0
@@ -220,7 +265,9 @@ def validate_audio(
                         "expected of a phonated vowel. Please record a steady sustained vowel /a/."
                     )
                 else:
-                    h2_mask = (fft_freqs >= 1.8 * median_f0) & (fft_freqs <= 2.2 * median_f0)
+                    h2_mask = (fft_freqs >= cfg.second_harmonic_min_factor * median_f0) & (
+                        fft_freqs <= cfg.second_harmonic_max_factor * median_f0
+                    )
                     h2_fraction = float(np.sum(fft[h2_mask] ** 2) / total_energy)
                     var_val = float(np.var(mono_centered))
                     kurtosis = (
@@ -229,7 +276,8 @@ def validate_audio(
                         else 1.0
                     )
                     if (
-                        overtone_fraction > 0.05 and h2_fraction < cfg.min_second_harmonic_fraction
+                        overtone_fraction > cfg.second_harmonic_trigger_overtone_fraction
+                        and h2_fraction < cfg.min_second_harmonic_fraction
                     ) or (kurtosis < cfg.min_waveform_kurtosis and len(mono) > 500):
                         errors.append(
                             "Configured harmonic criteria not met: acoustic resonance "

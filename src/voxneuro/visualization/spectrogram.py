@@ -6,9 +6,31 @@ import numpy as np
 from matplotlib.figure import Figure
 
 
-def spectrogram_figure(samples: np.ndarray, sample_rate: int):
-    x = np.asarray(samples, dtype=np.float32).reshape(-1)
-    spectrum = librosa.stft(x, n_fft=1024, hop_length=160)
+def spectrogram_figure(
+    samples: np.ndarray,
+    sample_rate: int,
+    *,
+    n_fft: int = 1024,
+    hop_length: int = 160,
+):
+    arr = np.asarray(samples, dtype=np.float32)
+    if arr.ndim == 2:
+        if arr.shape[1] in (1, 2):
+            x = arr.mean(axis=1)
+        elif arr.shape[0] in (1, 2):
+            x = arr.mean(axis=0)
+        else:
+            raise ValueError(
+                f"Multichannel spectrogram input has unsupported shape {arr.shape}; "
+                "expected 1 or 2 channels."
+            )
+    elif arr.ndim == 1:
+        x = arr
+    else:
+        raise ValueError(
+            f"Spectrogram visualization requires 1D or 2-channel audio array, got ndim={arr.ndim}."
+        )
+    spectrum = librosa.stft(x, n_fft=n_fft, hop_length=hop_length)
     db = librosa.amplitude_to_db(np.abs(spectrum), ref=np.max)
     fig = Figure(figsize=(10, 3.2))
     ax = fig.subplots()
@@ -16,7 +38,13 @@ def spectrogram_figure(samples: np.ndarray, sample_rate: int):
     fig.patch.set_alpha(0.92)
     ax.set_facecolor("#08151D")
     image = librosa.display.specshow(
-        db, sr=sample_rate, hop_length=160, x_axis="time", y_axis="linear", ax=ax, cmap="magma"
+        db,
+        sr=sample_rate,
+        hop_length=hop_length,
+        x_axis="time",
+        y_axis="linear",
+        ax=ax,
+        cmap="magma",
     )
     ax.set_title("Magnitude spectrogram", color="#55D9C1", fontsize=11, fontweight="600")
     ax.set_xlabel("Time (s)", color="#EDF6F7")

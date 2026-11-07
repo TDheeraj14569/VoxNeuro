@@ -266,13 +266,15 @@ def build_review_bundle(
                 raise zipfile.BadZipFile(
                     f"Non-aggregate or excluded evidence entered bundle: {forbidden}"
                 )
+        size = temporary_path.stat().st_size
+        if size > 5 * 1024 * 1024:
+            raise ValueError(
+                f"AI review bundle unexpectedly exceeds the 5 MiB limit: {size} bytes."
+            )
         os.replace(temporary_path, output)
     finally:
         temporary_path.unlink(missing_ok=True)
 
-    size = output.stat().st_size
-    if size > 5 * 1024 * 1024:
-        raise ValueError(f"AI review bundle unexpectedly exceeds the 5 MiB limit: {size} bytes.")
     return {
         "path": str(output),
         "bytes": size,

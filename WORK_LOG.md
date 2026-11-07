@@ -13,7 +13,7 @@
 - **Strict Predictor Identity Contracts:** Enforced 1-to-1 matching for `sample_id` and `participant_id` between $X$ and additional predictors in `evaluate_grouped()`, rejecting one-sided presence and sequence mismatches.
 - **Audio Validation Hardening:** Rejected complex-valued, object, and boolean audio arrays with structured errors (`Audio samples must contain real numeric values.`). Validated sample rates independently in `AudioRecord.__post_init__()` and rejected 3-channel WAVs with `AudioReadError`.
 - **Harmonic Screening Reframing:** Reframed synthetic generator checks as acoustic task screening criteria. Added configurable thresholds to `audio_config.yaml`.
-- **Test Suite & Receipts:** Full suite expanded to **247 passed tests** (239 unit/pipeline tests and 8 Streamlit AppTests) with **87.12% statement coverage**. Regenerated model receipts, model bundle, and deterministic audit archives.
+- **Test Suite & Receipts:** Full suite expanded through intermediate checkpoints (247 tests) to **252 passed tests** (244 unit/pipeline tests and 8 Streamlit AppTests) with 87% statement coverage. Regenerated model receipts, model bundle, and deterministic audit archives.
 
 ## Findings fixed
 
@@ -41,9 +41,17 @@
 - Used the configured frame duration in silence trimming, corrected supported WAV/WAVEX instructions, and fixed the traceability test paths.
 - Reconciled verification and test documentation with the current source snapshot; earlier pass reports are marked as historical.
 
-## Latest verification completed — 2026-11-07 (252-test suite)
+## Latest verification completed — 2026-11-07 (265-test suite)
 
-- **Test Suite & Coverage:** Expanded to **252 passed tests** (244 non-UI tests plus 8 Streamlit AppTests) with **87.12% statement coverage** across 2,027 statements in `src/voxneuro`.
+- **Test Suite & Coverage:** Expanded to **265 passed tests** (257 non-UI tests plus 8 Streamlit AppTests) with **86.81% statement coverage** across 2,085 statements in `src/voxneuro`.
+- **Feature Extraction Array Validation:** Enforced strict non-boolean, non-complex, finite numeric array requirements and integer sample rate validation (8–48 kHz) in standalone `extract_features()`. Added 11 regression tests.
+- **Audio Validation Config:** Added `AudioValidationConfig.from_dict()` for clean dictionary instantiation across CLI tools, pipeline scripts, and Streamlit app. Made harmonic overtone screening parameters configurable.
+- **Visualization Multichannel Safety:** Hardened `waveform.py` and `spectrogram.py` to downmix 2D stereo arrays to mono (`arr.mean(axis=1)`) rather than flattening/interleaving, and reject $>2$ channels.
+- **Model Tuning Alignment:** Aligned reference model training in `train_model.py` to 3-fold inner cross-validation (`inner_cv_splits`), matching the nested evaluation protocol.
+- **Dynamic Limitation Counts:** Derived participant cohort counts dynamically from dataset frames in `evaluate_nested_models.py` and synchronized random seed generation.
+- **HTML Report Enhancements:** Displayed recorded audio SHA-256 fingerprint, outer-fold ROC-AUC and Average Precision, and migrated template substitution to safe `string.Template`.
+- **Ruff & Quality Gates:** All 153 repository files formatted with Ruff; zero lint or style violations; all project and model verifiers passed green.
+- **Deterministic Archives:** Rebuilt `VoxNeuro_source_audit.zip` (181 files) and `VoxNeuro_ai_review_bundle.zip` (192 files) with pre-replacement size validation and exact checksum verifications.
 - **HNR Formula Correction:** Filtered out Praat's unvoiced/undefined frame marker (`-200 dB`) in `parselmouth_features.py` with `hnr > -199.0`, matching Praat's native `Get mean` harmonicity exactly.
 - **Feature Schema & Provenance:** Updated `hnr_mean_db` definition in `schema.py` to "mean valid voiced frames". New schema fingerprint: `a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f`.
 - **Evaluation Hardening:** Replaced `groups[test]` indexing with `group_values[test]` in `evaluate_grouped()` to support lists and Series. Enforced strict `sample_id` uniqueness check in `_validate_additional_predictors()`.

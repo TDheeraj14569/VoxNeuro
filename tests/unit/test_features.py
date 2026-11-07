@@ -145,3 +145,23 @@ def test_hnr_calculation_excludes_praat_undefined_unvoiced_frames():
     )
     praat_mean = parselmouth.praat.call(harmonicity, "Get mean", 0.0, 0.0)
     assert np.isclose(values["hnr_mean_db"], praat_mean, atol=1e-4)
+
+
+@pytest.mark.parametrize(
+    "bad_samples",
+    [
+        np.array([1.0 + 2.0j, 3.0 + 4.0j]),
+        np.array([True, False, True]),
+        np.array(["1.0", "2.0", "3.0"], dtype=object),
+        [[1.0], [2.0, 3.0]],
+    ],
+)
+def test_extract_features_rejects_complex_boolean_and_string_arrays(bad_samples):
+    with pytest.raises(FeatureExtractionError, match="numeric"):
+        extract_features(bad_samples, 16000)
+
+
+@pytest.mark.parametrize("bad_sr", [16000.5, True, False, 4000, 96000, "16000", -16000])
+def test_extract_features_rejects_invalid_sample_rates(bad_sr):
+    with pytest.raises(FeatureExtractionError, match="sample rate"):
+        extract_features(sustained_vowel(), bad_sr)

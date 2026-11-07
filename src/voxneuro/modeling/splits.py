@@ -50,16 +50,20 @@ def grouped_splits(y: np.ndarray, groups: np.ndarray, n_splits: int = 5, random_
         raise DatasetError(
             f"Each class needs at least {n_splits} distinct participants for {n_splits}-fold CV."
         )
-    splitter = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=random_seed)
-    for train, test in splitter.split(np.zeros(len(y)), y, groups):
-        overlap = set(groups[train]) & set(groups[test])
-        if overlap:
-            raise DatasetError(f"Participant leakage detected: {len(overlap)} overlapping IDs.")
-        if set(np.unique(y[train])) != {0, 1} or set(np.unique(y[test])) != {0, 1}:
-            raise DatasetError(
-                "A grouped fold does not contain both diagnosis classes; reduce the fold count."
-            )
-        yield train, test
+
+    def _generate_folds():
+        splitter = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=random_seed)
+        for train, test in splitter.split(np.zeros(len(y)), y, groups):
+            overlap = set(groups[train]) & set(groups[test])
+            if overlap:
+                raise DatasetError(f"Participant leakage detected: {len(overlap)} overlapping IDs.")
+            if set(np.unique(y[train])) != {0, 1} or set(np.unique(y[test])) != {0, 1}:
+                raise DatasetError(
+                    "A grouped fold does not contain both diagnosis classes; reduce the fold count."
+                )
+            yield train, test
+
+    return _generate_folds()
 
 
 def pd_is_missing(values: np.ndarray) -> np.ndarray:

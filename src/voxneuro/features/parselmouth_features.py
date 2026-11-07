@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 import parselmouth
 from parselmouth.praat import call
+
+logger = logging.getLogger(__name__)
 
 
 def extract_praat_features(
@@ -46,8 +50,8 @@ def extract_praat_features(
         shimmer = call([sound, pulses], "Get shimmer (local)", 0.0, 0.0, 0.0001, 0.02, 1.3, 1.6)
         if np.isfinite(shimmer):
             values["shimmer_local"] = float(shimmer)
-    except (parselmouth.PraatError, ValueError, RuntimeError):
-        pass
+    except (parselmouth.PraatError, ValueError, RuntimeError) as exc:
+        logger.debug("Praat pulse/jitter/shimmer extraction failed: %s", exc)
     try:
         harmonicity = sound.to_harmonicity_cc(
             time_step=pitch_step_seconds,
@@ -59,6 +63,6 @@ def extract_praat_features(
         hnr = hnr[np.isfinite(hnr) & (hnr > -199.0)]
         if hnr.size:
             values["hnr_mean_db"] = float(np.mean(hnr))
-    except (parselmouth.PraatError, ValueError, RuntimeError):
-        pass
+    except (parselmouth.PraatError, ValueError, RuntimeError) as exc:
+        logger.debug("Praat harmonicity extraction failed: %s", exc)
     return values

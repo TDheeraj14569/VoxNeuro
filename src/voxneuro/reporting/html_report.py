@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 import math
+from string import Template
 
 import numpy as np
 from scipy.signal import stft
@@ -171,6 +172,13 @@ def render_voice_report_html(
             f"<tr><th scope='row'>{html.escape(label)}</th>"
             f"<td>{html.escape(value)} {html.escape(unit)}</td></tr>"
         )
+    audio_sha256 = quality.get("audio_sha256")
+    if audio_sha256 and isinstance(audio_sha256, str):
+        escaped_hash = html.escape(audio_sha256)
+        quality_rows.append(
+            "<tr><th scope='row'>Recorded audio SHA-256</th>"
+            f"<td><code>{escaped_hash}</code> (recorded digest for provenance)</td></tr>"
+        )
     preprocessing_rows = []
     for key, value in preprocessing.items():
         if isinstance(value, (str, int, float, bool)) or value is None:
@@ -188,7 +196,7 @@ def render_voice_report_html(
     disclaimer = html.escape(str(report.get("clinical_disclaimer", "Research use only.")))
     feature_version = html.escape(str(provenance.get("schema_version", "unknown")))
     schema_fingerprint = html.escape(str(provenance.get("schema_fingerprint", "unknown")))
-    return (
+    tmpl = Template(
         """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -217,55 +225,51 @@ code{overflow-wrap:anywhere}
 @media(max-width:600px){main{padding:12px 8px 30px}section{padding:14px}h1{font-size:23px}}
 </style></head><body><main>
 <header><h1>VoxNeuro · Voice acoustic analysis</h1>
-<p>Report generated: __REPORT_ID__ · Feature schema: __SCHEMA_VERSION__</p>
+<p>Report generated: ${REPORT_ID} · Feature schema: ${SCHEMA_VERSION}</p>
 <p>Research prototype; no diagnosis is produced.</p></header>
 <section><h2>Recording quality</h2>
-<div class="scroll"><table><tbody>__QUALITY_ROWS__</tbody></table></div>
-<p><b>Quality outcome:</b> __QUALITY_STATUS__</p><ul>__WARNINGS__</ul></section>
+<div class="scroll"><table><tbody>${QUALITY_ROWS}</tbody></table></div>
+<p><b>Quality outcome:</b> ${QUALITY_STATUS}</p><ul>${WARNINGS}</ul></section>
 <section><h2>Preprocessing</h2>
-<div class="scroll"><table><tbody>__PREPROCESSING_ROWS__</tbody></table></div>
+<div class="scroll"><table><tbody>${PREPROCESSING_ROWS}</tbody></table></div>
 </section>
 <section><h2>Waveform and spectrogram</h2>
-<div class="grid charts">__WAVEFORM__ __SPECTROGRAM__</div>
+<div class="grid charts">${WAVEFORM} ${SPECTROGRAM}</div>
 <p class="muted">The spectrogram shows short-time magnitude relative to digital full scale;
 it is not calibrated sound-pressure level.</p></section>
 <section><h2>Acoustic feature measurements</h2>
-<p>All __FEATURE_COUNT__ measurements in schema __SCHEMA_VERSION__ are listed.
+<p>All ${FEATURE_COUNT} measurements in schema ${SCHEMA_VERSION} are listed.
 Undefined values remain unavailable; no clinical normal range is applied.</p>
 <div class="scroll"><table><caption>Measured features and extraction definitions</caption>
 <thead><tr><th scope="col">Feature</th><th scope="col">Value</th>
 <th scope="col">Unit</th><th scope="col">Status</th>
 <th scope="col">Method and validity</th></tr></thead>
-<tbody>__FEATURE_ROWS__</tbody></table></div>
-<p class="muted">Schema fingerprint: <code>__SCHEMA_FINGERPRINT__</code></p></section>
-<section><h2>Model assessment</h2><p>__MODEL_STATUS__</p>
-<p class="notice">__DISCLAIMER__ Voice measures are not specific to Parkinson's disease
-and must not guide treatment.</p>
+<tbody>${FEATURE_ROWS}</tbody></table></div>
+<p class="muted">Schema fingerprint: <code>${SCHEMA_FINGERPRINT}</code></p></section>
+<section><h2>Model assessment</h2><p>${MODEL_STATUS}</p>
+<p class="notice">${DISCLAIMER}</p>
 <p>No calibrated disease probability, clinical threshold, diagnosis, or rule-out
 result is provided.</p></section>
 <footer>Report contents are generated from this session's measured audio and feature values.
 The application does not store recordings or reports by default.</footer>
-</main></body></html>""".replace("__REPORT_ID__", report_id)
-        .replace("__SCHEMA_VERSION__", feature_version)
-        .replace("__SCHEMA_FINGERPRINT__", schema_fingerprint)
-        .replace("__QUALITY_ROWS__", "".join(quality_rows))
-        .replace(
-            "__QUALITY_STATUS__",
-            "Passed technical audio checks." if quality.get("valid") else "Not passed.",
-        )
-        .replace("__WARNINGS__", notices)
-        .replace("__PREPROCESSING_ROWS__", "".join(preprocessing_rows))
-        .replace(
-            "__WAVEFORM__",
-            f"<figure><figcaption>Processed waveform</figcaption>{waveform}</figure>",
-        )
-        .replace(
-            "__SPECTROGRAM__",
-            "<figure><figcaption>Short-time Fourier spectrogram</figcaption>"
-            f"{spectrogram}</figure>",
-        )
-        .replace("__FEATURE_COUNT__", str(len(FEATURE_NAMES)))
-        .replace("__FEATURE_ROWS__", "".join(rows))
-        .replace("__MODEL_STATUS__", status)
-        .replace("__DISCLAIMER__", disclaimer)
+</main></body></html>"""
+    )
+    return tmpl.substitute(
+        REPORT_ID=report_id,
+        SCHEMA_VERSION=feature_version,
+        SCHEMA_FINGERPRINT=schema_fingerprint,
+        QUALITY_ROWS="".join(quality_rows),
+        QUALITY_STATUS=(
+            "Passed technical audio checks." if quality.get("valid") else "Not passed."
+        ),
+        WARNINGS=notices,
+        PREPROCESSING_ROWS="".join(preprocessing_rows),
+        WAVEFORM=f"<figure><figcaption>Processed waveform</figcaption>{waveform}</figure>",
+        SPECTROGRAM=(
+            f"<figure><figcaption>Short-time Fourier spectrogram</figcaption>{spectrogram}</figure>"
+        ),
+        FEATURE_COUNT=str(len(FEATURE_NAMES)),
+        FEATURE_ROWS="".join(rows),
+        MODEL_STATUS=status,
+        DISCLAIMER=disclaimer,
     )
