@@ -45,7 +45,7 @@
 - Rebuilt the source archive and generated both inventories from the same inclusion rules. ZIP integrity passed: 176 source files. Review-only README/evidence files are explicitly excluded from source inventory calculations.
 - Built and CRC-checked the AI review bundle: 187 files total (176 source files plus 11 review attachments); no audio, participant-level feature/prediction table, or model binary is included.
 - Re-extracted the AI review ZIP and reran all 204 tests with its `src/` first on `PYTHONPATH`; all passed at 87% coverage.
-- Current source/model provenance fingerprint: `4ff4896a1b9f836c56f885778c91751ed5a78b7cc845b213d3dd1043d07c0e03`.
+- Current source/model provenance fingerprint: `6e9c7b491af1990718c0b6e1430eb0f0caafa71ebb722a357ca03f1ebf66e40f`.
 
 ## Limits retained
 

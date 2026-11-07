@@ -170,7 +170,7 @@ def _write_member(archive: zipfile.ZipFile, name: str, payload: bytes) -> None:
     archive.writestr(info, payload)
 
 
-def build_review_bundle() -> dict[str, object]:
+def build_review_bundle(output_path: Path | None = None) -> dict[str, object]:
     """Rebuild the source archive and add only aggregate, hashed review evidence."""
     source_report = build_archive()
     evidence = {"uams_dataset_audit.html": _render_aggregate_dataset_audit()}
@@ -190,7 +190,7 @@ def build_review_bundle() -> dict[str, object]:
     if re.search(r"\buams-\d+\b", audit_html):
         raise ValueError("Aggregate dataset audit must not include sample identifiers.")
     readme = _review_readme(evidence)
-    output = REVIEW_ARCHIVE.resolve()
+    output = (output_path or REVIEW_ARCHIVE).resolve()
     with tempfile.NamedTemporaryFile(
         prefix=f".{output.stem}-", suffix=".tmp", dir=output.parent, delete=False
     ) as temporary:

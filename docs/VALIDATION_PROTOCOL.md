@@ -13,7 +13,7 @@ No rows, predictions, or scores are combined across these experiments.
 
 - Use participant ID as the grouping unit. Repetitions from one participant must never cross a train/test boundary.
 - UAMS comparison: three repeated five-fold outer StratifiedGroupKFold evaluations. For each outer training partition, hyperparameters are selected by three-fold grouped inner validation using balanced accuracy.
-- The six voice candidate families are L2 logistic regression, elastic-net logistic regression, linear SVM, RBF SVM, random forest, Extra Trees, and histogram gradient boosting.
+- The seven voice candidate families are L2 logistic regression, elastic-net logistic regression, linear SVM, RBF SVM, random forest, Extra Trees, and histogram gradient boosting.
 - Age-only and age-plus-voice logistic comparators are separate analyses; age and sex are not inputs to voice-only models.
 - All imputation and scaling are fit inside the corresponding training folds.
 - Test metrics use participant-level out-of-fold scores. No threshold is tuned on outer test outcomes. The default model decision rule is exploratory only.

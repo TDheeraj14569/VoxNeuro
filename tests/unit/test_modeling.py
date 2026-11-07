@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
@@ -125,3 +126,81 @@ def test_nested_evaluation_keeps_each_participant_in_one_outer_fold():
             metrics.model.eq("logistic_l2") & metrics.repeat_seed.eq(18), "balanced_accuracy_ci_low"
         ].iloc[0]
     )
+
+
+def test_evaluate_grouped_rejects_invalid_labels_and_dimensions():
+    X, valid_y, groups = binary_groups(20, 2)
+    # Valid binary inputs must pass
+    metrics, _ = evaluate_grouped(X, valid_y, groups, n_splits=3)
+    assert not metrics.empty
+
+    # Fractional labels must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, [0, 0.5, 1, 1] * 10, groups, n_splits=3)
+
+    # Multi-class / out-of-range labels must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, [0, 2, 1, 0] * 10, groups, n_splits=3)
+
+    # Non-finite / NaN labels must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, [0, np.nan, 1, 0] * 10, groups, n_splits=3)
+
+    # Boolean labels must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, [False, True] * 20, groups, n_splits=3)
+
+    # Non-DataFrame X must be rejected
+    with pytest.raises(ValueError, match="X must be a pandas DataFrame"):
+        evaluate_grouped(X.to_numpy(), valid_y, groups, n_splits=3)
+
+    # Length mismatch between X and y must be rejected
+    with pytest.raises(ValueError, match="X and y must contain the same number of rows"):
+        evaluate_grouped(X.iloc[:-2], valid_y, groups, n_splits=3)
+
+
+def test_evaluate_grouped_and_nested_reject_misaligned_additional_predictors():
+    voice, y, groups = binary_groups(20, 2)
+    # Permute index to simulate row misalignment
+    misaligned_age = voice[["feature_a"]].rename(columns={"feature_a": "age"}).sample(frac=1.0)
+    pipeline = Pipeline(
+        [
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler()),
+            ("classifier", LogisticRegression(class_weight="balanced", max_iter=1000)),
+        ]
+    )
+    with pytest.raises(ValueError, match="Additional predictor rows for .* must align with X"):
+        evaluate_grouped(
+            voice,
+            y,
+            groups,
+            n_splits=3,
+            additional_models={"age_only": (misaligned_age, pipeline)},
+        )
+
+    with pytest.raises(ValueError, match="Additional predictor rows for .* must align with X"):
+        evaluate_nested_grouped(
+            voice,
+            y,
+            groups,
+            outer_splits=3,
+            inner_splits=2,
+            random_seeds=(42,),
+            additional_searches={
+                "age_only": (misaligned_age, pipeline, {"classifier__C": [0.1, 1.0]})
+            },
+        )
+
+
+def test_elastic_net_candidate_configures_l1_ratio_correctly():
+    searches = build_nested_model_searches()
+    pipe, grid = searches["logistic_elastic_net"]
+    clf = pipe.named_steps["classifier"]
+    assert clf.l1_ratio == 0.5
+    assert clf.solver == "saga"
+    # Verify candidate fits cleanly on synthetic binary data
+    X, y, _ = binary_groups(10, 2)
+    pipe.fit(X, y)
+    preds = pipe.predict(X)
+    assert len(preds) == len(y)

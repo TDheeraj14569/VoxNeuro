@@ -2,6 +2,7 @@
 
 Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. The source ZIP, separately-added AI review bundle evidence, local datasets, model artifacts, secrets, caches, and virtual environments are excluded.
 
+- `.github/workflows/ci.yml`
 - `.gitignore`
 - `.streamlit/config.toml`
 - `app.py`
@@ -34,6 +35,7 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. 
 - `docs/biodesign/observation_log_template.md`
 - `docs/biodesign/observation_protocol.md`
 - `docs/biodesign/problem_identification.md`
+- `docs/biodesign/SIMULATED_CLINICAL_WORKFLOW_SCENARIOS.md`
 - `docs/biodesign/solution_rationale.md`
 - `docs/biodesign/stakeholder_interview_guide.md`
 - `docs/CHANGELOG.md`
@@ -86,6 +88,7 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. 
 - `frontend/acoustic-visualizer/src/main.js`
 - `frontend/acoustic-visualizer/test/finite-data.test.js`
 - `frontend/acoustic-visualizer/THREE-LICENSE.txt`
+- `LICENSE`
 - `pyproject.toml`
 - `README.md`
 - `requirements-lock.txt`
@@ -152,6 +155,7 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. 
 - `tests/integration/test_training_pipeline.py`
 - `tests/unit/__init__.py`
 - `tests/unit/test_acoustic_3d.py`
+- `tests/unit/test_ai_review_bundle.py`
 - `tests/unit/test_audio_io.py`
 - `tests/unit/test_audio_quality.py`
 - `tests/unit/test_audio_validation.py`
@@ -179,4 +183,4 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-07. 
 - `uv.lock`
 - `WORK_LOG.md`
 
-Total included source/documentation files: **176**.
+Total included source/documentation files: **180**.

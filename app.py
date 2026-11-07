@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 from numbers import Real
 
@@ -197,6 +198,15 @@ div[data-testid="stMetric"] {
   border: 1px solid rgba(85, 217, 193, 0.2) !important;
   border-radius: 8px !important;
   background: rgba(12, 29, 39, 0.7) !important;
+}
+.stApp [data-testid="stJson"], .react-json-view {
+  background: rgba(10, 25, 34, 0.75) !important;
+  border: 1px solid rgba(85, 217, 193, 0.22) !important;
+  border-radius: 10px !important;
+  padding: 1rem !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
 }
 .vox-glass-card {
   background: rgba(12, 29, 39, 0.65);
@@ -576,19 +586,22 @@ def _analyze(payload: bytes) -> None:
     st.session_state["voxneuro_analysis_status"] = "complete"
 
 
-def _page_heading(title: str, description: str) -> None:
-    st.markdown(
-        '<div class="vox-kicker">VOXNEURO · LOCAL RESEARCH PROTOTYPE</div>', unsafe_allow_html=True
-    )
+def _page_heading(
+    title: str,
+    description: str,
+    kicker: str = "VOXNEURO · LOCAL RESEARCH PROTOTYPE",
+) -> None:
+    st.markdown(f'<div class="vox-kicker">{html.escape(kicker)}</div>', unsafe_allow_html=True)
     st.title(title)
-    st.markdown(f'<p class="vox-lede">{description}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="vox-lede">{html.escape(description)}</p>', unsafe_allow_html=True)
 
 
 def _show_overview() -> None:
-    st.title("VoxNeuro")
-    st.markdown(
-        '<div class="vox-kicker">VOICE SIGNAL ANALYSIS · RESEARCH SOFTWARE</div>',
-        unsafe_allow_html=True,
+    _page_heading(
+        "VoxNeuro",
+        "A careful research workspace for recording or reviewing a sustained vowel, "
+        "checking signal quality, and exploring acoustic measurements in Parkinson’s research.",
+        kicker="VOICE SIGNAL ANALYSIS · RESEARCH SOFTWARE",
     )
     st.markdown(
         '<div class="vox-glass-hero">'
@@ -701,7 +714,15 @@ def _show_assessment() -> None:
             help=f"Maximum file size: {int(APP_CONFIG['max_upload_mb'])} MB.",
         )
     if uploaded is not None:
+        max_bytes = int(APP_CONFIG["max_upload_mb"]) * 1024 * 1024
+        upload_size = getattr(uploaded, "size", None)
+        if upload_size is not None and upload_size > max_bytes:
+            st.error(f"Uploaded audio exceeds the {int(APP_CONFIG['max_upload_mb'])} MB limit.")
+            return
         payload = uploaded.getvalue()
+        if len(payload) > max_bytes:
+            st.error(f"Audio exceeds the {int(APP_CONFIG['max_upload_mb'])} MB limit.")
+            return
         st.audio(payload, format="audio/wav")
         if st.button("Analyze this recording", type="primary", key="analyze_recording"):
             try:
@@ -717,6 +738,9 @@ def _show_assessment() -> None:
             ) as exc:
                 st.session_state["voxneuro_analysis_status"] = "failed"
                 st.session_state["voxneuro_analysis_error"] = str(exc)
+            except Exception as exc:
+                st.session_state["voxneuro_analysis_status"] = "failed"
+                st.session_state["voxneuro_analysis_error"] = f"Unexpected processing error: {exc}"
     quality = st.session_state.get("voxneuro_quality")
     record = st.session_state.get("voxneuro_record")
     status = st.session_state.get("voxneuro_analysis_status")
@@ -915,10 +939,10 @@ def _format_measurement(val: object) -> str:
 def _render_glass_table(df: pd.DataFrame) -> None:
     rows_html = []
     for _, row in df.iterrows():
-        feat = str(row["feature"])
-        val_str = _format_measurement(row["measurement"])
-        units = str(row["units"]) if row["units"] else ""
-        method = str(row["method and interpretation"])
+        feat = html.escape(str(row["feature"]))
+        val_str = html.escape(_format_measurement(row["measurement"]))
+        units = html.escape(str(row["units"])) if row["units"] else ""
+        method = html.escape(str(row["method and interpretation"]))
         avail = str(row["availability"])
         status_html = (
             '<span class="vox-badge-ok">Available</span>'
@@ -934,20 +958,20 @@ def _render_glass_table(df: pd.DataFrame) -> None:
             f"<td>{status_html}</td>"
             "</tr>"
         )
-    html = (
+    html_markup = (
         '<div class="vox-table-wrapper">'
         '<table class="vox-table">'
         "<thead><tr>"
         "<th>Feature</th>"
         "<th>Measurement</th>"
         "<th>Units</th>"
-        "<th>Method & Interpretation</th>"
+        "<th>Method &amp; Interpretation</th>"
         "<th>Status</th>"
         "</tr></thead>"
         f"<tbody>{''.join(rows_html)}</tbody>"
         "</table></div>"
     )
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(html_markup, unsafe_allow_html=True)
 
 
 def _render_quality_cards(quality: dict) -> None:
@@ -960,13 +984,19 @@ def _render_quality_cards(quality: dict) -> None:
     )
     duration = float(quality.get("duration_seconds", 0.0))
     sample_rate = int(quality.get("sample_rate_hz", 0))
+    channels = int(quality.get("channels", 1))
+    channel_text = "Mono" if channels == 1 else f"{channels}-ch stereo"
     voiced = float(quality.get("voiced_fraction", 0.0))
     peak = float(quality.get("peak_amplitude_fs", 0.0))
     rms = float(quality.get("rms_amplitude_fs", 0.0))
     clipping = float(quality.get("clipping_fraction", 0.0))
     subtype = str(quality.get("subtype", "PCM_16"))
 
-    html = (
+    min_dur = float(AUDIO_CONFIG.get("min_duration_seconds", 1.0))
+    max_dur = float(AUDIO_CONFIG.get("max_duration_seconds", 30.0))
+    clipping_limit = float(AUDIO_CONFIG.get("clipping_fraction_limit", 0.01))
+
+    html_markup = (
         '<div class="vox-quality-grid">'
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Technical Check</div>'
@@ -976,12 +1006,12 @@ def _render_quality_cards(quality: dict) -> None:
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Signal Duration</div>'
         f'<div class="vox-qc-value">{duration:.2f} s</div>'
-        '<div class="vox-qc-sub">Target: 3.0 – 5.0 s</div>'
+        f'<div class="vox-qc-sub">Target: {min_dur:.1f} – {max_dur:.1f} s</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Sample Rate</div>'
         f'<div class="vox-qc-value">{sample_rate:,} Hz</div>'
-        f'<div class="vox-qc-sub">{subtype} mono</div>'
+        f'<div class="vox-qc-sub">{html.escape(subtype)} · {channel_text}</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Voiced Activity</div>'
@@ -996,11 +1026,11 @@ def _render_quality_cards(quality: dict) -> None:
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Clipping Rate</div>'
         f'<div class="vox-qc-value">{clipping:.4%}</div>'
-        '<div class="vox-qc-sub">Limit: &lt; 0.100%</div>'
+        f'<div class="vox-qc-sub">Limit: ≤ {clipping_limit:.2%}</div>'
         "</div>"
         "</div>"
     )
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(html_markup, unsafe_allow_html=True)
     with st.expander("Telemetry & raw quality metadata (JSON)", expanded=False):
         st.json(quality)
 

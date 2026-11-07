@@ -1,20 +1,22 @@
 Included file counts by top-level path (same source-archive rules):
 
+.github: 1
 .gitignore: 1
 .streamlit: 1
 app.py: 1
 artifacts: 2
 configs: 6
 data: 4
-docs: 62
+docs: 63
 frontend: 7
+LICENSE: 1
 pyproject.toml: 1
 README.md: 1
 requirements-lock.txt: 1
 scripts: 12
 src: 40
-tests: 35
+tests: 36
 uv.lock: 1
 WORK_LOG.md: 1
 
-Total: 176
+Total: 180

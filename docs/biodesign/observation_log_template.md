@@ -1,47 +1,50 @@
-# Clinical Observation & Stakeholder Fieldwork Synthesis
+# Blank Clinical Observation Log & Stakeholder Interview Template
 
-**Course Reference:** Biodesign Concept & Practice — Clinical Need Identification & Workflow Discovery.  
-**Context:** Multi-stakeholder qualitative discovery for vocal biomarker screening in Parkinson's Disease (Simulated Primary Care & Movement Disorder Neurology Pathways, India).
-
----
-
-## 1. Structured Clinical Observation Logs
-
-### Observation Log OBS-001: General Medicine Outpatient Department (OPD)
-* **Setting:** Taluk Hospital / Sub-District Hospital OPD, Maharashtra, India.
-* **Date & Context:** Morning general clinic session; high patient volume (~90 patients per 4-hour OPD).
-* **Observed Process:** 
-  - Patient (Male, 64 years) presents with generalized fatigue, slow gait, and low vocal loudness ("voice getting softer and muffled" noticed by daughter).
-  - First-contact medical officer performs basic physical exam (blood pressure, pulse, neurological cranial nerve screening with tuning fork/penlight).
-  - Voice symptom is recorded in handwritten notes as "general weakness / hoarseness due to chronic cough".
-  - Patient is prescribed multivitamins and referred to ENT for laryngoscopy. No neurology referral initiated.
-* **Failure Mode / Clinical Need:** 
-  Early hypokinetic dysarthria (hypophonia and monotonic pitch) is easily confounded with normal aging or non-neurological laryngeal conditions. Primary care doctors lack a rapid, objective screening tool to quantify phonatory stability during short consultation times (<4 minutes per patient).
-
-### Observation Log OBS-002: Movement Disorder Specialty Clinic
-* **Setting:** Tertiary Teaching Hospital Neurology OPD, New Delhi, India.
-* **Observed Process:** 
-  - Neurologist evaluates confirmed Parkinson's patient (Female, 58 years, Hoehn & Yahr Stage II).
-  - Assessment relies on Movement Disorder Society Unified Parkinson's Disease Rating Scale (MDS-UPDRS Part III). Item 3.1 (Speech) is scored on a subjective 0–4 scale based on conversational clarity.
-  - Neurologist notes difficulty tracking day-to-day voice fluctuations between medication "ON" and "OFF" states.
-* **Clinician Feedback:**
-  - *"If a software tool can record a 4-second sustained vowel, check signal quality, and provide standardized acoustic metrics (jitter, shimmer, fundamental frequency variability), it would give us an objective longitudinal trendline rather than relying solely on subjective 0–4 scoring."*
+> [!NOTE]
+> **Fieldwork Authorization Notice:**
+> This template is reserved for authorized prospective clinical fieldwork. Prior to conducting live clinical observations or interviews, researchers must obtain formal Institutional Ethics Committee (IEC) / Institutional Review Board (IRB) clearance, execute written participant consent protocols, and ensure data privacy compliance.
 
 ---
 
-## 2. Stakeholder Interview Summaries
+## 1. Clinical Observation Protocol Template
 
-| Stakeholder Role | Key Clinical Insights & Unmet Needs | Design Requirements for Software |
-|---|---|---|
-| **Movement Disorder Neurologist** | Most patients present late (Hoehn & Yahr Stage II/III) when motor symptoms (resting tremor, rigidity) are obvious. Voice changes often precede motor signs by 2–5 years, but are missed. | • Must not claim diagnostic certainty.<br>• Must provide transparent, versioned acoustic metrics (F0, HNR, Jitter).<br>• Must exclude non-conforming or clipped audio. |
-| **Primary Care Physician (MBBS)** | Consultation times are constrained (3–5 minutes). Referral pathways to government neurologists have 4–6 month waiting lists; cannot refer everyone without objective rationale. | • Zero-setup software running on standard browser.<br>• Instant feedback on recording quality.<br>• Simple 1-page printable/downloadable summary for referral attachment. |
-| **Speech-Language Pathologist (SLP)** | Sustained vowel `/a/` is the ideal task because it minimizes language/dialect confounding across diverse linguistic populations in India, isolating phonatory mechanics from lexical processing. | • Strictly standardize microphone distance (~15 cm).<br>• Explicitly reject background ambient noise and reverberant recordings. |
-| **Patient & Caregiver** | Early changes in voice (loss of projection, monotony, frequent requests by family to repeat words) caused social withdrawal and anxiety before diagnosis. | • Non-intimidating test (3–5 seconds breathing and phonation).<br>• Privacy guarantee: voice recordings must not be uploaded to unverified third-party cloud servers. |
+* **Observation ID:** `OBS-[YYYYMMDD]-[###]`
+* **Clinical Site / Facility:** `[Hospital / Clinic Name, Department, City]`
+* **Observer Name & Role:** `[Observer Name, Affiliation]`
+* **Clinical Context:** `[General OPD / Movement Disorder Clinic / Telemedicine Consultation]`
+* **Duration of Encounter:** `[Total consultation time in minutes]`
+* **Patient Demographics (De-identified):**
+  * Age Bracket: `[e.g., 50–59, 60–69, 70+]`
+  * Gender: `[M / F / Other]`
+  * Clinical Presentation / Chief Complaint: `[Primary symptoms reported]`
+* **Observed Clinical Workflow:**
+  1. `[Step 1: Patient arrival and history intake]`
+  2. `[Step 2: Physical / neurological examination]`
+  3. `[Step 3: Vocal / speech assessment observations]`
+  4. `[Step 4: Clinical decision, prescription, or referral pathway]`
+* **Pain Points & Friction Observed:**
+  * Clinical bottleneck: `[e.g., time constraint, subjective assessment variability]`
+  * Diagnostic dilemma: `[e.g., distinguishing early dysarthria from presbyphonia]`
+* **Potential Role for Objective Voice Analysis:**
+  * `[Specific point in workflow where a 4-second vowel recording adds utility]`
 
 ---
 
-## 3. Needs Statement Refinement
+## 2. Stakeholder Interview Guide Template
 
-From this qualitative synthesis, the Biodesign Need Statement is refined from preliminary assumption to structured specification:
-
-> **"A standardized, privacy-preserving acoustic analysis software for primary care and community clinicians to objectively measure sustained phonatory stability in adults with suspected early vocal changes, to support timely, evidence-backed neurological referrals while preventing false reassurance and avoiding uncalibrated automated diagnoses."**
+* **Interviewee ID:** `STK-[Role]-[###]`
+* **Role Category:** `[Neurologist / Primary Care Physician / SLP / Patient / Caregiver]`
+* **Years in Practice / Experience:** `[# years]`
+* **Standard Interview Questions:**
+  1. *What are the earliest vocal or phonatory symptoms typically noticed or reported?*
+     * Response: `[Field notes]`
+  2. *How is voice currently evaluated during standard outpatient consultations?*
+     * Response: `[Field notes]`
+  3. *What are the primary barriers to objective acoustic measurement in standard practice?*
+     * Response: `[Field notes]`
+  4. *What technical feedback (e.g., duration, pitch variability, stability metrics) would be clinically interpretable?*
+     * Response: `[Field notes]`
+  5. *What privacy or operational concerns exist regarding digital voice recordings?*
+     * Response: `[Field notes]`
+* **Key Insights & Unmet Needs:**
+  * `[Synthesized design requirements]`

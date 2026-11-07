@@ -1,0 +1,38 @@
+VoxNeuro Academic Research License & Software Prototype Notice
+
+Copyright (c) 2026 TDheeraj14569 (VoxNeuro Research Project).
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to inspect,
+audit, evaluate, and reproduce the research findings for non-commercial academic,
+educational, and scientific evaluation purposes, subject to the following conditions:
+
+1. The above copyright notice, this permission notice, and the disclaimers below
+   shall be included in all copies or substantial portions of the Software.
+
+2. NON-CLINICAL / NON-DIAGNOSTIC USE ONLY:
+   THE SOFTWARE IS AN EXPERIMENTAL RESEARCH PROTOTYPE DEVELOPED FOR BIOMEDICAL
+   DESIGN AND COMPUTER SCIENCE COURSEWORK. IT IS NOT A MEDICAL DEVICE, HAS NOT
+   BEEN EVALUATED OR CLEARED BY THE US FDA, CDSCO, OR ANY EQUIVALENT REGULATORY
+   AUTHORITY, AND SHALL NOT BE USED FOR CLINICAL DIAGNOSIS, DISEASE SCREENING,
+   PATIENT TRIAGE, OR DIRECT PATIENT CARE DECISIONS.
+
+3. TRADEMARK AND INDEPENDENCE NOTICE:
+   "VoxNeuro" in this repository refers solely to an academic voice-signal research
+   software project. This project is entirely independent, separate from, and
+   unaffiliated with VoxNeuro Inc. (the commercial cognitive health assessment company).
+
+4. DATASET LICENSES:
+   Research dataset files, feature tables, and audio recordings referenced in this
+   project remain subject to their respective original publication licenses:
+   - UAMS Parkinson's Vowel Dataset: Figshare / CC BY 4.0 (DOI: 10.6084/m9.figshare.23849127.v1).
+   - UCI Machine Learning Repository Dataset #470: Creative Commons Attribution 4.0.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

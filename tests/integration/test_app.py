@@ -2,6 +2,7 @@ import shutil
 from io import BytesIO
 from pathlib import Path
 
+import numpy as np
 import soundfile as sf
 from streamlit.testing.v1 import AppTest
 
@@ -71,6 +72,9 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     app.sidebar.radio[0].set_value("Reports").run()
     assert not app.exception
     assert len(app.get("download_button")) == 3
+    assert any("Limit: ≤ 1.00%" in md.value for md in app.markdown)
+    assert any("Mono" in md.value for md in app.markdown)
+    assert any("Method &amp; Interpretation" in md.value for md in app.markdown)
 
 
 def test_app_all_navigation_sections_render_without_exceptions():
@@ -121,3 +125,24 @@ def test_app_shows_safe_empty_state_when_research_receipts_and_report_are_absent
     app.sidebar.radio[0].set_value("Reports").run()
     assert not app.exception
     assert any("Complete a successful analysis" in item.value for item in app.info)
+
+
+def test_app_stereo_upload_displays_stereo_channel_text():
+    app_path = Path(__file__).resolve().parents[2] / "app.py"
+    payload = BytesIO()
+    mono = sustained_vowel()
+    stereo = np.column_stack((mono, mono))
+    sf.write(payload, stereo, 16000, format="WAV", subtype="PCM_16")
+    app = AppTest.from_file(app_path, default_timeout=60)
+    app.session_state["voxneuro_nav"] = "Voice assessment"
+    app.run()
+    app.radio[0].set_value("Upload WAV").run()
+    app.get("file_uploader")[0].set_value(("stereo.wav", payload.getvalue(), "audio/wav")).run()
+    analyze = next(button for button in app.button if button.label == "Analyze this recording")
+    analyze.click().run()
+
+    assert not app.exception
+    assert app.session_state["voxneuro_quality"].valid
+    app.sidebar.radio[0].set_value("Reports").run()
+    assert not app.exception
+    assert any("2-ch stereo" in md.value for md in app.markdown)

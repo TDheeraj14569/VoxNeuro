@@ -22,6 +22,29 @@ class AudioValidationConfig:
     mono_policy: str = "average_with_phase_check"
     pitch_floor_hz: float = 75.0
     pitch_ceiling_hz: float = 500.0
+    min_harmonic_overtone_fraction: float = 0.005
+
+    def __post_init__(self) -> None:
+        if self.min_duration_seconds <= 0:
+            raise ValueError("min_duration_seconds must be positive.")
+        if self.max_duration_seconds <= self.min_duration_seconds:
+            raise ValueError("max_duration_seconds must be greater than min_duration_seconds.")
+        if not (0.0 <= self.min_rms <= 1.0):
+            raise ValueError("min_rms must be in range [0.0, 1.0].")
+        if not (0.0 < self.max_peak <= 1.0):
+            raise ValueError("max_peak must be in range (0.0, 1.0].")
+        if not (0.0 <= self.clipping_fraction_limit <= 1.0):
+            raise ValueError("clipping_fraction_limit must be in range [0.0, 1.0].")
+        if not (0.0 <= self.min_voiced_fraction <= 1.0):
+            raise ValueError("min_voiced_fraction must be in range [0.0, 1.0].")
+        if self.frame_ms <= 0:
+            raise ValueError("frame_ms must be a positive integer.")
+        if self.pitch_floor_hz <= 0:
+            raise ValueError("pitch_floor_hz must be positive.")
+        if self.pitch_ceiling_hz <= self.pitch_floor_hz:
+            raise ValueError("pitch_ceiling_hz must be greater than pitch_floor_hz.")
+        if not (0.0 <= self.min_harmonic_overtone_fraction <= 1.0):
+            raise ValueError("min_harmonic_overtone_fraction must be in range [0.0, 1.0].")
 
 
 @dataclass
@@ -107,6 +130,22 @@ def validate_audio(
         errors.append(
             "Too little voiced signal was detected. Use a steady sustained vowel and retry."
         )
+    elif mono.size and record.sample_rate > 0:
+        valid_f0 = frequencies[np.isfinite(frequencies) & (frequencies > 0)]
+        if len(valid_f0) > 0:
+            median_f0 = float(np.median(valid_f0))
+            fft = np.abs(np.fft.rfft(mono))
+            fft_freqs = np.fft.rfftfreq(len(mono), 1.0 / record.sample_rate)
+            total_energy = float(np.sum(fft**2))
+            if total_energy > 0:
+                overtone_energy = float(np.sum(fft[fft_freqs > 1.5 * median_f0] ** 2))
+                overtone_fraction = overtone_energy / total_energy
+                if overtone_fraction < cfg.min_harmonic_overtone_fraction:
+                    errors.append(
+                        "Signal lacks harmonic overtones expected of a human voice "
+                        "(isolated single-frequency tone or synthetic generator detected). "
+                        "Please record a natural sustained vowel /a/."
+                    )
     if record.channels == 2:
         centered = x - x.mean(axis=0, keepdims=True)
         corr = np.corrcoef(centered.T)[0, 1] if len(centered) > 1 else 1.0

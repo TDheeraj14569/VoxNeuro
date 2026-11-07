@@ -53,6 +53,22 @@ def build_pipelines(random_seed: int = 2026) -> dict[str, Pipeline]:
     }
 
 
+def _elastic_net_logistic_regression(random_seed: int = 2026) -> LogisticRegression:
+    """Build a LogisticRegression configured for elastic net across scikit-learn versions."""
+    kwargs: dict[str, object] = {
+        "solver": "saga",
+        "l1_ratio": 0.5,
+        "class_weight": "balanced",
+        "max_iter": 5000,
+        "random_state": random_seed,
+    }
+    # In scikit-learn < 1.8, l1_ratio requires penalty='elasticnet'.
+    # In scikit-learn >= 1.8, penalty is deprecated and l1_ratio alone configures elastic net.
+    if getattr(LogisticRegression(), "penalty", None) != "deprecated":
+        kwargs["penalty"] = "elasticnet"
+    return LogisticRegression(**kwargs)
+
+
 def build_nested_model_searches(random_seed: int = 2026) -> dict[str, tuple[Pipeline, dict]]:
     """Return bounded candidate grids for nested, participant-grouped CV.
 
@@ -80,16 +96,7 @@ def build_nested_model_searches(random_seed: int = 2026) -> dict[str, tuple[Pipe
             {"classifier__C": [0.01, 0.1, 1.0, 10.0, 100.0]},
         ),
         "logistic_elastic_net": (
-            pipeline(
-                scaled,
-                LogisticRegression(
-                    solver="saga",
-                    l1_ratio=0.5,
-                    class_weight="balanced",
-                    max_iter=5000,
-                    random_state=random_seed,
-                ),
-            ),
+            pipeline(scaled, _elastic_net_logistic_regression(random_seed)),
             {
                 "classifier__C": [0.1, 1.0, 10.0],
                 "classifier__l1_ratio": [0.25, 0.75],

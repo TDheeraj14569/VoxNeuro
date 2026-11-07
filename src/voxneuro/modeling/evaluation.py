@@ -127,14 +127,19 @@ def evaluate_nested_grouped(
     prespecified repeat and are conditional on those fitted outer-fold models.
     """
     raw_labels = np.asarray(y)
-    if raw_labels.dtype.kind not in "iuf" or not np.isfinite(raw_labels).all():
-        raise ValueError("Labels must contain only finite binary values coded 0 and 1.")
-    if not np.isin(raw_labels, [0, 1]).all():
-        raise ValueError("Labels must contain only binary values coded 0 and 1.")
+    if (
+        raw_labels.ndim != 1
+        or raw_labels.dtype.kind not in "iuf"
+        or not np.isfinite(raw_labels).all()
+        or not np.isin(raw_labels, [0, 1]).all()
+    ):
+        raise ValueError("Labels must contain only finite binary values: 0 and 1.")
     labels = raw_labels.astype(int)
     group_values = np.asarray(groups)
-    if not isinstance(X, pd.DataFrame) or len(X) != len(labels):
-        raise ValueError("X must be a DataFrame with one row per label.")
+    if not isinstance(X, pd.DataFrame):
+        raise ValueError("X must be a pandas DataFrame.")
+    if len(X) != len(labels):
+        raise ValueError("X and y must contain the same number of rows.")
     if bootstrap_iterations < 0:
         raise ValueError("bootstrap_iterations cannot be negative.")
     if not random_seeds or len(set(random_seeds)) != len(random_seeds):
@@ -149,6 +154,8 @@ def evaluate_nested_grouped(
             raise ValueError(f"Additional model name {name!r} conflicts with a built-in model.")
         if not isinstance(predictors, pd.DataFrame) or len(predictors) != len(labels):
             raise ValueError(f"Predictor table for {name!r} must match labels and be a DataFrame.")
+        if not predictors.index.equals(X.index):
+            raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
         if estimator is None or not hasattr(estimator, "fit") or not isinstance(grid, dict):
             raise ValueError(
                 f"Additional search for {name!r} needs an estimator and parameter grid."
@@ -350,7 +357,19 @@ def evaluate_grouped(
     lets demographic and combined-feature baselines use the identical folds without adding
     demographic columns to voice-only models.
     """
-    labels = np.asarray(y, dtype=int)
+    raw_labels = np.asarray(y)
+    if (
+        raw_labels.ndim != 1
+        or raw_labels.dtype.kind not in "iuf"
+        or not np.isfinite(raw_labels).all()
+        or not np.isin(raw_labels, [0, 1]).all()
+    ):
+        raise ValueError("Labels must contain only finite binary values: 0 and 1.")
+    labels = raw_labels.astype(int)
+    if not isinstance(X, pd.DataFrame):
+        raise ValueError("X must be a pandas DataFrame.")
+    if len(X) != len(labels):
+        raise ValueError("X and y must contain the same number of rows.")
     folds = list(grouped_splits(labels, np.asarray(groups), n_splits, random_seed))
     models = {"dummy": None, **build_pipelines(random_seed)}
     predictor_tables = {name: X for name in models}
@@ -361,6 +380,8 @@ def evaluate_grouped(
             raise ValueError(
                 f"Predictor table for {name!r} must match the row count and be a DataFrame."
             )
+        if not predictors.index.equals(X.index):
+            raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
         if estimator is None or not hasattr(estimator, "fit"):
             raise ValueError(f"Estimator for {name!r} must implement fit().")
         models[name] = estimator

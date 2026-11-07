@@ -1,26 +1,62 @@
 # VoxNeuro
 
-VoxNeuro is a local, software-only research prototype for quality-checking a sustained vowel recording, viewing the signal, and extracting versioned acoustic features. It does **not** diagnose or rule out Parkinson disease. The experimental cohort model is not exposed to new user microphone recordings because cross-domain compatibility with the telephone-collected UAMS samples has not been established.
+> [!NOTE]
+> **Academic Research Software & Independence Notice:**  
+> VoxNeuro is an independent academic software prototype developed for Biodesign Concept & Practice coursework (Voice Signal Analysis). It is completely unrelated to, separate from, and unaffiliated with VoxNeuro Inc. (the commercial cognitive health assessment company). VoxNeuro does not claim medical device status, regulatory authorization, or clinical diagnostic utility.
+
+VoxNeuro is a private, local voice-signal quality control and 39-parameter acoustic measurement research prototype. It analyzes a sustained vowel recording (`/a/`), inspects signal quality, renders interactive 3D acoustic views, and exports self-contained HTML/JSON technical reports. It does **not** diagnose or rule out Parkinson's disease. The experimental cohort model is intentionally not exposed to new user microphone recordings because cross-domain compatibility between telephone-collected research datasets and arbitrary laptop/mobile microphones has not been clinically established.
+
+---
+
+## Quick Start (Analyze a WAV in 2 minutes)
+
+```powershell
+# 1. Install dependencies
+uv sync --all-extras --locked
+
+# 2. Run analysis directly on any 16-bit WAV recording
+.\.venv\Scripts\python.exe scripts\analyze_voice.py --audio path\to\vowel.wav
+
+# 3. Or launch the interactive Streamlit workspace
+.\.venv\Scripts\streamlit.exe run app.py --server.address 127.0.0.1
+```
+
+*(On macOS/Linux, substitute `.venv/bin/python` and `.venv/bin/streamlit`)*.
+
+---
+
+## Versioning Architecture
+
+| Component | Version | Scope & Role |
+| :--- | :--- | :--- |
+| **Python Package** | `0.1.0` | Core `voxneuro` library, preprocessing, and validation pipelines (`pyproject.toml`). |
+| **Acoustic Feature Schema** | `voxneuro.voice.v3` | 39 versioned, deterministic Praat and Librosa measurement definitions. |
+| **Session Technical Report** | `0.3.0` | Individual session acoustic quality, waveform, and measurement HTML report. |
+| **Research Model Bundle** | `0.4.0-research` | Internal UAMS cross-validation cohort baseline (domain-restricted; research only). |
+
+---
 
 ## Environment
 
-The implementation targets 64-bit Windows and CPython 3.12. The checked-in `uv.lock` records exact resolved dependencies. A local managed Python can be installed with `uv python install 3.12`; no global Python install is needed.
+The implementation targets 64-bit Windows, Linux, and macOS running CPython 3.12. The checked-in `uv.lock` and `requirements-lock.txt` record exact resolved dependencies. A local managed Python can be installed with `uv python install 3.12`; no global Python install is needed.
 
-## Setup (PowerShell)
+## Setup
 
+### Windows (PowerShell)
 ```powershell
 uv python install 3.12
 uv venv --python 3.12 .venv
 uv sync --all-extras --locked
 ```
 
-If PowerShell activation is useful for interactive work:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
+### macOS / Linux (Bash)
+```bash
+uv python install 3.12
+uv venv --python 3.12 .venv
+uv sync --all-extras --locked
 ```
 
-Activation is optional; exact commands below use `.venv\Scripts\python.exe` and `.venv\Scripts\streamlit.exe` so they do not depend on shell policy. Streamlit is restricted to loopback by `.streamlit/config.toml`.
+Activation is optional; exact commands below use `.venv\Scripts\python.exe` and `.venv\Scripts\streamlit.exe` (or `.venv/bin/python` on POSIX) so they do not depend on shell execution policy. Streamlit is restricted to loopback by `.streamlit/config.toml`.
 
 ## Verify and launch
 
