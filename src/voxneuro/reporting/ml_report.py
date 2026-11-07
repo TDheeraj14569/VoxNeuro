@@ -66,6 +66,15 @@ def summarize_nested_metrics(metrics: pd.DataFrame, primary_seed: int) -> pd.Dat
                 )
         for count_name in ("tn", "fp", "fn", "tp"):
             row[count_name] = int(primary.iloc[0][count_name])
+        for outer_metric in (
+            "outer_fold_roc_auc_mean",
+            "outer_fold_roc_auc_sd",
+            "outer_fold_ap_mean",
+            "outer_fold_ap_sd",
+        ):
+            if outer_metric in subset.columns:
+                vals = pd.to_numeric(subset[outer_metric], errors="coerce").dropna()
+                row[outer_metric] = float(vals.mean()) if not vals.empty else math.nan
         rows.append(row)
     return pd.DataFrame(rows)
 

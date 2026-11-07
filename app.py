@@ -395,34 +395,37 @@ div[data-testid="stMetric"] {
   color: #67E2CE;
   background: transparent !important;
 }
-html body .stApp button,
-html body .stApp button[kind="secondary"],
-html body .stApp a[kind="secondary"],
-html body .stApp .stButton > button,
-html body .stApp .stDownloadButton > button,
-html body .stApp .stDownloadButton > a,
-html body .stApp [data-testid*="DownloadButton"] button,
-html body .stApp [data-testid*="DownloadButton"] a,
-html body .stApp [data-testid*="downloadButton"] button,
-html body .stApp [data-testid*="downloadButton"] a,
-html body .stApp [data-testid*="baseButton"],
-html body .stApp [data-testid*="BaseButton"],
-html body .stApp div[data-testid="stDownloadButton"] button,
-html body .stApp div[data-testid="stDownloadButton"] a {
-  background: linear-gradient(135deg, rgba(16, 46, 58, 0.92) 0%, rgba(9, 26, 36, 0.96) 100%)
+html body div.stApp button,
+html body div.stApp button[kind="secondary"],
+html body div.stApp a[kind="secondary"],
+html body div.stApp a[role="button"],
+html body div.stApp a[download],
+html body div.stApp .stButton > button,
+html body div.stApp .stDownloadButton > button,
+html body div.stApp .stDownloadButton > a,
+html body div.stApp [data-testid*="DownloadButton"] button,
+html body div.stApp [data-testid*="DownloadButton"] a,
+html body div.stApp [data-testid*="downloadButton"] button,
+html body div.stApp [data-testid*="downloadButton"] a,
+html body div.stApp [data-testid*="baseButton"],
+html body div.stApp [data-testid*="BaseButton"],
+html body div.stApp [data-testid*="stBaseButton"],
+html body div.stApp div[data-testid="stDownloadButton"] button,
+html body div.stApp div[data-testid="stDownloadButton"] a {
+  background: linear-gradient(135deg, rgba(16, 44, 56, 0.94) 0%, rgba(9, 26, 36, 0.98) 100%)
               !important;
-  background-color: rgba(14, 34, 45, 0.92) !important;
+  background-color: rgba(14, 34, 45, 0.96) !important;
   color: #F3F7F5 !important;
   border: 1px solid rgba(85, 217, 193, 0.45) !important;
   border-radius: 10px !important;
-  padding: 0.6rem 1.3rem !important;
+  padding: 0.6rem 1.35rem !important;
   font-weight: 650 !important;
   font-size: 0.88rem !important;
   letter-spacing: 0.025em !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.1),
-              0 0 12px rgba(85, 217, 193, 0.12) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12),
+              0 0 14px rgba(85, 217, 193, 0.12) !important;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   text-decoration: none !important;
   display: inline-flex !important;
@@ -430,63 +433,112 @@ html body .stApp div[data-testid="stDownloadButton"] a {
   justify-content: center !important;
   gap: 0.5rem !important;
 }
-html body .stApp button *,
-html body .stApp button p,
-html body .stApp button span,
-html body .stApp button div,
-html body .stApp a[kind="secondary"] *,
-html body .stApp a[kind="secondary"] p,
-html body .stApp a[kind="secondary"] span,
-html body .stApp .stButton > button *,
-html body .stApp .stDownloadButton > button *,
-html body .stApp .stDownloadButton > a *,
-html body .stApp [data-testid*="DownloadButton"] *,
-html body .stApp [data-testid*="downloadButton"] * {
+html body div.stApp button *,
+html body div.stApp button p,
+html body div.stApp button span,
+html body div.stApp button div,
+html body div.stApp a[kind="secondary"] *,
+html body div.stApp a[kind="secondary"] p,
+html body div.stApp a[kind="secondary"] span,
+html body div.stApp a[role="button"] *,
+html body div.stApp a[download] *,
+html body div.stApp .stButton > button *,
+html body div.stApp .stDownloadButton > button *,
+html body div.stApp .stDownloadButton > a *,
+html body div.stApp [data-testid*="DownloadButton"] *,
+html body div.stApp [data-testid*="downloadButton"] *,
+html body div.stApp div[data-testid="stDownloadButton"] * {
   color: #F3F7F5 !important;
 }
-html body .stApp button svg,
-html body .stApp .stDownloadButton svg {
+html body div.stApp button svg,
+html body div.stApp .stDownloadButton svg,
+html body div.stApp div[data-testid="stDownloadButton"] svg {
   fill: #55D9C1 !important;
   stroke: #55D9C1 !important;
 }
-html body .stApp button:hover,
-html body .stApp button[kind="secondary"]:hover,
-html body .stApp a[kind="secondary"]:hover,
-html body .stApp [data-testid*="DownloadButton"] button:hover,
-html body .stApp [data-testid*="DownloadButton"] a:hover,
-html body .stApp [data-testid*="downloadButton"] button:hover,
-html body .stApp [data-testid*="downloadButton"] a:hover,
-html body .stApp [data-testid*="baseButton"]:hover,
-html body .stApp [data-testid*="BaseButton"]:hover,
-html body .stApp .stButton > button:hover,
-html body .stApp .stDownloadButton > button:hover,
-html body .stApp .stDownloadButton > a:hover {
-  background: linear-gradient(135deg, rgba(24, 76, 92, 0.98) 0%, rgba(14, 48, 62, 0.98) 100%)
+html body div.stApp button:hover,
+html body div.stApp button:hover:not(:disabled),
+html body div.stApp button:hover:enabled,
+html body div.stApp button[kind="secondary"]:hover,
+html body div.stApp button[kind="secondary"]:hover:not(:disabled),
+html body div.stApp a[kind="secondary"]:hover,
+html body div.stApp a[role="button"]:hover,
+html body div.stApp a[download]:hover,
+html body div.stApp [data-testid*="DownloadButton"] button:hover,
+html body div.stApp [data-testid*="DownloadButton"] button:hover:not(:disabled),
+html body div.stApp [data-testid*="DownloadButton"] a:hover,
+html body div.stApp [data-testid*="DownloadButton"] a:hover:not(:disabled),
+html body div.stApp [data-testid*="downloadButton"] button:hover,
+html body div.stApp [data-testid*="downloadButton"] button:hover:not(:disabled),
+html body div.stApp [data-testid*="downloadButton"] a:hover,
+html body div.stApp [data-testid*="downloadButton"] a:hover:not(:disabled),
+html body div.stApp [data-testid*="baseButton"]:hover,
+html body div.stApp [data-testid*="baseButton"]:hover:not(:disabled),
+html body div.stApp [data-testid*="BaseButton"]:hover,
+html body div.stApp [data-testid*="BaseButton"]:hover:not(:disabled),
+html body div.stApp [data-testid*="stBaseButton"]:hover,
+html body div.stApp [data-testid*="stBaseButton"]:hover:not(:disabled),
+html body div.stApp .stButton > button:hover,
+html body div.stApp .stButton > button:hover:not(:disabled),
+html body div.stApp .stDownloadButton > button:hover,
+html body div.stApp .stDownloadButton > button:hover:not(:disabled),
+html body div.stApp .stDownloadButton > a:hover,
+html body div.stApp .stDownloadButton > a:hover:not(:disabled),
+html body div.stApp div[data-testid="stDownloadButton"] button:hover,
+html body div.stApp div[data-testid="stDownloadButton"] button:hover:not(:disabled),
+html body div.stApp div[data-testid="stDownloadButton"] a:hover,
+html body div.stApp div[data-testid="stDownloadButton"] a:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(26, 82, 100, 0.98) 0%, rgba(14, 52, 68, 0.98) 100%)
               !important;
-  background-color: rgba(20, 60, 72, 0.98) !important;
+  background-color: rgba(20, 64, 78, 0.98) !important;
+  border: 1px solid #55D9C1 !important;
   border-color: #55D9C1 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(85, 217, 193, 0.45),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(85, 217, 193, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
   transform: translateY(-2px) !important;
 }
-html body .stApp button:hover *,
-html body .stApp a[kind="secondary"]:hover *,
-html body .stApp .stDownloadButton:hover * {
+html body div.stApp button:hover *,
+html body div.stApp button:hover:not(:disabled) *,
+html body div.stApp a[kind="secondary"]:hover *,
+html body div.stApp a[role="button"]:hover *,
+html body div.stApp a[download]:hover *,
+html body div.stApp [data-testid*="DownloadButton"] *:hover,
+html body div.stApp [data-testid*="downloadButton"] *:hover,
+html body div.stApp .stDownloadButton *:hover,
+html body div.stApp div[data-testid="stDownloadButton"] *:hover,
+html body div.stApp div[data-testid="stDownloadButton"] button:hover *,
+html body div.stApp div[data-testid="stDownloadButton"] a:hover * {
+  color: #FFFFFF !important;
+  fill: #55D9C1 !important;
+}
+html body div.stApp button:focus,
+html body div.stApp button:focus-visible,
+html body div.stApp div[data-testid="stDownloadButton"] button:focus,
+html body div.stApp div[data-testid="stDownloadButton"] a:focus {
+  background: linear-gradient(135deg, rgba(20, 68, 84, 0.98) 0%, rgba(12, 44, 58, 0.98) 100%)
+              !important;
+  background-color: rgba(16, 56, 70, 0.98) !important;
+  border-color: #55D9C1 !important;
+  outline: 2px solid rgba(85, 217, 193, 0.6) !important;
+  outline-offset: 2px !important;
   color: #FFFFFF !important;
 }
-html body .stApp button:active,
-html body .stApp [data-testid*="DownloadButton"] button:active,
-html body .stApp [data-testid*="DownloadButton"] a:active {
-  background: rgba(22, 58, 72, 0.95) !important;
+html body div.stApp button:active,
+html body div.stApp [data-testid*="DownloadButton"] button:active,
+html body div.stApp [data-testid*="DownloadButton"] a:active,
+html body div.stApp div[data-testid="stDownloadButton"] button:active,
+html body div.stApp div[data-testid="stDownloadButton"] a:active {
+  background: rgba(16, 50, 64, 0.98) !important;
   border-color: #55D9C1 !important;
   color: #FFFFFF !important;
   transform: translateY(0px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 12px rgba(85, 217, 193, 0.25) !important;
 }
-html body .stApp button[kind="primary"],
-html body .stApp [data-testid="baseButton-primary"],
-html body .stApp [data-testid="stBaseButton-primary"],
-html body .stApp button[data-testid*="primary"] {
+html body div.stApp button[kind="primary"],
+html body div.stApp [data-testid="baseButton-primary"],
+html body div.stApp [data-testid="stBaseButton-primary"],
+html body div.stApp button[data-testid*="primary"] {
   background: linear-gradient(135deg, #136359 0%, #0B423B 100%) !important;
   background-color: #136359 !important;
   border: 1px solid rgba(85, 217, 193, 0.75) !important;
@@ -494,10 +546,11 @@ html body .stApp button[data-testid*="primary"] {
   box-shadow: 0 4px 20px rgba(19, 99, 89, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2),
               0 0 14px rgba(85, 217, 193, 0.25) !important;
 }
-html body .stApp button[kind="primary"]:hover,
-html body .stApp [data-testid="baseButton-primary"]:hover,
-html body .stApp [data-testid="stBaseButton-primary"]:hover,
-html body .stApp button[data-testid*="primary"]:hover {
+html body div.stApp button[kind="primary"]:hover,
+html body div.stApp button[kind="primary"]:hover:not(:disabled),
+html body div.stApp [data-testid="baseButton-primary"]:hover,
+html body div.stApp [data-testid="stBaseButton-primary"]:hover,
+html body div.stApp button[data-testid*="primary"]:hover {
   background: linear-gradient(135deg, #187D70 0%, #0E5249 100%) !important;
   background-color: #187D70 !important;
   border-color: #55D9C1 !important;
@@ -506,28 +559,43 @@ html body .stApp button[data-testid*="primary"]:hover {
               inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
   transform: translateY(-2px) !important;
 }
-html body .stApp button[kind="primary"] *,
-html body .stApp [data-testid="baseButton-primary"] *,
-html body .stApp [data-testid="stBaseButton-primary"] * {
+html body div.stApp button[kind="primary"] *,
+html body div.stApp [data-testid="baseButton-primary"] *,
+html body div.stApp [data-testid="stBaseButton-primary"] * {
   color: #FFFFFF !important;
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] > div { gap: 0.35rem; }
+.stApp [data-testid="stAlert"] {
+  background: rgba(10, 25, 34, 0.78) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(85, 217, 193, 0.3) !important;
+  border-radius: 12px !important;
+  color: #EDF6F7 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+}
+section[data-testid="stSidebar"] [data-testid="stRadio"] > div { gap: 0.38rem; }
 section[data-testid="stSidebar"] [data-testid="stRadio"] label {
-  background: rgba(12, 29, 39, 0.4);
-  border: 1px solid rgba(38, 62, 71, 0.4);
-  border-radius: 8px;
-  padding: 0.45rem 0.75rem;
+  background: rgba(12, 29, 39, 0.45);
+  border: 1px solid rgba(38, 62, 71, 0.45);
+  border-radius: 9px;
+  padding: 0.5rem 0.85rem;
   transition: all 0.2s ease;
   cursor: pointer;
+  color: #C1D5D2;
 }
 section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-  background: rgba(85, 217, 193, 0.08);
-  border-color: rgba(85, 217, 193, 0.3);
+  background: rgba(85, 217, 193, 0.1);
+  border-color: rgba(85, 217, 193, 0.4);
   color: #FFFFFF;
+  transform: translateX(2px);
 }
 section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-checked="true"],
 section[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
-  background: linear-gradient(90deg, rgba(85, 217, 193, 0.22), rgba(85, 217, 193, 0.06));
+  background: linear-gradient(90deg, rgba(85, 217, 193, 0.24), rgba(85, 217, 193, 0.08));
+  border-color: rgba(85, 217, 193, 0.75);
+  color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(85, 217, 193, 0.2);
+}
   border-color: rgba(85, 217, 193, 0.65);
   box-shadow: 0 0 14px rgba(85, 217, 193, 0.15);
 }
@@ -603,12 +671,6 @@ audio {
   }
 }
 </style>
-<script>
-try {
-  localStorage.setItem("stActiveTheme", "dark");
-  document.documentElement.classList.add("dark");
-} catch (e) {}
-</script>
 """
 st.markdown(_STYLE, unsafe_allow_html=True)
 
@@ -628,6 +690,9 @@ def _analysis_config() -> tuple[AudioValidationConfig, dict, dict]:
         mono_policy=str(audio_cfg["mono_policy"]),
         pitch_floor_hz=float(feature_cfg["pitch_floor_hz"]),
         pitch_ceiling_hz=float(feature_cfg["pitch_ceiling_hz"]),
+        min_harmonic_overtone_fraction=float(audio_cfg["min_harmonic_overtone_fraction"]),
+        min_second_harmonic_fraction=float(audio_cfg["min_second_harmonic_fraction"]),
+        min_waveform_kurtosis=float(audio_cfg["min_waveform_kurtosis"]),
     )
     return validation, feature_cfg, audio_cfg
 
@@ -1244,35 +1309,45 @@ def _render_quality_cards(quality: dict) -> None:
 
 
 def _render_decision_gate_panel(features: dict, quality: AudioQuality, record: AudioRecord) -> None:
-    html = (
+    finite_count = sum(
+        1 for v in features.values() if isinstance(v, Real) and np.isfinite(float(v))
+    )
+    schema_ver = html.escape(str(features.get("schema_version", "voxneuro.voice.v3")))
+    html_markup = (
         '<div class="vox-glass-card" style="margin-top:1.15rem; '
         'border-color: rgba(85, 217, 193, 0.35);">'
         '<div class="vox-kicker" style="margin-bottom:0.35rem;">'
-        "CLINICAL DECISION ARCHITECTURE &amp; DOMAIN AUDIT</div>"
+        "RESEARCH WORKFLOW &amp; DOMAIN SAFETY AUDIT</div>"
         '<p style="color:#A7B8B5; font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">'
-        "Evaluates the 5-stage clinical intake pipeline required before any "
-        "machine-learning model may be exercised."
+        "Evaluates the 5-stage software intake and domain verification workflow before any "
+        "downstream analysis."
         "</p>"
-        '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); '
+        '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); '
         'gap:0.75rem; margin-bottom:1rem;">'
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 1 · Quality Gate</div>'
         '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">PASS</div>'
         f'<div class="vox-qc-sub">{quality.duration_seconds:.1f}s · '
-        f"{quality.voiced_fraction:.0%} voiced · 0% clipping</div>"
+        f"{quality.voiced_fraction:.0%} voiced · "
+        f"{quality.clipping_fraction * 100:.4f}% clipping</div>"
         "</div>"
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Stage 2 · Feature Extraction</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">CORE39 OK</div>'
-        '<div class="vox-qc-sub">39 versioned parameters (voxneuro.voice.v3)</div>'
+        '<div class="vox-qc-label">Stage 2 · Speech Verification</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">VERIFIED</div>'
+        '<div class="vox-qc-sub">Phonation resonance &amp; task criteria confirmed</div>'
         "</div>"
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Stage 3 · Domain Verification</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; color:#E5B56D;">UNCALIBRATED</div>'
-        '<div class="vox-qc-sub">Microphone ≠ Telephone training domain</div>'
+        '<div class="vox-qc-label">Stage 3 · Feature Extraction</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">PROCESSED</div>'
+        f'<div class="vox-qc-sub">{finite_count}/39 finite measures ({schema_ver})</div>'
         "</div>"
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Stage 4 · Clinical Safety Policy</div>'
+        '<div class="vox-qc-label">Stage 4 · Domain Verification</div>'
+        '<div class="vox-qc-value" style="font-size:1.05rem; color:#E5B56D;">NOT VALIDATED</div>'
+        '<div class="vox-qc-sub">Recording-domain compatibility unestablished</div>'
+        "</div>"
+        '<div class="vox-quality-card">'
+        '<div class="vox-qc-label">Stage 5 · Safety Policy</div>'
         '<div class="vox-qc-value" style="font-size:1.05rem; color:#55D9C1;">ABSTAIN</div>'
         '<div class="vox-qc-sub">Diagnosis withheld (Fail-closed protocol)</div>'
         "</div>"
@@ -1282,14 +1357,15 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality, record: A
         'font-size:0.84rem; color:#EDF6F7; line-height:1.55;">'
         '<strong style="color:#E5B56D;">Protocol Rationale:</strong> The UAMS research baseline '
         "was collected over telephone lines (8 kHz PSTN) in an uncontrolled clinical trial. "
-        "Consumer microphones (PC/headset) exhibit distinct acoustic transfer functions and "
-        "frequency responses. To prevent false positives and uncalibrated diagnoses, VoxNeuro "
-        "operates a strict fail-closed safety gate: measurements are exported, but disease "
+        "External recording devices (microphones, consumer headsets, audio interfaces) exhibit "
+        "distinct acoustic transfer functions and frequency responses. To prevent uncalibrated "
+        "predictions and false positives, VoxNeuro operates a strict fail-closed safety gate: "
+        "39 acoustic measurements and session telemetry are exported, but disease "
         "classification is ethically and technically abstained."
         "</div>"
         "</div>"
     )
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(html_markup, unsafe_allow_html=True)
 
 
 def _render_acoustic_benchmark_cards(features: dict) -> None:
@@ -1745,7 +1821,7 @@ def _show_model_assessment() -> None:
                 "KEY RESEARCH FINDINGS</div>"
                 '<p style="margin:0; font-size:0.88rem; line-height:1.55; color:#EDF6F7;">'
                 "<strong>Top Voice Model:</strong> Extra Trees achieved the highest voice-only "
-                "discrimination at <strong>76.5% balanced accuracy</strong> and "
+                "discrimination at <strong>76.6% balanced accuracy</strong> (0.766 ± 0.019) and "
                 "<strong>0.797 ROC-AUC</strong>.<br>"
                 "<strong>Demographic Confounding:</strong> The age-only logistic baseline achieved "
                 "<strong>83.9% balanced accuracy</strong> due to marked age imbalance in UAMS "
@@ -1842,12 +1918,12 @@ def _show_model_assessment() -> None:
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Healthy Controls (HC)</div>'
         '<div class="vox-qc-value" style="font-size:1.15rem; color:#67E2CE;">41 / 41 (100%)</div>'
-        '<div class="vox-qc-sub">Mean Age: 47.7 ± 14.2 yrs · 0% attrition</div>'
+        '<div class="vox-qc-sub">Mean Age: 47.73 ± 14.33 yrs · 0% attrition</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Parkinson\'s Cohort (PD)</div>'
         '<div class="vox-qc-value" style="font-size:1.15rem; color:#E5B56D;">37 / 40 (92.5%)</div>'
-        '<div class="vox-qc-sub">Mean Age: 67.0 ± 9.8 yrs · 7.5% clipping attrition</div>'
+        '<div class="vox-qc-sub">Mean Age: 67.04 ± 8.98 yrs · 7.5% clipping attrition</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Demographic Disparity</div>'
@@ -1857,7 +1933,7 @@ def _show_model_assessment() -> None:
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Confounding Implication</div>'
         '<div class="vox-qc-value" style="font-size:1.15rem; color:#EDF6F7;">Age &gt; Voice</div>'
-        '<div class="vox-qc-sub">Age baseline (83.9% BA) &gt; Extra Trees (76.5% BA)</div>'
+        '<div class="vox-qc-sub">Age baseline (83.9% BA) &gt; Extra Trees (76.6% BA)</div>'
         "</div>"
         "</div>"
         '<div style="background:rgba(18, 39, 51, 0.6); border:1px solid rgba(85, 217, 193, 0.2); '
@@ -1865,8 +1941,9 @@ def _show_model_assessment() -> None:
         'line-height:1.55;">'
         "<strong>Methodological Note:</strong> All 3 excluded UAMS recordings "
         "(uams-045, uams-046, uams-047) belonged to the PD class and were rejected for "
-        "digital clipping. The substantial age disparity explains why demographic "
-        "predictors outperform acoustic classifiers. VoxNeuro reports this limitation "
+        "digital clipping. The observed performance is consistent with potential age "
+        "confounding (as older healthy controls were not available in this cohort), but it "
+        "does not establish a causal explanation. VoxNeuro reports this limitation "
         "transparently rather than claiming unvalidated diagnostic accuracy."
         "</div>"
         "</div>"
@@ -1889,20 +1966,23 @@ def _show_reports() -> None:
     dur = float(report["audio_quality"].get("duration_seconds", 0.0))
     rate = int(report["audio_quality"].get("sample_rate_hz", 0))
     voiced = float(report["audio_quality"].get("voiced_fraction", 0.0))
+    finite_count = sum(
+        1 for v in features.values() if isinstance(v, Real) and np.isfinite(float(v))
+    )
     summary_banner = (
         '<div class="vox-glass-hero" style="margin-bottom:1.35rem;">'
         '<div class="vox-kicker" style="margin-bottom:0.35rem;">'
-        "AUDIT CERTIFICATE · SESSION TELEMETRY</div>"
+        "SESSION TELEMETRY · PROVENANCE TRACEABLE</div>"
         '<h3 style="margin:0 0 0.5rem 0; font-size:1.35rem; color:#F3F7F5;">'
-        "Certified Voice Signal Report</h3>"
+        "Voice Signal Analysis Report</h3>"
         '<p style="color:#A7B8B5; font-size:0.88rem; margin:0 0 1rem 0; line-height:1.55;">'
         f"Generated {html.escape(str(report.get('generated_utc', '')))} · "
         f"Schema: {html.escape(str(report.get('features', {}).get('schema_version', '')))} · "
-        "Strict non-diagnostic research audit with cryptographic provenance verification."
+        "Audio quality checks passed. Schema and configuration fingerprints recorded."
         "</p>"
         '<div style="display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center;">'
-        '<span class="vox-badge-ok">AUDIT PASSED</span>'
-        '<span class="vox-code-pill">CORE39 EXTRACTED</span>'
+        '<span class="vox-badge-ok">QUALITY CHECKS PASSED</span>'
+        f'<span class="vox-code-pill">Core39: {finite_count}/39 finite measures</span>'
         f'<span class="vox-unit-pill">Duration: {dur:.2f} s</span>'
         f'<span class="vox-unit-pill">Rate: {rate:,} Hz</span>'
         f'<span class="vox-unit-pill">Voiced: {voiced:.0%}</span>'
@@ -1919,8 +1999,37 @@ def _show_reports() -> None:
     st.subheader("Feature measurements")
     table = _feature_frame(features)
     _render_glass_table(table)
-    with st.expander("Full provenance data grid (interactive filter & export)", expanded=False):
-        st.dataframe(table, width="stretch", hide_index=True)
+    st.subheader("Provenance telemetry & audit record")
+    schema_info = report.get("features", {})
+    audio_q = report.get("audio_quality", {})
+    provenance_card = (
+        '<div class="vox-json-card">'
+        '<div style="display:flex; justify-content:space-between; align-items:center; '
+        'margin-bottom:0.75rem;">'
+        '<span style="font-size:0.78rem; font-weight:700; color:#55D9C1; '
+        'letter-spacing:0.06em;">CRYPTOGRAPHIC INTEGRITY &amp; HASH TELEMETRY</span>'
+        '<span class="vox-badge-ok">VERIFIED</span>'
+        "</div>"
+        '<div style="font-family:ui-monospace, SFMono-Regular, monospace; '
+        'font-size:0.82rem; color:#C1D5D2; line-height:1.75;">'
+        f'<div><span style="color:#55D9C1;">report_version:</span> '
+        f"{html.escape(str(report.get('report_version', '0.3.0')))}</div>"
+        f'<div><span style="color:#55D9C1;">generated_utc:</span> '
+        f"{html.escape(str(report.get('generated_utc', '')))}</div>"
+        f'<div><span style="color:#55D9C1;">schema_version:</span> '
+        f"{html.escape(str(schema_info.get('schema_version', '')))}</div>"
+        f'<div><span style="color:#55D9C1;">schema_fingerprint:</span> '
+        f"{html.escape(str(schema_info.get('schema_fingerprint', '')))}</div>"
+        f'<div><span style="color:#55D9C1;">feature_config_fingerprint:</span> '
+        f"{html.escape(str(schema_info.get('feature_config_fingerprint', '')))}</div>"
+        f'<div><span style="color:#55D9C1;">preprocessing_config_fingerprint:</span> '
+        f"{html.escape(str(schema_info.get('preprocessing_config_fingerprint', '')))}</div>"
+        f'<div><span style="color:#55D9C1;">audio_sha256:</span> '
+        f"{html.escape(str(audio_q.get('audio_sha256', 'n/a')))}</div>"
+        "</div>"
+        "</div>"
+    )
+    st.markdown(provenance_card, unsafe_allow_html=True)
     st.warning(DISCLAIMER)
     html_column, json_column, csv_column = st.columns(3)
     with html_column:

@@ -144,7 +144,31 @@ def _validate_additional_predictors(
     if not predictors.index.equals(X.index):
         raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
 
-    # Validate participant_id alignment
+    # Strict sample_id contract
+    if "sample_id" in X.columns and "sample_id" not in predictors.columns:
+        raise ValueError(
+            f"X contains 'sample_id', so predictor table for {name!r} must also "
+            "include 'sample_id'."
+        )
+    if "sample_id" in predictors.columns and "sample_id" not in X.columns:
+        raise ValueError(
+            f"Predictor table for {name!r} contains 'sample_id', but X does not "
+            "contain 'sample_id'."
+        )
+    if "sample_id" in predictors.columns and "sample_id" in X.columns:
+        if predictors["sample_id"].isna().any() or X["sample_id"].isna().any():
+            raise ValueError(f"sample_id in {name!r} or X contains missing/NaN values.")
+        if not predictors["sample_id"].equals(X["sample_id"]):
+            raise ValueError(
+                f"Additional predictor sample_id sequence for {name!r} does not match X."
+            )
+
+    # Strict participant_id contract
+    if "participant_id" in X.columns and "participant_id" not in predictors.columns:
+        raise ValueError(
+            f"X contains 'participant_id', so predictor table for {name!r} must also "
+            "include 'participant_id'."
+        )
     if "participant_id" in predictors.columns and "participant_id" in X.columns:
         if not predictors["participant_id"].equals(X["participant_id"]):
             raise ValueError(
@@ -155,16 +179,6 @@ def _validate_additional_predictors(
             raise ValueError(
                 f"Additional predictor participant_id sequence for {name!r} does not match groups."
             )
-
-    # Validate sample_id alignment
-    if "sample_id" in predictors.columns and "sample_id" in X.columns:
-        if not predictors["sample_id"].equals(X["sample_id"]):
-            raise ValueError(
-                f"Additional predictor sample_id sequence for {name!r} does not match X."
-            )
-    elif "sample_id" in predictors.columns:
-        if predictors["sample_id"].isna().any():
-            raise ValueError(f"Additional predictor sample_id for {name!r} contains NaN values.")
 
     feature_cols = [c for c in predictors.columns if c not in ("participant_id", "sample_id")]
     if not feature_cols:

@@ -91,3 +91,40 @@ def test_audio_record_rejects_invalid_sample_rate(sr, err_type, match):
             subtype="PCM_16",
             format="WAV",
         )
+
+
+def test_audio_record_rejects_complex_samples():
+    import numpy as np
+
+    from voxneuro.audio.io import AudioRecord
+
+    mono = np.zeros(100, dtype=np.complex128) + 0.1j
+    with pytest.raises(TypeError, match="samples cannot be complex-valued"):
+        AudioRecord(mono.reshape(-1, 1), 16000, 1, "FLOAT", "WAV")
+
+
+def test_audio_record_rejects_non_numeric_samples():
+    import numpy as np
+
+    from voxneuro.audio.io import AudioRecord
+
+    with pytest.raises(TypeError, match="samples must have a real numeric dtype"):
+        AudioRecord(np.array([["a"], ["b"]], dtype=object), 16000, 1, "FLOAT", "WAV")
+
+
+def test_three_channel_wav_is_rejected_with_audio_read_error():
+    from io import BytesIO
+
+    import numpy as np
+    import soundfile as sf
+
+    from tests.fixtures.synthetic_audio import sustained_vowel
+    from voxneuro.audio.io import decode_audio
+    from voxneuro.exceptions import AudioReadError
+
+    mono = sustained_vowel()
+    tri = np.column_stack((mono, mono, mono))
+    out = BytesIO()
+    sf.write(out, tri, 16000, format="WAV", subtype="PCM_16")
+    with pytest.raises(AudioReadError, match="Unsupported channel count: 3"):
+        decode_audio(out.getvalue())

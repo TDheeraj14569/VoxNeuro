@@ -56,9 +56,9 @@ def preprocess_audio(
         isinstance(silence_relative_db, bool)
         or not isinstance(silence_relative_db, (int, float))
         or not math.isfinite(silence_relative_db)
-        or not (0.0 <= float(silence_relative_db) <= 100.0)
+        or not (0.0 < float(silence_relative_db) <= 100.0)
     ):
-        raise ValueError("silence_relative_db must be a finite number between 0.0 and 100.0 dB.")
+        raise ValueError("silence_relative_db must be a finite positive number in (0.0, 100.0] dB.")
     if mono_policy != "average_with_phase_check":
         raise ValueError(f"Unsupported mono conversion policy: {mono_policy!r}.")
     original = record.samples

@@ -267,9 +267,9 @@ def test_elastic_net_candidate_configures_l1_ratio_correctly():
 
 def test_evaluation_rejects_identifier_only_predictor_tables():
     voice, y, groups = binary_groups(10, 2)
-    id_only = pd.DataFrame(
-        {"participant_id": groups, "sample_id": [f"s_{i}" for i in range(len(groups))]}
-    )
+    sample_ids = [f"s_{i}" for i in range(len(groups))]
+    voice = voice.assign(sample_id=sample_ids)
+    id_only = pd.DataFrame({"participant_id": groups, "sample_id": sample_ids})
     pipeline = Pipeline(
         [
             ("imputer", SimpleImputer(strategy="median")),
@@ -301,4 +301,76 @@ def test_nested_evaluation_rejects_invalid_bootstrap_iterations(invalid_iter):
             inner_splits=2,
             random_seeds=(42,),
             bootstrap_iterations=invalid_iter,
+        )
+
+
+def test_additional_predictors_strict_sample_id_contract():
+    X, y, groups = binary_groups(10, 2)
+    sample_ids = [f"s_{i}" for i in range(len(groups))]
+    X_with_id = X.assign(sample_id=sample_ids)
+    pred_without_id = pd.DataFrame({"feat_demo": np.random.randn(len(groups))})
+    pipeline = Pipeline([("clf", LogisticRegression())])
+
+    # X has sample_id, predictors does not
+    with pytest.raises(ValueError, match="must also include 'sample_id'"):
+        evaluate_grouped(
+            X_with_id,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (pred_without_id, pipeline)},
+        )
+
+    # Predictors has sample_id, X does not
+    pred_with_id = pred_without_id.assign(sample_id=sample_ids)
+    with pytest.raises(ValueError, match="contains 'sample_id', but X does not"):
+        evaluate_grouped(
+            X,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (pred_with_id, pipeline)},
+        )
+
+    # Swapped sample_id sequence between X and predictors
+    swapped_ids = list(sample_ids)
+    swapped_ids[0], swapped_ids[1] = swapped_ids[1], swapped_ids[0]
+    pred_swapped = pred_without_id.assign(sample_id=swapped_ids)
+    with pytest.raises(ValueError, match="sample_id sequence for 'demo' does not match X"):
+        evaluate_grouped(
+            X_with_id,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (pred_swapped, pipeline)},
+        )
+
+
+def test_additional_predictors_strict_participant_id_contract():
+    X, y, groups = binary_groups(10, 2)
+    X_with_pid = X.assign(participant_id=groups)
+    pred_without_pid = pd.DataFrame({"feat_demo": np.random.randn(len(groups))})
+    pipeline = Pipeline([("clf", LogisticRegression())])
+
+    # X has participant_id, predictors does not
+    with pytest.raises(ValueError, match="must also include 'participant_id'"):
+        evaluate_grouped(
+            X_with_pid,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (pred_without_pid, pipeline)},
+        )
+
+    # Swapped participant_id sequence
+    swapped_groups = np.copy(groups)
+    swapped_groups[0], swapped_groups[-1] = swapped_groups[-1], swapped_groups[0]
+    pred_swapped_pid = pred_without_pid.assign(participant_id=swapped_groups)
+    with pytest.raises(ValueError, match="participant_id sequence for 'demo' does not match"):
+        evaluate_grouped(
+            X_with_pid,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (pred_swapped_pid, pipeline)},
         )

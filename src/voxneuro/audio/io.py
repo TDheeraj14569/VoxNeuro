@@ -42,6 +42,14 @@ class AudioRecord:
             raise TypeError("subtype must be a non-empty string.")
         if not isinstance(self.format, str) or not self.format.strip():
             raise TypeError("format must be a non-empty string.")
+        try:
+            arr = np.asarray(self.samples)
+        except (TypeError, ValueError) as exc:
+            raise TypeError(f"samples must be a valid array: {exc}") from exc
+        if np.iscomplexobj(arr) or np.issubdtype(arr.dtype, np.complexfloating):
+            raise TypeError("samples cannot be complex-valued.")
+        if not np.issubdtype(arr.dtype, np.number):
+            raise TypeError(f"samples must have a real numeric dtype, got {arr.dtype}.")
 
     @property
     def duration_seconds(self) -> float:
@@ -69,10 +77,16 @@ def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:
     # still a RIFF/WAVE container and is used by the public UAMS recordings.
     if str(info.format).upper() not in {"WAV", "WAVEX"}:
         raise AudioReadError("Unsupported audio container. Upload a WAV file.")
+    channels = int(raw.shape[1])
+    if channels not in (1, 2):
+        raise AudioReadError(
+            f"Unsupported channel count: {channels}. Only mono (1) and stereo (2) "
+            "WAV files are supported."
+        )
     return AudioRecord(
         samples=np.asarray(raw),
         sample_rate=int(sample_rate),
-        channels=int(raw.shape[1]),
+        channels=channels,
         subtype=str(info.subtype),
         format=str(info.format),
     )

@@ -3,6 +3,18 @@
 **Date:** 2026-11-06 to 2026-11-07  
 **Workspace:** Local project root
 
+## Audit findings & UI glassy redesign resolution (2026-11-07)
+
+- **UI & Hover Redesign:** Eliminated all white button hover and focus artifacts across the application using high-specificity CSS (`html body div.stApp button:hover:not(:disabled)`). Buttons now feature dark-glass gradients (`rgba(26, 82, 100, 0.98)`), glowing emerald borders (`#55D9C1`), crisp white text, and smooth elevation.
+- **Dark Glass Tables:** Applied uniform glassmorphism (`backdrop-filter: blur(20px)`, dark-teal gradients, glowing borders, uppercase headers, zebra striping, and interactive row highlight) across all 7 sections (`Overview`, `Voice assessment`, `Signal analysis`, `Feature analysis`, `Research model`, `Reports`, `Method & privacy`).
+- **Reports Overhaul:** Completely resolved report visibility issues by replacing raw JSON displays and canvas dataframes with executive telemetry cards, the full 39-feature glass table, structured cryptographic hash verification, and prominent download buttons (HTML, JSON, CSV).
+- **Clipping Display Correction:** Replaced hardcoded "0% clipping" in the decision panel with actual measured clipping percentages (`{quality.clipping_fraction * 100:.4f}% clipping`).
+- **Safety Terminology Alignment:** Replaced unsupported "AUDIT CERTIFICATE" and "cryptographic provenance verification" claims with accurate research wording: "VOICE SIGNAL ANALYSIS REPORT", "Audio quality checks passed", and "Schema and configuration fingerprints recorded".
+- **Strict Predictor Identity Contracts:** Enforced 1-to-1 matching for `sample_id` and `participant_id` between $X$ and additional predictors in `evaluate_grouped()`, rejecting one-sided presence and sequence mismatches.
+- **Audio Validation Hardening:** Rejected complex-valued, object, and boolean audio arrays with structured errors (`Audio samples must contain real numeric values.`). Validated sample rates independently in `AudioRecord.__post_init__()` and rejected 3-channel WAVs with `AudioReadError`.
+- **Harmonic Screening Reframing:** Reframed synthetic generator checks as acoustic task screening criteria. Added configurable thresholds to `audio_config.yaml`.
+- **Test Suite & Receipts:** Full suite expanded to **247 passed tests** (239 unit/pipeline tests and 8 Streamlit AppTests) with **87.12% statement coverage**. Regenerated model receipts, model bundle, and deterministic audit archives.
+
 ## Findings fixed
 
 - Canonicalized recording domains and rejected microphone aliases before compatibility checks. Non-string domains now produce a controlled compatibility error.

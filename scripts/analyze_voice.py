@@ -34,6 +34,9 @@ def _analysis_config() -> tuple[AudioValidationConfig, dict, dict]:
         mono_policy=str(audio_config["mono_policy"]),
         pitch_floor_hz=float(feature_config["pitch_floor_hz"]),
         pitch_ceiling_hz=float(feature_config["pitch_ceiling_hz"]),
+        min_harmonic_overtone_fraction=float(audio_config["min_harmonic_overtone_fraction"]),
+        min_second_harmonic_fraction=float(audio_config["min_second_harmonic_fraction"]),
+        min_waveform_kurtosis=float(audio_config["min_waveform_kurtosis"]),
     )
     return validation, feature_config, audio_config
 

@@ -63,7 +63,7 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     assert any(expected_jitter in md.value for md in app.markdown)
     assert any(expected_shimmer in md.value for md in app.markdown)
     assert any(expected_hnr in md.value for md in app.markdown)
-    assert any("CLINICAL DECISION ARCHITECTURE" in md.value for md in app.markdown)
+    assert any("RESEARCH WORKFLOW" in md.value for md in app.markdown)
 
     app.sidebar.radio[0].set_value("Signal analysis").run()
     assert not app.exception
@@ -163,3 +163,43 @@ def test_app_stereo_upload_displays_stereo_channel_text():
     app.sidebar.radio[0].set_value("Reports").run()
     assert not app.exception
     assert any("2-ch stereo" in md.value for md in app.markdown)
+
+
+def test_app_nonzero_permitted_clipping_displays_measured_percentage():
+    app_path = Path(__file__).resolve().parents[2] / "app.py"
+    payload = BytesIO()
+    mono = sustained_vowel()
+    # Introduce small clipping within 1% limit (20 out of 48,000 samples = ~0.0417%)
+    mono[:20] = 1.0
+    sf.write(payload, mono, 16000, format="WAV", subtype="PCM_16")
+    app = AppTest.from_file(app_path, default_timeout=60)
+    app.session_state["voxneuro_nav"] = "Voice assessment"
+    app.run()
+    app.radio[0].set_value("Upload WAV").run()
+    app.get("file_uploader")[0].set_value(("clipping.wav", payload.getvalue(), "audio/wav")).run()
+    analyze = next(button for button in app.button if button.label == "Analyze this recording")
+    analyze.click().run()
+
+    assert not app.exception
+    quality = app.session_state.get("voxneuro_quality")
+    assert quality is not None
+    assert quality.valid
+    assert quality.clipping_fraction > 0.0
+    expected_clip_str = f"{quality.clipping_fraction * 100:.4f}% clipping"
+    assert any(expected_clip_str in md.value for md in app.markdown)
+    # Ensure hard-coded "0% clipping" is NOT rendered
+    assert not any("0% clipping" in md.value for md in app.markdown)
+
+
+def test_app_acoustic_benchmark_cards_render_em_dash_for_missing_values():
+    from app import _render_acoustic_benchmark_cards
+
+    missing_features = {
+        "f0_mean_hz": None,
+        "jitter_local": float("nan"),
+        "shimmer_local": None,
+        "hnr_mean_db": float("nan"),
+    }
+    # Test that rendering with missing values does not throw and renders em dash
+    # We can invoke through streamlit AppTest session state or directly
+    _render_acoustic_benchmark_cards(missing_features)

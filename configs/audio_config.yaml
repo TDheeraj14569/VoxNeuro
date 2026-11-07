@@ -8,5 +8,8 @@ clipping_fraction_limit: 0.01
 silence_relative_db: 35.0
 frame_ms: 20
 min_voiced_fraction: 0.15
+min_harmonic_overtone_fraction: 0.005
+min_second_harmonic_fraction: 0.002
+min_waveform_kurtosis: 1.15
 mono_policy: average_with_phase_check
 

@@ -113,7 +113,30 @@ def validate_audio(
             f"and {MAX_SUPPORTED_SAMPLE_RATE} Hz."
         )
         return AudioQuality(valid=False, errors=errors, warnings=warnings)
-    x = np.asarray(record.samples, dtype=np.float64)
+    try:
+        raw = np.asarray(record.samples)
+    except (TypeError, ValueError):
+        return AudioQuality(
+            valid=False,
+            errors=["Audio samples must form a rectangular numeric array."],
+        )
+    if (
+        isinstance(raw, bool)
+        or raw.dtype == bool
+        or not np.issubdtype(raw.dtype, np.number)
+        or np.issubdtype(raw.dtype, np.complexfloating)
+    ):
+        return AudioQuality(
+            valid=False,
+            errors=["Audio samples must contain real numeric values."],
+        )
+    try:
+        x = raw.astype(np.float64, copy=False)
+    except (TypeError, ValueError):
+        return AudioQuality(
+            valid=False,
+            errors=["Audio samples must form a rectangular numeric array."],
+        )
     if cfg.mono_policy != "average_with_phase_check":
         errors.append(f"Unsupported mono conversion policy: {cfg.mono_policy!r}.")
     if x.ndim != 2 or x.shape[1] not in (1, 2):
@@ -193,9 +216,8 @@ def validate_audio(
                 overtone_fraction = overtone_energy / total_energy
                 if overtone_fraction < cfg.min_harmonic_overtone_fraction:
                     errors.append(
-                        "Signal lacks harmonic overtones expected of a human voice "
-                        "(isolated single-frequency tone or synthetic generator detected). "
-                        "Please record a natural sustained vowel /a/."
+                        "Configured harmonic criteria not met: signal lacks harmonic overtones "
+                        "expected of a phonated vowel. Please record a steady sustained vowel /a/."
                     )
                 else:
                     h2_mask = (fft_freqs >= 1.8 * median_f0) & (fft_freqs <= 2.2 * median_f0)
@@ -210,9 +232,9 @@ def validate_audio(
                         overtone_fraction > 0.05 and h2_fraction < cfg.min_second_harmonic_fraction
                     ) or (kurtosis < cfg.min_waveform_kurtosis and len(mono) > 500):
                         errors.append(
-                            "Signal exhibits unnatural harmonic distribution or flat rail dynamics "
-                            "lacking human vocal resonances (e.g. synthetic waveform). "
-                            "Please record a natural sustained vowel /a/."
+                            "Configured harmonic criteria not met: acoustic resonance "
+                            "distribution outside expected vocal range. Please record a "
+                            "steady sustained vowel /a/."
                         )
     if record.channels == 2:
         centered = x - x.mean(axis=0, keepdims=True)

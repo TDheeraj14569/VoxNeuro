@@ -25,6 +25,9 @@ _CONFIG_KEYS: dict[str, set[str]] = {
         "silence_relative_db",
         "frame_ms",
         "min_voiced_fraction",
+        "min_harmonic_overtone_fraction",
+        "min_second_harmonic_fraction",
+        "min_waveform_kurtosis",
         "mono_policy",
     },
     "feature_config.yaml": {
@@ -123,6 +126,21 @@ def _validate_config(name: str, value: dict[str, Any]) -> None:
             strict_minimum=True,
         )
         _require_number(value["min_voiced_fraction"], "min_voiced_fraction", minimum=0, maximum=1)
+        _require_number(
+            value["min_harmonic_overtone_fraction"],
+            "min_harmonic_overtone_fraction",
+            minimum=0,
+            maximum=1,
+        )
+        _require_number(
+            value["min_second_harmonic_fraction"],
+            "min_second_harmonic_fraction",
+            minimum=0,
+            maximum=1,
+        )
+        _require_number(
+            value["min_waveform_kurtosis"], "min_waveform_kurtosis", minimum=0, maximum=10
+        )
         if value["mono_policy"] != "average_with_phase_check":
             raise ValueError("mono_policy must be 'average_with_phase_check'.")
     elif name == "feature_config.yaml":

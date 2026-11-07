@@ -205,7 +205,7 @@ def test_square_wave_is_rejected_as_synthetic():
     square_wave = 0.2 * np.sign(np.sin(2 * np.pi * 130.0 * t))
     result = validate_audio(record(square_wave, fs))
     assert not result.valid
-    assert any("unnatural harmonic distribution" in err for err in result.errors)
+    assert any("acoustic resonance distribution" in err for err in result.errors)
 
 
 def test_praat_pitch_failure_with_zero_min_voiced_fraction_returns_clean_result(monkeypatch):
@@ -231,3 +231,40 @@ def test_validate_audio_rejects_invalid_sample_rate():
     result = validate_audio(mock_rec)
     assert not result.valid
     assert any("Source sample rate must be an integer" in err for err in result.errors)
+
+
+def test_validate_audio_rejects_complex_samples():
+    from unittest.mock import MagicMock
+
+    mock_rec = MagicMock()
+    mock_rec.sample_rate = 16000
+    mono = sustained_vowel().astype(np.complex128) + 0.05j
+    mock_rec.samples = mono.reshape(-1, 1)
+    mock_rec.channels = 1
+    result = validate_audio(mock_rec)
+    assert not result.valid
+    assert any("real numeric values" in err for err in result.errors)
+
+
+def test_validate_audio_rejects_non_numeric_object_samples():
+    from unittest.mock import MagicMock
+
+    mock_rec = MagicMock()
+    mock_rec.sample_rate = 16000
+    mock_rec.samples = np.array([["hello"], ["world"]], dtype=object)
+    mock_rec.channels = 1
+    result = validate_audio(mock_rec)
+    assert not result.valid
+    assert any("real numeric values" in err for err in result.errors)
+
+
+def test_validate_audio_rejects_boolean_samples():
+    from unittest.mock import MagicMock
+
+    mock_rec = MagicMock()
+    mock_rec.sample_rate = 16000
+    mock_rec.samples = np.array([[True], [False]], dtype=bool)
+    mock_rec.channels = 1
+    result = validate_audio(mock_rec)
+    assert not result.valid
+    assert any("real numeric values" in err for err in result.errors)

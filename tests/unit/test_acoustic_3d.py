@@ -86,3 +86,24 @@ def test_local_viewer_embeds_the_built_bundle_and_has_a_fallback():
 
 def test_home_visualization_identifies_its_decorative_status():
     assert decorative_hero_payload() == {"mode": "hero"}
+
+
+def test_spectrogram_payload_validates_types():
+    samples = np.sin(np.linspace(0, 10, 1000))
+    with pytest.raises(ValueError, match="Maximum spectrogram frequency must be a finite"):
+        spectrogram_payload(samples, 16000, maximum_frequency_hz="invalid")
+    with pytest.raises(ValueError, match="Maximum spectrogram frequency must be a finite"):
+        spectrogram_payload(samples, 16000, maximum_frequency_hz=True)
+    with pytest.raises(ValueError, match="STFT window size must be an integer"):
+        spectrogram_payload(samples, 16000, window_samples=True)
+    with pytest.raises(ValueError, match="STFT hop size must be an integer"):
+        spectrogram_payload(samples, 16000, hop_samples=False)
+
+    payload = spectrogram_payload(
+        samples,
+        16000,
+        window_samples=np.int64(256),
+        hop_samples=np.int32(64),
+        maximum_frequency_hz=np.float64(4000.0),
+    )
+    assert payload["mode"] == "spectrogram"

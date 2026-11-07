@@ -73,3 +73,6 @@ jobs:
 
       - name: Verify Three.js Bundle Build
         run: npm run build
+
+      - name: Verify Committed Bundle Consistency
+        run: git diff --exit-code dist/

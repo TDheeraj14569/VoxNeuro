@@ -70,19 +70,24 @@ def spectrogram_payload(
     values = _mono_finite(samples, sample_rate)
     if (
         isinstance(window_samples, bool)
-        or not isinstance(window_samples, int)
-        or window_samples < 64
+        or not isinstance(window_samples, (int, np.integer))
+        or int(window_samples) < 64
     ):
         raise ValueError("STFT window size must be an integer of at least 64 samples.")
     if (
         isinstance(hop_samples, bool)
-        or not isinstance(hop_samples, int)
-        or not 1 <= hop_samples <= window_samples
+        or not isinstance(hop_samples, (int, np.integer))
+        or not 1 <= int(hop_samples) <= int(window_samples)
     ):
         raise ValueError("STFT hop size must be an integer between 1 and the window size.")
-    if not np.isfinite(maximum_frequency_hz) or maximum_frequency_hz <= 0:
+    if (
+        isinstance(maximum_frequency_hz, bool)
+        or not isinstance(maximum_frequency_hz, (int, float, np.floating, np.integer))
+        or not np.isfinite(float(maximum_frequency_hz))
+        or float(maximum_frequency_hz) <= 0
+    ):
         raise ValueError("Maximum spectrogram frequency must be a finite positive value.")
-    if maximum_frequency_hz >= sample_rate / 2:
+    if float(maximum_frequency_hz) >= sample_rate / 2:
         raise ValueError("Maximum spectrogram frequency must be below the sample-rate Nyquist.")
 
     nperseg = min(window_samples, values.size)
