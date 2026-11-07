@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import logging
+
+import librosa
 import numpy as np
 
 from voxneuro.exceptions import FeatureExtractionError
@@ -13,6 +16,8 @@ from voxneuro.features.schema import (
     schema_fingerprint,
 )
 from voxneuro.features.spectral_features import extract_spectral_features
+
+logger = logging.getLogger(__name__)
 
 
 def extract_features(
@@ -81,6 +86,17 @@ def extract_features(
         if isinstance(p_val, (bool, np.bool_)) or not isinstance(p_val, (int, np.integer)):
             raise FeatureExtractionError(f"{p_name} must be an integer.")
 
+    if preprocessing_config_fingerprint is not None:
+        if (
+            isinstance(preprocessing_config_fingerprint, (bool, np.bool_))
+            or not isinstance(preprocessing_config_fingerprint, str)
+            or len(preprocessing_config_fingerprint) != 64
+            or not all(c in "0123456789abcdefABCDEF" for c in preprocessing_config_fingerprint)
+        ):
+            raise FeatureExtractionError(
+                "preprocessing_config_fingerprint must be None or a 64-character hex string."
+            )
+
     if mel_bands < 13 or mel_bands > 256:
         raise FeatureExtractionError("mel_bands must be between 13 and 256.")
     if fft_window_samples <= 0 or (fft_window_samples & (fft_window_samples - 1)) != 0:
@@ -90,12 +106,15 @@ def extract_features(
     if mel_min_hz < 0:
         raise FeatureExtractionError("mel_min_hz must be non-negative.")
     effective_rate = original_sample_rate if original_sample_rate is not None else sample_rate
-    if common_max_hz <= mel_min_hz or common_max_hz > (effective_rate / 2):
+    if common_max_hz <= mel_min_hz or common_max_hz >= (effective_rate / 2):
         raise FeatureExtractionError(
-            f"common_max_hz must be > mel_min_hz and <= Nyquist ({effective_rate / 2} Hz)."
+            f"common_max_hz must be > mel_min_hz and strictly below Nyquist "
+            f"({effective_rate / 2} Hz)."
         )
     if not (0.0 < spectral_rolloff_fraction < 1.0):
-        raise FeatureExtractionError("spectral_rolloff_fraction must be between 0.0 and 1.0.")
+        raise FeatureExtractionError(
+            "spectral_rolloff_fraction must be strictly between 0.0 and 1.0."
+        )
     try:
         raw = np.asarray(samples)
     except (TypeError, ValueError) as exc:
@@ -105,11 +124,14 @@ def extract_features(
     if (
         isinstance(raw, (bool, np.bool_))
         or raw.dtype == np.bool_
-        or not np.issubdtype(raw.dtype, np.number)
+        or not np.issubdtype(raw.dtype, np.floating)
         or np.iscomplexobj(raw)
         or np.issubdtype(raw.dtype, np.complexfloating)
     ):
-        raise FeatureExtractionError("Feature extraction requires real numeric audio samples.")
+        raise FeatureExtractionError(
+            "Feature extraction requires normalized numeric floating-point audio samples in "
+            "[-1.0, 1.0]. Integer PCM must be normalized before extraction."
+        )
     x = raw.astype(np.float64, copy=False)
     if x.ndim != 1:
         raise FeatureExtractionError(
@@ -146,8 +168,13 @@ def extract_features(
                 rolloff_fraction=spectral_rolloff_fraction,
             )
         )
-    except Exception as exc:
+    except (ValueError, TypeError, FloatingPointError, librosa.ParameterError) as exc:
         raise FeatureExtractionError(f"Acoustic feature extraction failed: {exc}") from exc
+    except Exception as exc:
+        logger.exception("Unexpected error during feature extraction: %s", exc)
+        raise FeatureExtractionError(
+            f"Unexpected error during acoustic feature extraction: {exc}"
+        ) from exc
     missing = set(FEATURE_NAMES) - values.keys()
     if missing:
         raise FeatureExtractionError(

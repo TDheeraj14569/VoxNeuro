@@ -194,8 +194,28 @@ def render_voice_report_html(
     report_id = html.escape(str(report.get("generated_utc", "session")))
     status = html.escape(str(model.get("status", "No model assessment available.")))
     disclaimer = html.escape(str(report.get("clinical_disclaimer", "Research use only.")))
-    feature_version = html.escape(str(provenance.get("schema_version", "unknown")))
-    schema_fingerprint = html.escape(str(provenance.get("schema_fingerprint", "unknown")))
+    feature_version = html.escape(
+        str(provenance.get("schema_version") or features.get("schema_version") or "unknown")
+    )
+    schema_fingerprint = html.escape(
+        str(provenance.get("schema_fingerprint") or features.get("schema_fingerprint") or "unknown")
+    )
+    feature_config_fingerprint = html.escape(
+        str(
+            provenance.get("feature_config_fingerprint")
+            or features.get("feature_config_fingerprint")
+            or "unavailable"
+        )
+    )
+    preprocessing_config_fingerprint = html.escape(
+        str(
+            provenance.get("preprocessing_config_fingerprint")
+            or features.get("preprocessing_config_fingerprint")
+            or "unavailable"
+        )
+    )
+    raw_audio_sha256 = quality.get("audio_sha256")
+    audio_sha256_val = html.escape(str(raw_audio_sha256)) if raw_audio_sha256 else "unavailable"
     tmpl = Template(
         """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -379,6 +399,17 @@ Undefined values remain unavailable; no clinical normal range is applied.</p>
 <tbody>${FEATURE_ROWS}</tbody></table></div>
 <p class="muted" style="margin-top:12px;">Schema fingerprint:
 <code>${SCHEMA_FINGERPRINT}</code></p></section>
+<section><h2>Provenance and configuration fingerprints</h2>
+<div class="scroll"><table><tbody>
+<tr><th scope="row">Feature schema</th><td><code>${SCHEMA_VERSION}</code></td></tr>
+<tr><th scope="row">Schema fingerprint</th><td><code>${SCHEMA_FINGERPRINT}</code></td></tr>
+<tr><th scope="row">Feature config SHA-256</th>
+<td><code>${FEATURE_CONFIG_FINGERPRINT}</code></td></tr>
+<tr><th scope="row">Preprocessing config SHA-256</th>
+<td><code>${PREPROCESSING_CONFIG_FINGERPRINT}</code></td></tr>
+<tr><th scope="row">Recorded audio SHA-256</th><td><code>${AUDIO_SHA256}</code></td></tr>
+</tbody></table></div>
+</section>
 <section><h2>Model assessment</h2><p>${MODEL_STATUS}</p>
 <div class="notice"><p style="margin:0;">${DISCLAIMER}</p></div>
 <p style="margin-top:12px;">No calibrated disease probability, clinical threshold,
@@ -392,6 +423,9 @@ Non-diagnostic research software.</footer>
         REPORT_ID=report_id,
         SCHEMA_VERSION=feature_version,
         SCHEMA_FINGERPRINT=schema_fingerprint,
+        FEATURE_CONFIG_FINGERPRINT=feature_config_fingerprint,
+        PREPROCESSING_CONFIG_FINGERPRINT=preprocessing_config_fingerprint,
+        AUDIO_SHA256=audio_sha256_val,
         QUALITY_ROWS="".join(quality_rows),
         QUALITY_STATUS=(
             "Passed technical audio checks." if quality.get("valid") else "Not passed."

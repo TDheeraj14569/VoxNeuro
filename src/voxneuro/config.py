@@ -59,14 +59,24 @@ _CONFIG_KEYS: dict[str, set[str]] = {
 
 
 def _require_number(
-    value: Any, name: str, *, minimum: float, maximum: float, strict_minimum: bool = False
+    value: Any,
+    name: str,
+    *,
+    minimum: float,
+    maximum: float,
+    strict_minimum: bool = False,
+    strict_maximum: bool = False,
 ) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not isfinite(value):
         raise ValueError(f"Configuration value {name!r} must be a finite number.")
     lower_ok = value > minimum if strict_minimum else value >= minimum
-    if not lower_ok or value > maximum:
+    upper_ok = value < maximum if strict_maximum else value <= maximum
+    if not lower_ok or not upper_ok:
         left = "(" if strict_minimum else "["
-        raise ValueError(f"Configuration value {name!r} must be in {left}{minimum}, {maximum}].")
+        right = ")" if strict_maximum else "]"
+        raise ValueError(
+            f"Configuration value {name!r} must be in {left}{minimum}, {maximum}{right}."
+        )
     return float(value)
 
 
@@ -181,7 +191,7 @@ def _validate_config(name: str, value: dict[str, Any]) -> None:
         if type(value["mfcc_count"]) is not int or value["mfcc_count"] != 13:
             raise ValueError("The current feature schema requires exactly 13 MFCC coefficients.")
         integer_ranges = {
-            "mel_bands": (13, 512),
+            "mel_bands": (13, 256),
             "fft_window_samples": (256, 8192),
             "hop_samples": (1, 8192),
         }
@@ -201,7 +211,14 @@ def _validate_config(name: str, value: dict[str, Any]) -> None:
                 key,
                 minimum=bounds[0],
                 maximum=bounds[1],
-                strict_minimum=key in {"pitch_floor_hz", "pitch_step_seconds", "common_max_hz"},
+                strict_minimum=key
+                in {
+                    "pitch_floor_hz",
+                    "pitch_step_seconds",
+                    "common_max_hz",
+                    "spectral_rolloff_fraction",
+                },
+                strict_maximum=key in {"spectral_rolloff_fraction"},
             )
         if value["pitch_floor_hz"] >= value["pitch_ceiling_hz"]:
             raise ValueError("pitch_floor_hz must be less than pitch_ceiling_hz.")

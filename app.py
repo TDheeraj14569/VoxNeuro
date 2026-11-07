@@ -587,8 +587,9 @@ html body div.stApp [data-testid="stBaseButton-primary"] * {
 }
 
 html body div.stApp button[kind="primary"]:hover:not(:disabled),
-html body div.stApp [data-testid="baseButton-primary"]:hover,
-html body div.stApp button[data-testid*="primary"]:hover {
+html body div.stApp [data-testid="baseButton-primary"]:hover:not(:disabled),
+html body div.stApp [data-testid="stBaseButton-primary"]:hover:not(:disabled),
+html body div.stApp button[data-testid*="primary"]:hover:not(:disabled) {
   background: var(--vox-vermilion-hover) !important;
   background-color: var(--vox-vermilion-hover) !important;
   border-color: #8F422E !important;
@@ -1587,7 +1588,7 @@ def _evaluation_inputs() -> tuple[pd.DataFrame | None, pd.DataFrame | None, dict
     return manifest, feature_table, (receipt, metrics, predictions), []
 
 
-def _current_nested_evaluation_html() -> str | None:
+def _current_nested_evaluation_package() -> tuple[pd.DataFrame | None, list[str]]:
     processed = PROJECT_ROOT / "data" / "processed"
     manifest_path = processed / "feature_manifest.csv"
     feature_path = processed / "voice_features.csv"
@@ -1596,8 +1597,17 @@ def _current_nested_evaluation_html() -> str | None:
     predictions_path = processed / "nested_uams_oof_predictions.csv"
     summary_path = processed / "nested_uams_summary.csv"
     report_path = PROJECT_ROOT / "artifacts" / "reports" / "model_evaluation" / "uams_nested.html"
-    if not manifest_path.is_file() or not feature_path.is_file():
-        return None
+    for p in (
+        manifest_path,
+        feature_path,
+        receipt_path,
+        metrics_path,
+        predictions_path,
+        summary_path,
+        report_path,
+    ):
+        if not p.is_file():
+            return None, [f"Missing required nested evaluation artifact: {p.name}"]
     expected = {
         "status": "complete",
         "dataset": "uams",
@@ -1620,7 +1630,22 @@ def _current_nested_evaluation_html() -> str | None:
         },
     )
     if issues:
+        return None, issues
+    try:
+        df = pd.read_csv(summary_path)
+    except Exception as exc:
+        return None, [f"Could not parse nested UAMS summary: {exc}"]
+    required_cols = {"model", "model_label", "balanced_accuracy_mean", "roc_auc_mean"}
+    if not required_cols.issubset(df.columns) or df.empty or df["model"].duplicated().any():
+        return None, ["Nested evaluation summary does not meet structural requirements."]
+    return df, []
+
+
+def _current_nested_evaluation_html() -> str | None:
+    df, issues = _current_nested_evaluation_package()
+    if issues or df is None:
         return None
+    report_path = PROJECT_ROOT / "artifacts" / "reports" / "model_evaluation" / "uams_nested.html"
     try:
         return report_path.read_text(encoding="utf-8")
     except OSError:
@@ -1828,10 +1853,16 @@ def _show_model_assessment() -> None:
         "it cannot establish that voice adds disease-specific or clinically useful information."
     )
 
-    nested_path = PROJECT_ROOT / "data" / "processed" / "nested_uams_summary.csv"
-    if nested_path.is_file():
+    nested_df, nested_issues = _current_nested_evaluation_package()
+    voice_candidates = pd.DataFrame()
+    age_match = pd.DataFrame()
+    best_voice = None
+    ba_mean = 0.0
+    ba_sd = 0.0
+    auc_mean = 0.0
+    age_ba = 0.0
+    if nested_df is not None:
         try:
-            nested_df = pd.read_csv(nested_path)
             st.subheader(
                 "Repeated nested cross-validation (7 voice models + 2 age baselines + dummy)"
             )
@@ -1865,17 +1896,22 @@ def _show_model_assessment() -> None:
                     "F1 Score",
                 ],
             )
-            et_match = nested_df[nested_df["model"] == "extra_trees"]
+            voice_candidates = nested_df[
+                ~nested_df["model"].isin(["age_only_logistic", "age_plus_voice_logistic", "dummy"])
+            ]
             age_match = nested_df[nested_df["model"] == "age_only_logistic"]
-            if not et_match.empty and not age_match.empty:
-                et_row = et_match.iloc[0]
+            if not voice_candidates.empty and not age_match.empty:
+                best_voice = voice_candidates.loc[
+                    voice_candidates["balanced_accuracy_mean"].idxmax()
+                ]
+                top_label = best_voice["model_label"]
+                ba_mean = float(best_voice["balanced_accuracy_mean"])
+                ba_sd = float(best_voice.get("balanced_accuracy_repeat_sd", 0.0))
+                auc_mean = float(best_voice["roc_auc_mean"])
                 age_row = age_match.iloc[0]
-                ba_mean = float(et_row.get("balanced_accuracy_mean", 0.762))
-                ba_sd = float(et_row.get("balanced_accuracy_repeat_sd", 0.020))
-                auc_mean = float(et_row.get("roc_auc_mean", 0.784))
-                age_ba = float(age_row.get("balanced_accuracy_mean", 0.839))
+                age_ba = float(age_row["balanced_accuracy_mean"])
                 top_model_text = (
-                    f"Extra Trees achieved the highest voice-only discrimination at "
+                    f"{top_label} achieved the highest voice-only discrimination at "
                     f"<strong>{ba_mean * 100:.1f}% balanced accuracy</strong> "
                     f"({ba_mean:.3f} ± {ba_sd:.3f}) and <strong>{auc_mean:.3f} ROC-AUC</strong>."
                 )
@@ -1979,6 +2015,45 @@ def _show_model_assessment() -> None:
             "The exclusions are listed in the local extraction report. "
             "The age-only comparator is shown because this cohort has a marked age imbalance."
         )
+    analyzed_sample_ids = set(feature_table["sample_id"])
+    hc_manifest = manifest[manifest["class_label"] == "HC"]
+    pd_manifest = manifest[manifest["class_label"] == "PD"]
+    hc_analyzed = feature_table[feature_table["class_label"] == "HC"]
+    pd_analyzed = feature_table[feature_table["class_label"] == "PD"]
+
+    hc_tot, hc_kept = len(hc_manifest), len(hc_analyzed)
+    pd_tot, pd_kept = len(pd_manifest), len(pd_analyzed)
+    hc_pct = (hc_kept / hc_tot * 100) if hc_tot > 0 else 0.0
+    pd_pct = (pd_kept / pd_tot * 100) if pd_tot > 0 else 0.0
+    hc_att = 100.0 - hc_pct
+    pd_att = 100.0 - pd_pct
+
+    hc_ages = pd.to_numeric(hc_manifest["age"], errors="coerce").dropna()
+    pd_ages = pd.to_numeric(pd_manifest["age"], errors="coerce").dropna()
+    hc_age_mean = float(hc_ages.mean()) if not hc_ages.empty else 0.0
+    hc_age_sd = float(hc_ages.std()) if not hc_ages.empty else 0.0
+    pd_age_mean = float(pd_ages.mean()) if not pd_ages.empty else 0.0
+    pd_age_sd = float(pd_ages.std()) if not pd_ages.empty else 0.0
+    age_diff = abs(pd_age_mean - hc_age_mean)
+
+    excluded = manifest.loc[~manifest["sample_id"].isin(analyzed_sample_ids)]
+    excl_count = len(excluded)
+    excl_classes = "/".join(sorted(excluded["class_label"].unique())) if excl_count > 0 else "none"
+    excl_ids_str = (
+        ", ".join(sorted(excluded["sample_id"]))
+        if 0 < excl_count <= 5
+        else f"{excl_count} recordings"
+    )
+
+    if nested_df is not None and not voice_candidates.empty and not age_match.empty:
+        best_voice_label = best_voice["model_label"]
+        confound_sub = (
+            f"Age baseline ({age_ba * 100:.1f}% BA) &gt; "
+            f"{best_voice_label} ({ba_mean * 100:.1f}% BA)"
+        )
+    else:
+        confound_sub = "Age is a stronger discriminator than voice alone"
+
     demographics_html = (
         '<div class="vox-editorial-card" style="margin-top:1.15rem;">'
         '<div class="vox-kicker" style="margin-bottom:0.35rem;">'
@@ -1991,32 +2066,37 @@ def _show_model_assessment() -> None:
         'gap:0.75rem; margin-bottom:1rem;">'
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Healthy Controls (HC)</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#39745A;">41 / 41 (100%)</div>'
-        '<div class="vox-qc-sub">Mean Age: 47.73 ± 14.33 yrs · 0% attrition</div>'
+        f'<div class="vox-qc-value" style="font-size:1.15rem; color:#39745A;">'
+        f"{hc_kept} / {hc_tot} ({hc_pct:.1f}%)</div>"
+        f'<div class="vox-qc-sub">Mean Age: {hc_age_mean:.2f} ± {hc_age_sd:.2f} yrs · '
+        f"{hc_att:.1f}% attrition</div>"
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Parkinson\'s Cohort (PD)</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#A76F24;">37 / 40 (92.5%)</div>'
-        '<div class="vox-qc-sub">Mean Age: 67.04 ± 8.98 yrs · 7.5% clipping attrition</div>'
+        f'<div class="vox-qc-value" style="font-size:1.15rem; color:#A76F24;">'
+        f"{pd_kept} / {pd_tot} ({pd_pct:.1f}%)</div>"
+        f'<div class="vox-qc-sub">Mean Age: {pd_age_mean:.2f} ± {pd_age_sd:.2f} yrs · '
+        f"{pd_att:.1f}% attrition</div>"
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Demographic Disparity</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#B95E46;">Δ = 19.3 Years</div>'
-        '<div class="vox-qc-sub">Standardized diff: d = -1.61 (p &lt; 0.001)</div>'
+        f'<div class="vox-qc-value" style="font-size:1.15rem; color:#B95E46;">'
+        f"Δ = {age_diff:.1f} Years</div>"
+        '<div class="vox-qc-sub">Marked age disparity between diagnostic groups</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Confounding Implication</div>'
         '<div class="vox-qc-value" style="font-size:1.15rem; color:#20232B;">Age &gt; Voice</div>'
-        '<div class="vox-qc-sub">Age baseline (83.9% BA) &gt; Extra Trees (76.2% BA)</div>'
+        f'<div class="vox-qc-sub">{confound_sub}</div>'
         "</div>"
         "</div>"
         '<div style="background:#FAF5EC; border:1px solid #E5D3B8; '
         "border-left:3px solid var(--vox-vermilion); "
         "border-radius:4px; padding:0.85rem 1rem; font-size:0.84rem; color:#20232B; "
         'line-height:1.6;">'
-        "<strong>Methodological Note:</strong> All 3 excluded UAMS recordings "
-        "(uams-045, uams-046, uams-047) belonged to the PD class and were rejected for "
-        "digital clipping. The observed performance is consistent with potential age "
+        f"<strong>Methodological Note:</strong> All {excl_count} excluded UAMS recordings "
+        f"({excl_ids_str}) belonged to the {excl_classes} class and were rejected during quality "
+        "checks. The observed performance is consistent with potential age "
         "confounding (as older healthy controls were not available in this cohort), but it "
         "does not establish a causal explanation. VoxNeuro reports this limitation "
         "transparently rather than claiming unvalidated diagnostic accuracy."

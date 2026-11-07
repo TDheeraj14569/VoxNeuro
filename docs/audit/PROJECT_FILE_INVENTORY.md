@@ -6,6 +6,7 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-08. 
 - `.github/workflows/ci.yml`
 - `.gitignore`
 - `.streamlit/config.toml`
+- `AI_PROJECT_CONTEXT.txt`
 - `app.py`
 - `artifacts/models/README.md`
 - `artifacts/reports/README.md`
@@ -184,4 +185,4 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-08. 
 - `uv.lock`
 - `WORK_LOG.md`
 
-Total included source/documentation files: **181**.
+Total included source/documentation files: **182**.

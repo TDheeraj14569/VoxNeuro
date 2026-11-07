@@ -19,6 +19,12 @@ def extract_praat_features(
     pitch_step_seconds: float = 0.01,
 ) -> dict[str, float]:
     """Return F0 summaries, local jitter/shimmer, and mean HNR; invalid measures are NaN."""
+    if isinstance(sample_rate, (bool, np.bool_)) or not isinstance(sample_rate, (int, np.integer)):
+        raise TypeError(f"sample_rate must be an integer, not {type(sample_rate).__name__}.")
+    if not (8000 <= int(sample_rate) <= 48000):
+        raise ValueError(
+            f"sample_rate must be an integer between 8000 and 48000 Hz, got {sample_rate}."
+        )
     try:
         raw = np.asarray(samples)
     except (TypeError, ValueError) as exc:
@@ -34,6 +40,8 @@ def extract_praat_features(
     x = raw.astype(np.float64, copy=False)
     if x.ndim != 1:
         raise ValueError("Praat feature extraction requires mono one-dimensional audio.")
+    if x.size == 0 or not np.isfinite(x).all():
+        raise ValueError("Praat feature extraction requires finite, non-empty audio samples.")
     sound = parselmouth.Sound(x, sampling_frequency=sample_rate)
     pitch = sound.to_pitch_ac(
         time_step=pitch_step_seconds,

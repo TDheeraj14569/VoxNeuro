@@ -18,7 +18,7 @@ UAMS ZIPs and UCI RAR content are inspected and extracted into temporary staging
 
 ## Audio SHA-256 Provenance & Privacy Disclosure
 
-- Exported HTML and JSON technical reports record a SHA-256 cryptographic digest of the ingested audio payload (`audio_sha256`) to enable exact file-level provenance and verify session integrity without altering or storing the raw audio.
+- Exported HTML and JSON technical reports record a SHA-256 cryptographic digest of the ingested audio payload (`audio_sha256`) to support exact source-audio identification and file-level provenance without altering or storing the raw audio.
 - **Privacy Notice:** While a one-way cryptographic SHA-256 digest cannot reconstruct the raw vocal recording, it serves as an immutable fingerprint of the exact file. Anyone possessing both the original audio file and the exported report can confirm a 1-to-1 match.
 - This digest does not anonymize the speaker and should not be treated as a substitute for participant-data de-identification or patient consent. Users distributing exported reports should consider whether sharing the file-level hash is permissible under applicable research governance protocols.
 

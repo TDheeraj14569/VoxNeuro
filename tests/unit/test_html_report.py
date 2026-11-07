@@ -33,5 +33,7 @@ def test_individual_html_report_contains_actual_features_and_embedded_plots():
     assert "mfcc_12_sd" in rendered
     assert "Processed voice waveform" in rendered
     assert "Processed audio spectrogram" in rendered
+    assert "Provenance and configuration fingerprints" in rendered
+    assert "Schema fingerprint" in rendered
     assert "No calibrated disease probability" in rendered
     assert "<script" not in rendered

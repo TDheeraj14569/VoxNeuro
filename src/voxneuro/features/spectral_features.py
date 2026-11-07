@@ -20,6 +20,25 @@ def extract_spectral_features(
     rolloff_fraction: float = 0.85,
 ) -> dict[str, float]:
     """Calculate temporal summaries after enforcing a shared source-compatible band."""
+    if isinstance(sample_rate, (bool, np.bool_)) or not isinstance(sample_rate, (int, np.integer)):
+        raise TypeError(f"sample_rate must be an integer, not {type(sample_rate).__name__}.")
+    if not (8000 <= int(sample_rate) <= 48000):
+        raise ValueError(
+            f"sample_rate must be an integer between 8000 and 48000 Hz, got {sample_rate}."
+        )
+    if original_sample_rate is not None:
+        if isinstance(original_sample_rate, (bool, np.bool_)) or not isinstance(
+            original_sample_rate, (int, np.integer)
+        ):
+            raise TypeError(
+                "original_sample_rate must be an integer, not "
+                f"{type(original_sample_rate).__name__}."
+            )
+        if not (8000 <= int(original_sample_rate) <= 48000):
+            raise ValueError(
+                f"original_sample_rate must be between 8000 and 48000 Hz, "
+                f"got {original_sample_rate}."
+            )
     try:
         raw = np.asarray(samples)
     except (TypeError, ValueError) as exc:
@@ -35,12 +54,10 @@ def extract_spectral_features(
     x = raw.astype(np.float32, copy=False)
     if x.ndim != 1:
         raise ValueError("Spectral extraction requires mono 1D audio.")
+    if x.size == 0 or not np.isfinite(x).all():
+        raise ValueError("Spectral extraction requires finite audio samples.")
     if x.size < max(fft_window_samples // 2, 64):
         raise ValueError("Audio is too short for stable spectral summaries.")
-    if sample_rate <= 0:
-        raise ValueError("Sample rate must be positive.")
-    if original_sample_rate is not None and original_sample_rate <= 0:
-        raise ValueError("Original sample rate must be positive when supplied.")
     nyquist = float(sample_rate) / 2
     highest = min(
         float(common_max_hz),

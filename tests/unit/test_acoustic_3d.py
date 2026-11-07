@@ -44,6 +44,9 @@ def test_waveform_downsampling_preserves_short_transients():
         np.column_stack((sustained_vowel(duration=1.0), sustained_vowel(duration=1.0))),
         np.array([0.0, np.nan, 1.0]),
         np.array([], dtype=np.float64),
+        np.array([1.0 + 2.0j, 3.0 + 4.0j]),
+        np.array([True, False]),
+        np.array(["a", "b"], dtype=object),
     ],
 )
 def test_waveform_payload_rejects_invalid_samples(samples):

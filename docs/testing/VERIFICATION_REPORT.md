@@ -35,7 +35,7 @@ Across the three pooled repeat estimates:
 - Age-only logistic comparator: balanced accuracy **0.839 ± 0.007**, precision **0.807 ± 0.012**, sensitivity **0.865**, specificity **0.813 ± 0.014**, ROC-AUC **0.849 ± 0.013**.
 - Highest mean voice-only candidate, Extra Trees: balanced accuracy **0.762 ± 0.020**, precision **0.727 ± 0.017**, sensitivity **0.793 ± 0.041**, specificity **0.732 ± 0.024**, ROC-AUC **0.784 ± 0.014**.
 - Age-plus-voice logistic: balanced accuracy **0.771 ± 0.012**, ROC-AUC **0.817 ± 0.024**.
-- Extra Trees primary-seed participant-bootstrap 95% interval for balanced accuracy: **0.678–0.861**. Age-only comparator interval: **0.754–0.911**. These intervals condition on the fitted outer-fold models and do not represent external or clinical uncertainty.
+- Extra Trees primary-seed participant-bootstrap 95% interval for balanced accuracy: **0.664–0.850**. Age-only comparator interval: **0.754–0.911**. These intervals condition on the fitted outer-fold models and do not represent external or clinical uncertainty.
 
 The cohort has a large age imbalance: HC mean age 47.73 (SD 14.33), PD 67.04 (SD 8.98), standardized mean difference -1.61, Mann–Whitney p=1.75e-8. Age-only exceeds every voice-only candidate. Age-plus-voice does not exceed age-only balanced accuracy or ROC-AUC. This cohort therefore cannot establish that the model has isolated a Parkinson-specific acoustic signal. The three PD-only clipping exclusions are another limitation.
 

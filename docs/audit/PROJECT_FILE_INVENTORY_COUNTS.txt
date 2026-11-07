@@ -4,6 +4,7 @@ Included file counts by top-level path (same source-archive rules):
 .github: 1
 .gitignore: 1
 .streamlit: 1
+AI_PROJECT_CONTEXT.txt: 1
 app.py: 1
 artifacts: 2
 configs: 6
@@ -20,4 +21,4 @@ tests: 36
 uv.lock: 1
 WORK_LOG.md: 1
 
-Total: 181
+Total: 182

@@ -2,11 +2,15 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const palette = {
-  background: 0x0a1922,
-  grid: 0x21414a,
-  teal: 0x55d9c1,
-  cyan: 0x70b9e8,
+  background: 0x141922,
+  grid: 0x222a36,
+  gridSubtle: 0x19212c,
+  vermilion: 0xb95e46,
+  mineralBlue: 0x526a91,
   amber: 0xe5b56d,
+  cream: 0xf3f0e8,
+  teal: 0x48a999,
+  cyan: 0x70b9e8,
 };
 
 export function finiteData(data) {
@@ -152,24 +156,107 @@ function makeHero(scene) {
 }
 
 function makeWaveform(scene, data) {
-  const positions = [];
   const duration = data.duration_seconds || data.points.at(-1)[0] || 1;
-  for (const [time, amplitude] of data.points) {
-    positions.push(((time / duration) - 0.5) * 16, amplitude * 4, 0);
+  const positions = [];
+  const colors = [];
+  const indices = [];
+  const crestPositions = [];
+
+  const points = data.points;
+  for (let i = 0; i < points.length; i += 1) {
+    const [time, amplitude] = points[i];
+    const x = ((time / duration) - 0.5) * 16;
+    const y = amplitude * 4;
+    const absAmp = Math.min(1.0, Math.abs(amplitude));
+    const zWidth = 0.15 + 0.65 * absAmp;
+
+    positions.push(x, y, -zWidth);
+    positions.push(x, y, zWidth);
+
+    const color = new THREE.Color();
+    if (absAmp < 0.35) {
+      const t = absAmp / 0.35;
+      color.setRGB(
+        0.32 + t * (0.55 - 0.32),
+        0.42 + t * (0.60 - 0.42),
+        0.57 - t * (0.57 - 0.40),
+      );
+    } else {
+      const t = Math.min(1.0, (absAmp - 0.35) / 0.65);
+      color.setRGB(
+        0.55 + t * (0.73 - 0.55),
+        0.60 - t * (0.60 - 0.37),
+        0.40 - t * (0.40 - 0.27),
+      );
+    }
+    colors.push(color.r, color.g, color.b);
+    colors.push(color.r * 1.15, color.g * 1.15, color.b * 1.15);
+
+    crestPositions.push(x, y + 0.015, 0);
+
+    if (i < points.length - 1) {
+      const v0 = i * 2;
+      const v1 = i * 2 + 1;
+      const v2 = (i + 1) * 2;
+      const v3 = (i + 1) * 2 + 1;
+      indices.push(v0, v2, v1);
+      indices.push(v1, v2, v3);
+    }
   }
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: palette.teal }));
-  line.computeLineDistances();
-  scene.add(line);
+
+  const ribbonGeo = new THREE.BufferGeometry();
+  ribbonGeo.setIndex(indices);
+  ribbonGeo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  ribbonGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+  ribbonGeo.computeVertexNormals();
+
+  const ribbonMat = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    side: THREE.DoubleSide,
+    metalness: 0.18,
+    roughness: 0.42,
+  });
+  const ribbonMesh = new THREE.Mesh(ribbonGeo, ribbonMat);
+  scene.add(ribbonMesh);
+
+  const crestGeo = new THREE.BufferGeometry();
+  crestGeo.setAttribute("position", new THREE.Float32BufferAttribute(crestPositions, 3));
+  const crestLine = new THREE.Line(
+    crestGeo,
+    new THREE.LineBasicMaterial({ color: palette.amber, linewidth: 2 }),
+  );
+  scene.add(crestLine);
+
   addAxisLine(scene, [-8, 0, 0], [8, 0, 0], palette.cyan);
   addAxisLine(scene, [-8, -4, 0], [-8, 4, 0], palette.amber);
+  return ribbonMesh;
 }
 
 function colorForDb(db) {
-  const value = Math.max(0, Math.min(1, (db + 90) / 90));
+  const norm = Math.max(0, Math.min(1, (db + 90) / 90));
   const color = new THREE.Color();
-  color.setHSL(0.53 - 0.09 * value, 0.34 + 0.36 * value, 0.12 + 0.42 * value);
+  if (norm < 0.35) {
+    const t = norm / 0.35;
+    color.setRGB(
+      0.07 + t * (0.32 - 0.07),
+      0.10 + t * (0.42 - 0.10),
+      0.14 + t * (0.57 - 0.14),
+    );
+  } else if (norm < 0.70) {
+    const t = (norm - 0.35) / 0.35;
+    color.setRGB(
+      0.32 + t * (0.90 - 0.32),
+      0.42 + t * (0.71 - 0.42),
+      0.57 - t * (0.57 - 0.43),
+    );
+  } else {
+    const t = (norm - 0.70) / 0.30;
+    color.setRGB(
+      0.90 - t * (0.90 - 0.73),
+      0.71 - t * (0.71 - 0.37),
+      0.43 - t * (0.43 - 0.27),
+    );
+  }
   return color;
 }
 
@@ -211,19 +298,20 @@ function makeSpectrogram(scene, data) {
     new THREE.MeshStandardMaterial({
       vertexColors: true,
       side: THREE.DoubleSide,
-      metalness: 0.08,
-      roughness: 0.48,
+      metalness: 0.12,
+      roughness: 0.46,
     }),
   );
   scene.add(surface);
   const wire = new THREE.LineSegments(
     new THREE.WireframeGeometry(geometry),
-    new THREE.LineBasicMaterial({ color: 0x9bead8, transparent: true, opacity: 0.13 }),
+    new THREE.LineBasicMaterial({ color: 0x526a91, transparent: true, opacity: 0.16 }),
   );
   scene.add(wire);
   addAxisLine(scene, [-7, -5, -2], [7, -5, -2], palette.cyan);
   addAxisLine(scene, [-7, -5, -2], [-7, 5, -2], palette.amber);
-  addAxisLine(scene, [-7, -5, -2], [-7, -5, 2], palette.teal);
+  addAxisLine(scene, [-7, -5, -2], [-7, -5, 2], palette.vermilion);
+  return surface;
 }
 
 function disposeTree(scene) {
@@ -292,9 +380,66 @@ export function mount(root, data) {
     grid.position.y = -4.2;
   }
   scene.add(grid);
+  let interactiveMesh = null;
   if (data.mode === "hero") makeHero(scene);
-  else if (data.mode === "waveform") makeWaveform(scene, data);
-  else makeSpectrogram(scene, data);
+  else if (data.mode === "waveform") interactiveMesh = makeWaveform(scene, data);
+  else interactiveMesh = makeSpectrogram(scene, data);
+
+  const probeMarker = new THREE.Mesh(
+    new THREE.SphereGeometry(0.24, 16, 16),
+    new THREE.MeshStandardMaterial({
+      color: palette.vermilion,
+      emissive: palette.vermilion,
+      emissiveIntensity: 0.8,
+      roughness: 0.2,
+    }),
+  );
+  probeMarker.visible = false;
+  scene.add(probeMarker);
+
+  const probeReadout = root.querySelector("[data-probe-readout]");
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  const handlePointerMove = (event) => {
+    if (!interactiveMesh || data.mode !== "spectrogram") return;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObject(interactiveMesh);
+    if (hits.length > 0) {
+      const p = hits[0].point;
+      probeMarker.position.copy(p);
+      probeMarker.visible = true;
+      const maxTime = data.times.at(-1) || 1;
+      const maxFreq = data.frequencies_hz.at(-1) || 1;
+      const timeSec = Math.max(0, Math.min(maxTime, ((p.x / 14) + 0.5) * maxTime));
+      const freqHz = Math.max(0, Math.min(maxFreq, ((p.y + 5) / 10) * maxFreq));
+      const magDb = Math.max(-90, Math.min(0, ((p.z + 2) / 4) * 90 - 90));
+      if (probeReadout) {
+        probeReadout.hidden = false;
+        probeReadout.innerHTML = `<span style="color:#B95E46; font-weight:700;">PROBE</span> · Time: <strong>${timeSec.toFixed(2)}s</strong> · Freq: <strong>${Math.round(freqHz)} Hz</strong> · Mag: <strong style="color:#E5B56D;">${magDb.toFixed(1)} dB</strong>`;
+      }
+      requestRender();
+    } else if (probeMarker.visible) {
+      probeMarker.visible = false;
+      if (probeReadout) probeReadout.hidden = true;
+      requestRender();
+    }
+  };
+
+  const handlePointerLeave = () => {
+    if (probeMarker.visible) {
+      probeMarker.visible = false;
+      if (probeReadout) probeReadout.hidden = true;
+      requestRender();
+    }
+  };
+
+  canvas.addEventListener("pointermove", handlePointerMove);
+  canvas.addEventListener("pointerleave", handlePointerLeave);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0, 0);
@@ -309,6 +454,41 @@ export function mount(root, data) {
   const reset = () => controls.reset();
   resetButton?.addEventListener("click", reset);
 
+  const presetButtons = root.querySelectorAll("[data-camera-preset]");
+  presetButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const preset = btn.getAttribute("data-camera-preset");
+      if (preset === "iso") {
+        if (data.mode === "spectrogram") {
+          camera.position.set(12, -16, 12);
+          camera.up.set(0, 0, 1);
+        } else {
+          camera.position.set(10, 8, 14);
+          camera.up.set(0, 1, 0);
+        }
+      } else if (preset === "front") {
+        if (data.mode === "spectrogram") {
+          camera.position.set(0, -22, 0);
+          camera.up.set(0, 0, 1);
+        } else {
+          camera.position.set(0, 0, 18);
+          camera.up.set(0, 1, 0);
+        }
+      } else if (preset === "top") {
+        if (data.mode === "spectrogram") {
+          camera.position.set(0, 0, 24);
+          camera.up.set(0, 1, 0);
+        } else {
+          camera.position.set(0, 22, 0);
+          camera.up.set(0, 0, -1);
+        }
+      }
+      controls.target.set(0, 0, 0);
+      controls.update();
+      requestRender();
+    });
+  });
+
   const notice = root.querySelector("#voxneuro-fallback-note");
   if (notice) notice.textContent = data.mode === "hero"
     ? "Decorative acoustic field · no patient recording"
@@ -322,11 +502,11 @@ export function mount(root, data) {
       axes.innerHTML = `<div><strong>Spectrogram 3D</strong> · Time: 0 – ${maxT}s · Freq: 0 – ${maxF} Hz</div>` +
         `<div style="display:inline-flex; align-items:center; gap:6px; margin-top:3px;">` +
         `<span style="font-size:10px; color:#A7B8B5;">-90 dB</span>` +
-        `<span style="display:inline-block; width:70px; height:6px; border-radius:2px; background:linear-gradient(to right, #112d36, #2d7a72, #55d9c1); border: 1px solid rgba(85,217,193,0.3);"></span>` +
-        `<span style="font-size:10px; color:#55D9C1; font-weight:600;">0 dB</span></div>`;
+        `<span style="display:inline-block; width:70px; height:6px; border-radius:2px; background:linear-gradient(to right, #1c2836, #526a91, #e5b56d, #b95e46); border: 1px solid rgba(185,94,70,0.4);"></span>` +
+        `<span style="font-size:10px; color:#B95E46; font-weight:700;">0 dB</span></div>`;
     } else if (data.mode === "waveform") {
       const dur = (data.duration_seconds || data.points?.at(-1)?.[0] || 0).toFixed(2);
-      axes.innerHTML = `<div><strong>Waveform 3D</strong> · Time: 0 – ${dur}s · Amplitude: -1.0 to +1.0 FS</div>`;
+      axes.innerHTML = `<div><strong>Waveform 3D</strong> · Time: 0 – ${dur}s · Volumetric Ribbon</div>`;
     } else {
       axes.textContent = "Decorative acoustic field · no patient recording";
     }
@@ -398,6 +578,8 @@ export function mount(root, data) {
     renderer.domElement.removeEventListener("webglcontextlost", contextLost);
     controls.removeEventListener("change", handleControlsChange);
     controls.stopListenToKeyEvents();
+    canvas.removeEventListener("pointermove", handlePointerMove);
+    canvas.removeEventListener("pointerleave", handlePointerLeave);
     resetButton?.removeEventListener("click", reset);
     controls.dispose();
     disposeTree(scene);

@@ -20,7 +20,20 @@ MAX_SPECTROGRAM_FREQUENCY_BINS = 64
 
 
 def _mono_finite(samples: np.ndarray, sample_rate: int) -> np.ndarray:
-    values = np.asarray(samples, dtype=np.float64)
+    try:
+        raw = np.asarray(samples)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("3D signal visualization requires a numeric array.") from exc
+
+    if (
+        isinstance(raw, (bool, np.bool_))
+        or raw.dtype == np.bool_
+        or np.iscomplexobj(raw)
+        or not np.issubdtype(raw.dtype, np.number)
+    ):
+        raise ValueError("3D signal visualization requires real numeric audio samples.")
+
+    values = raw.astype(np.float64, copy=False)
     if values.ndim != 1:
         raise ValueError("3D signal visualization requires mono 1D audio.")
     if values.size == 0 or not np.isfinite(values).all():
@@ -182,6 +195,13 @@ button {{
 }}
 button:hover {{ border-color: #B95E46; color: #B95E46; background: #FFFFFF; }}
 button:focus-visible {{ outline: 2px solid #B95E46; outline-offset: 2px; }}
+.probe {{
+  position: absolute; right: 14px; bottom: 12px; z-index: 2;
+  background: rgba(20, 25, 34, 0.92); border: 1px solid rgba(185, 94, 70, 0.5);
+  color: #FBFAF6; border-radius: 6px; padding: 5px 9px; font-family: ui-monospace, monospace;
+  font-size: 11px; pointer-events: none; backdrop-filter: blur(8px);
+}}
+.probe[hidden] {{ display: none; }}
 .note, .axes {{
   position: absolute; left: 14px; z-index: 2; max-width: 80%;
   background: rgba(28, 35, 43, 0.88); border: 1px solid rgba(216, 211, 200, 0.22);
@@ -195,9 +215,13 @@ button:focus-visible {{ outline: 2px solid #B95E46; outline-offset: 2px; }}
 <canvas role="img"
         aria-label="Three-dimensional acoustic scene. Drag to orbit and scroll to zoom."></canvas>
 <div class="toolbar">
-  <button type="button" data-reset-view aria-label="Reset 3D camera view">Reset view</button>
+  <button type="button" data-camera-preset="iso" aria-label="3D perspective">3D</button>
+  <button type="button" data-camera-preset="front" aria-label="Front spectrum view">Front</button>
+  <button type="button" data-camera-preset="top" aria-label="Top-down spectrogram view">Top</button>
+  <button type="button" data-reset-view aria-label="Reset 3D camera view">Reset</button>
 </div>
 <div class="axes" data-axis-labels></div>
+<div class="probe" data-probe-readout hidden></div>
 <div class="note" id="voxneuro-fallback-note">Loading local visualization…</div>
 </div>
 <script>window.VOXNEURO_DATA={serialized};</script><script>{bundle}</script>

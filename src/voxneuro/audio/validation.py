@@ -246,13 +246,30 @@ def validate_audio(
             "documented quality-control policy."
         )
 
-    # Avoid expensive pitch tracking and harmonic analysis if duration or audio basics failed
-    if (
+    if record.channels == 2:
+        centered = x - x.mean(axis=0, keepdims=True)
+        corr = np.corrcoef(centered.T)[0, 1] if len(centered) > 1 else 1.0
+        if np.isfinite(corr) and corr < -0.5:
+            errors.append(
+                "Stereo channels are strongly out of phase; safe mono conversion is not possible."
+            )
+        elif np.isfinite(corr) and corr < 0.0:
+            warnings.append(
+                "Stereo channels are partly out of phase; inspect the mono mix before use."
+            )
+
+    # Early rejection path for hard failures: avoid expensive pitch tracking and harmonic screening
+    hard_failure = (
         duration < cfg.min_duration_seconds
         or duration > cfg.max_duration_seconds
         or x.size == 0
         or peak == 0.0
-    ):
+        or rms < cfg.min_rms
+        or clipping > cfg.clipping_fraction_limit
+        or "Audio contains NaN or infinite samples." in errors
+        or any("out of phase" in err for err in errors)
+    )
+    if hard_failure:
         return AudioQuality(
             valid=False,
             errors=errors,
@@ -332,17 +349,6 @@ def validate_audio(
                             "distribution outside expected vocal range. Please record a "
                             "steady sustained vowel /a/."
                         )
-    if record.channels == 2:
-        centered = x - x.mean(axis=0, keepdims=True)
-        corr = np.corrcoef(centered.T)[0, 1] if len(centered) > 1 else 1.0
-        if np.isfinite(corr) and corr < -0.5:
-            errors.append(
-                "Stereo channels are strongly out of phase; safe mono conversion is not possible."
-            )
-        elif np.isfinite(corr) and corr < 0.0:
-            warnings.append(
-                "Stereo channels are partly out of phase; inspect the mono mix before use."
-            )
     return AudioQuality(
         valid=not errors,
         errors=errors,
