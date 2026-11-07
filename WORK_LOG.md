@@ -32,7 +32,7 @@
 ## Latest verification completed — 2026-11-07
 
 - Locked environment: CPython 3.12.14; uv 0.12.5; `uv sync --all-extras --locked` checked 71 packages.
-- Full suite: **216 passed** (210 non-UI tests plus six Streamlit AppTests); **87% coverage** across 1,791 statements.
+- Full suite: **224 passed** (218 non-UI tests plus six Streamlit AppTests); **87% coverage** across 1,934 statements.
 - Ruff 0.17.3 lint passed; format check passed with 153 files already formatted. Project verification passed 11 imports and 8 required files.
 - UAMS audit passed for 81 rows/81 participants with no label, duplicate-waveform, or demographic-age issues. Current Core39 extraction accepted 78/81 recordings under the reviewed policy; all three clipped exclusions are PD.
 - Repeated nested UAMS model selection/evaluation completed with five outer folds, three inner folds, three seeds, and participant bootstrap intervals. Extra Trees had the highest mean voice-only BA at 0.766 ± 0.019; age-only logistic was 0.839 ± 0.007. The age imbalance and PD-only exclusions prevent disease-specific interpretation.
@@ -40,12 +40,12 @@
 - Tuned L2 logistic research reference trained and verified against current code, data, schema, and standard/nested evaluation receipts. App microphone classification remains disabled.
 - Regenerated the grouped UAMS and nested UAMS receipts, UCI grouped evaluation, and research model against the current source fingerprint; model verification passed.
 - Generated a UAMS nested evaluation HTML report, aggregate-only dataset-audit HTML report, and an HTML Core39 smoke report from an actual UAMS development-cohort WAV. The aggregate audit omits sample IDs; the AI-bundle extraction receipt retains the exclusion count while redacting the ID list. No disease class was emitted for the WAV.
-- Python suite includes five Streamlit AppTests. Frontend npm tests passed (3/3), build succeeded, and browser workflow passed for synthetic upload, analysis, 3D views, tab visibility resume, camera reset, and WebGL fallback.
+- Python suite includes six Streamlit AppTests. Frontend npm tests passed (3/3), build succeeded, and browser workflow passed for synthetic upload, analysis, 3D views, tab visibility resume, camera reset, and WebGL fallback.
 - Opened the current app in Chrome at the local address. Physical microphone/OS permissions were not tested.
 - Rebuilt the source archive and generated both inventories from the same inclusion rules. ZIP integrity passed: 180 source files. Review-only README/evidence files are explicitly excluded from source inventory calculations.
 - Built and CRC-checked the AI review bundle: 191 files total (180 source files plus 11 review attachments); no audio, participant-level feature/prediction table, or model binary is included.
-- Re-extracted the AI review ZIP and reran all 216 tests with its `src/` first on `PYTHONPATH`; all passed at 87% coverage.
-- Current source/model provenance fingerprint: `65942228163857cf526d5881703a668717981347f6a6a90932ff489f339687c5`.
+- Re-extracted the AI review ZIP and reran all 224 tests with its `src/` first on `PYTHONPATH`; all passed at 87% coverage.
+- Current source/model provenance fingerprint: `e73319356c3512350d251de512393ccc95f034d49fee25e0043338a608167259`.
 
 ## Limits retained
 

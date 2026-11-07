@@ -46,7 +46,7 @@ jobs:
       - name: Run Pytest Test Suite
         env:
           PYTHONPATH: src
-        run: python -m pytest -v
+        run: python -m pytest -v --cov=src/voxneuro --cov-fail-under=85
 
   frontend-test:
     name: Frontend Three.js Visualizer Tests & Build

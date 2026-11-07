@@ -167,14 +167,24 @@ def test_audio_validation_config_enforces_numeric_ranges():
         AudioValidationConfig(frame_ms=20.5)
     with pytest.raises(TypeError, match="frame_ms must be an int"):
         AudioValidationConfig(frame_ms=True)
-    with pytest.raises(ValueError, match="frame_ms must be a positive integer"):
+    with pytest.raises(ValueError, match="frame_ms must be an integer between 5 and 100 ms"):
         AudioValidationConfig(frame_ms=0)
-    with pytest.raises(ValueError, match="pitch_floor_hz must be positive"):
+    with pytest.raises(ValueError, match="frame_ms must be an integer between 5 and 100 ms"):
+        AudioValidationConfig(frame_ms=101)
+    with pytest.raises(ValueError, match="pitch limits must satisfy"):
         AudioValidationConfig(pitch_floor_hz=-50.0)
     with pytest.raises(ValueError, match="pitch_floor_hz must be a finite number"):
         AudioValidationConfig(pitch_floor_hz=float("nan"))
-    with pytest.raises(ValueError, match="pitch_ceiling_hz must be greater"):
+    with pytest.raises(ValueError, match="pitch limits must satisfy"):
         AudioValidationConfig(pitch_floor_hz=300.0, pitch_ceiling_hz=200.0)
+
+
+def test_audio_validation_with_dc_offset_does_not_artificially_fail_harmonics():
+    vowel = sustained_vowel() + 0.15  # Add significant DC offset
+    rec = record(vowel)
+    result = validate_audio(rec)
+    assert result.valid
+    assert not any("harmonic overtones" in err for err in result.errors)
 
 
 def test_pure_sine_tone_is_rejected_as_non_vocal():

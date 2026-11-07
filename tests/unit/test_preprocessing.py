@@ -50,6 +50,16 @@ def test_preprocessing_rejects_signal_that_is_too_short_after_trimming():
         preprocess_audio(record, validation_config=config)
 
 
+@pytest.mark.parametrize("invalid_rate", [16000.5, True, False, 4000, 96000, "16000", -8000])
+def test_preprocessing_rejects_invalid_target_sample_rates(invalid_rate):
+    source = sustained_vowel(8000, 3.0)
+    record = AudioRecord(source.reshape(-1, 1), 8000, 1, "FLOAT", "WAV")
+    with pytest.raises(
+        ValueError, match="Target sample rate must be an integer between 8000 and 48000 Hz."
+    ):
+        preprocess_audio(record, target_sample_rate=invalid_rate)
+
+
 def test_preprocessing_uses_configured_frame_size_for_silence_trimming():
     from voxneuro.audio.validation import AudioValidationConfig
 

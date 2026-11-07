@@ -151,6 +151,14 @@ def test_evaluate_grouped_rejects_invalid_labels_and_dimensions():
     with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
         evaluate_grouped(X, [False, True] * 20, groups, n_splits=3)
 
+    # Mixed numpy boolean and integer labels must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, [np.bool_(False), 1] * 20, groups, n_splits=3)
+
+    # Boolean numpy array must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, np.array([False, True] * 20), groups, n_splits=3)
+
     # Mixed boolean and integer labels must be rejected
     with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
         evaluate_grouped(X, [False, 1] * 20, groups, n_splits=3)
@@ -216,6 +224,32 @@ def test_evaluate_grouped_and_nested_reject_misaligned_additional_predictors():
             n_splits=3,
             additional_models={"age_only": (shuffled_age_reset, pipeline)},
         )
+
+    # X participant_id mismatch against groups must be rejected
+    bad_x_id = voice_with_id.copy()
+    bad_x_id["participant_id"] = np.roll(groups, 1)
+    with pytest.raises(ValueError, match="X\\['participant_id'\\] does not match"):
+        evaluate_grouped(bad_x_id, y, groups, n_splits=3)
+
+    # Identifiers present in X and predictors are cleanly stripped before fitting
+    voice_with_both_ids = voice.copy()
+    voice_with_both_ids["participant_id"] = groups
+    voice_with_both_ids["sample_id"] = [f"s_{i}" for i in range(len(groups))]
+    age_with_both_ids = pd.DataFrame(
+        {
+            "participant_id": groups,
+            "sample_id": [f"s_{i}" for i in range(len(groups))],
+            "age": np.linspace(40, 80, len(groups)),
+        }
+    )
+    res_m, res_p = evaluate_grouped(
+        voice_with_both_ids,
+        y,
+        groups,
+        n_splits=3,
+        additional_models={"age_only": (age_with_both_ids, pipeline)},
+    )
+    assert not res_m.empty
 
 
 def test_elastic_net_candidate_configures_l1_ratio_correctly():

@@ -5,7 +5,7 @@
 ## Software and application checks
 
 - uv 0.12.5; uv sync --all-extras --locked checked 71 locked Python packages.
-- Full Python suite: **216 passed** (210 non-UI tests plus six Streamlit AppTests). Coverage is **87% across 1,791 statements** in `src/voxneuro`.
+- Full Python suite: **224 passed** (218 non-UI tests plus six Streamlit AppTests). Coverage is **87% across 1,934 statements** in `src/voxneuro`.
 - Ruff lint passed. Ruff format --check passed with 153 files already formatted.
 - Project verification passed: 11 required imports and 8 required files.
 - Model verification passed: bundle sidecar, current data/evaluation/code/config receipts, feature schema, deterministic reload prediction, and research-only/domain-incompatible metadata.
@@ -21,7 +21,7 @@
 - Feature extraction: 78/81 recordings accepted under the explicit reviewed exclusion policy. The three excluded recordings are clipped PD samples. Class-specific missingness can bias model estimates.
 - Current Core39 feature table: 78 participants (37 PD, 41 HC), one recording per participant. Feature schema is voxneuro.voice.v3.
 - UCI #470: strict validation passed for 756 source rows, 252 participants, three repeats per participant, binary and participant-consistent metadata, and finite predictors. There is one exact duplicate row for one participant; a separate deduplication sensitivity analysis was run.
-- Source/model provenance fingerprint: 65942228163857cf526d5881703a668717981347f6a6a90932ff489f339687c5.
+- Source/model provenance fingerprint: e73319356c3512350d251de512393ccc95f034d49fee25e0043338a608167259.
 - UAMS feature schema fingerprint: bd4a145f09ada55b519fae1f06bf4383a1921ff9a2421c7562ddead672eb48f2.
 - UAMS manifest SHA-256: 697e422f2631ded7be3b6ac737ce2655747340491ab8a49ab5ba40ed0454264e.
 - UAMS extracted feature-table SHA-256: 9037167ccb69c98e3926573a0de3ec1e922595557c77aaa16617bfd4a1f0b2a6.
@@ -67,6 +67,6 @@ These are results on the UCI pre-extracted table, not VoxNeuro raw WAV features.
 
 `VoxNeuro_AI_review_bundle.zip` contains those same 180 source files plus 11 review attachments (191 members total). The evidence includes aggregate fold metrics, result summaries, provenance receipts, and a dataset audit with counts only; the feature-extraction receipt replaces its sample-ID list with an exclusion count. It excludes recordings, participant-level prediction rows, participant-level feature tables, and trained model binaries. Its README lists SHA-256 hashes for every evidence attachment.
 
-The entire 216-test suite was also run from a clean extraction of the AI review ZIP with the extracted `src/` forced to the front of `PYTHONPATH`; all tests passed and coverage rounded to 87%. This confirms the fixed source-inventory test and the package contents rather than relying only on a test run in the development workspace.
+The entire 224-test suite was also run from a clean extraction of the AI review ZIP with the extracted `src/` forced to the front of `PYTHONPATH`; all tests passed and coverage rounded to 87%. This confirms the fixed source-inventory test and the package contents rather than relying only on a test run in the development workspace.
 
 Reproducing the cohort results requires separately obtaining and verifying the source datasets. Passing software tests and internal cross-validation do not establish clinical effectiveness.

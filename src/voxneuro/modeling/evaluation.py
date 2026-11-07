@@ -110,17 +110,20 @@ def _participant_bootstrap_intervals(
 def _validate_binary_labels(y: object) -> np.ndarray:
     """Validate that y contains strictly finite binary integers 0 and 1 without boolean types."""
     if isinstance(y, (list, tuple)):
-        if any(isinstance(v, bool) for v in y):
+        if any(isinstance(v, (bool, np.bool_)) for v in y):
             raise ValueError("Labels must contain only finite binary values: 0 and 1.")
     elif isinstance(y, pd.Series):
-        if y.dtype == bool or any(isinstance(v, bool) for v in y):
+        if y.dtype == bool or any(isinstance(v, (bool, np.bool_)) for v in y):
             raise ValueError("Labels must contain only finite binary values: 0 and 1.")
     elif isinstance(y, np.ndarray):
-        if y.dtype == bool or (y.dtype == object and any(isinstance(v, bool) for v in y.flat)):
+        if y.dtype == bool or (
+            y.dtype == object and any(isinstance(v, (bool, np.bool_)) for v in y.flat)
+        ):
             raise ValueError("Labels must contain only finite binary values: 0 and 1.")
     raw_labels = np.asarray(y)
     if (
         raw_labels.ndim != 1
+        or raw_labels.dtype == bool
         or raw_labels.dtype.kind not in "iuf"
         or not np.isfinite(raw_labels).all()
         or not np.isin(raw_labels, [0, 1]).all()
@@ -140,17 +143,25 @@ def _validate_additional_predictors(
         raise ValueError(f"Predictor table for {name!r} must match labels and be a DataFrame.")
     if not predictors.index.equals(X.index):
         raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
-    for id_col in ("participant_id", "sample_id"):
-        if id_col in predictors.columns and id_col in X.columns:
-            if not predictors[id_col].equals(X[id_col]):
-                raise ValueError(
-                    f"Additional predictor {id_col} sequence for {name!r} does not match X."
-                )
-        elif id_col in predictors.columns:
-            if not np.array_equal(predictors[id_col].to_numpy(), groups):
-                raise ValueError(
-                    f"Additional predictor {id_col} sequence for {name!r} does not match groups."
-                )
+
+    # Validate participant_id alignment
+    if "participant_id" in predictors.columns and "participant_id" in X.columns:
+        if not predictors["participant_id"].equals(X["participant_id"]):
+            raise ValueError(
+                f"Additional predictor participant_id sequence for {name!r} does not match X."
+            )
+    elif "participant_id" in predictors.columns:
+        if not np.array_equal(predictors["participant_id"].to_numpy(), groups):
+            raise ValueError(
+                f"Additional predictor participant_id sequence for {name!r} does not match groups."
+            )
+
+    # Validate sample_id alignment
+    if "sample_id" in predictors.columns and "sample_id" in X.columns:
+        if not predictors["sample_id"].equals(X["sample_id"]):
+            raise ValueError(
+                f"Additional predictor sample_id sequence for {name!r} does not match X."
+            )
 
 
 def evaluate_nested_grouped(
@@ -178,6 +189,10 @@ def evaluate_nested_grouped(
         raise ValueError("X must be a pandas DataFrame.")
     if len(X) != len(labels):
         raise ValueError("X and y must contain the same number of rows.")
+    if "participant_id" in X.columns and not np.array_equal(
+        X["participant_id"].to_numpy(), group_values
+    ):
+        raise ValueError("X['participant_id'] does not match the supplied groups array.")
     if bootstrap_iterations < 0:
         raise ValueError("bootstrap_iterations cannot be negative.")
     if not random_seeds or len(set(random_seeds)) != len(random_seeds):
@@ -226,10 +241,12 @@ def evaluate_nested_grouped(
                 grouped_splits(labels[train], group_values[train], inner_splits, inner_seed)
             )
             test_records: dict[str, pd.DataFrame] = {}
+            x_feat_cols = [c for c in X.columns if c not in ("participant_id", "sample_id")]
+            X_feats = X[x_feat_cols] if x_feat_cols else X
             dummy = DummyClassifier(strategy="prior")
-            dummy.fit(X.iloc[train], labels[train])
-            dummy_pred = dummy.predict(X.iloc[test]).astype(int)
-            dummy_probability = dummy.predict_proba(X.iloc[test])[:, 1]
+            dummy.fit(X_feats.iloc[train], labels[train])
+            dummy_pred = dummy.predict(X_feats.iloc[test]).astype(int)
+            dummy_probability = dummy.predict_proba(X_feats.iloc[test])[:, 1]
             test_records["dummy"] = pd.DataFrame(
                 {
                     "participant_id": group_values[test],
@@ -245,6 +262,11 @@ def evaluate_nested_grouped(
             for name, (predictors, estimator, parameter_grid) in repeat_specs.items():
                 train_x = predictors.iloc[train]
                 test_x = predictors.iloc[test]
+                feat_cols = [
+                    c for c in predictors.columns if c not in ("participant_id", "sample_id")
+                ]
+                train_feats = train_x[feat_cols] if feat_cols else train_x
+                test_feats = test_x[feat_cols] if feat_cols else test_x
                 search = GridSearchCV(
                     estimator=clone(estimator),
                     param_grid=parameter_grid,
@@ -255,16 +277,18 @@ def evaluate_nested_grouped(
                     error_score="raise",
                     return_train_score=False,
                 )
-                search.fit(train_x, labels[train])
+                search.fit(train_feats, labels[train])
                 fitted = search.best_estimator_
-                predicted = fitted.predict(test_x).astype(int)
+                predicted = fitted.predict(test_feats).astype(int)
                 probability = None
                 if hasattr(fitted, "predict_proba"):
-                    probability = fitted.predict_proba(test_x)[:, 1]
+                    probability = fitted.predict_proba(test_feats)[:, 1]
                     score = probability
                     score_kind = "uncalibrated_probability"
                 elif hasattr(fitted, "decision_function"):
-                    score = np.asarray(fitted.decision_function(test_x), dtype=float).reshape(-1)
+                    score = np.asarray(fitted.decision_function(test_feats), dtype=float).reshape(
+                        -1
+                    )
                     score_kind = "decision_function"
                 else:
                     score = predicted.astype(float)
@@ -398,6 +422,10 @@ def evaluate_grouped(
         raise ValueError("X must be a pandas DataFrame.")
     if len(X) != len(labels):
         raise ValueError("X and y must contain the same number of rows.")
+    if "participant_id" in X.columns and not np.array_equal(
+        X["participant_id"].to_numpy(), group_values
+    ):
+        raise ValueError("X['participant_id'] does not match the supplied groups array.")
     folds = list(grouped_splits(labels, group_values, n_splits, random_seed))
     models = {"dummy": None, **build_pipelines(random_seed)}
     predictor_tables = {name: X for name in models}
@@ -413,18 +441,20 @@ def evaluate_grouped(
     metric_rows = []
     for name, model in models.items():
         model_X = predictor_tables[name]
+        feat_cols = [c for c in model_X.columns if c not in ("participant_id", "sample_id")]
+        X_clean = model_X[feat_cols] if feat_cols else model_X
         for fold_id, (train, test) in enumerate(folds, start=1):
             if model is None:
                 fitted = DummyClassifier(strategy="prior")
             else:
                 fitted = clone(model)
-            fitted.fit(model_X.iloc[train], labels[train])
-            predicted = fitted.predict(model_X.iloc[test]).astype(int)
+            fitted.fit(X_clean.iloc[train], labels[train])
+            predicted = fitted.predict(X_clean.iloc[test]).astype(int)
             score = None
             if hasattr(fitted, "predict_proba"):
-                score = fitted.predict_proba(model_X.iloc[test])[:, 1]
+                score = fitted.predict_proba(X_clean.iloc[test])[:, 1]
             elif hasattr(fitted, "decision_function"):
-                score = fitted.decision_function(model_X.iloc[test])
+                score = fitted.decision_function(X_clean.iloc[test])
             fold_records = pd.DataFrame(
                 {
                     "participant_id": groups[test],

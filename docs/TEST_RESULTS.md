@@ -5,8 +5,8 @@ Verified on 2026-11-07 in the locked Windows/Python 3.12 environment. Full detai
 | Check | Result |
 |---|---|
 | Environment | Windows 11, CPython 3.12.14; uv 0.12.5; 71 locked Python packages checked. |
-| Python tests | **216 passed**: 210 non-UI tests and all 6 Streamlit AppTests. |
-| Source coverage | **87%** across 1,791 statements in `src/voxneuro`. |
+| Python tests | **224 passed**: 218 non-UI tests and all 6 Streamlit AppTests. |
+| Source coverage | **87%** across 1,934 statements in `src/voxneuro`. |
 | Ruff | Lint passed; formatter check passed with 153 files already formatted. |
 | Project verification | 11 required imports and 8 required files passed. |
 | Dataset audit | UAMS: 81 records (41 HC/40 PD), 81 participants, zero label, waveform-hash, demographic, or age-integrity issues. |
@@ -19,6 +19,6 @@ Verified on 2026-11-07 in the locked Windows/Python 3.12 environment. Full detai
 | WAV report | Actual UAMS training-cohort WAV passed decoding, quality validation and Core39 feature extraction; a local self-contained HTML smoke report was generated. No disease classification was made. |
 | Source archive | `VoxNeuro_source_audit.zip` rebuilt and CRC/inventory validated: 180 files. |
 | AI review bundle | 191 files: the same 180 source files plus 11 hashed aggregate-evidence attachments; CRC and inventory checks passed. |
-| Extracted bundle tests | The full 216-test suite passed from a clean extraction with the extracted `src/` explicitly first on `PYTHONPATH`; coverage rounded to 87%. |
+| Extracted bundle tests | The full 224-test suite passed from a clean extraction with the extracted `src/` explicitly first on `PYTHONPATH`; coverage rounded to 87%. |
 
 The browser upload used generated synthetic audio. The separate WAV smoke test used a development-cohort UAMS recording and is not independent validation. Physical microphone/OS permissions, external-cohort performance, clinical validity, and regulatory status remain unverified.

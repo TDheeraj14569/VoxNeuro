@@ -44,3 +44,31 @@ def combined_file_sha256(*paths: Path) -> str:
             raise FileNotFoundError(path)
         digest.update(path.read_bytes())
     return digest.hexdigest()
+
+
+def frontend_code_fingerprint() -> str:
+    """Hash frontend source, bundle, and package manifests deterministically."""
+    frontend_dir = PROJECT_ROOT / "frontend" / "acoustic-visualizer"
+    paths = [
+        frontend_dir / "package.json",
+        frontend_dir / "package-lock.json",
+        frontend_dir / "src" / "main.js",
+        frontend_dir / "dist" / "visualizer.bundle.js",
+    ]
+    digest = hashlib.sha256()
+    for path in sorted(paths):
+        if not path.is_file():
+            continue
+        digest.update(path.relative_to(PROJECT_ROOT).as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def release_provenance() -> dict[str, str]:
+    """Return provenance fingerprints for model pipeline and frontend release."""
+    return {
+        "model_pipeline_fingerprint": project_code_fingerprint(),
+        "frontend_fingerprint": frontend_code_fingerprint(),
+    }

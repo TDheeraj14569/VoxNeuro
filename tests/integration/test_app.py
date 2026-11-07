@@ -48,6 +48,20 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     assert "mfcc_12_sd" in app.session_state["voxneuro_html_report"]
     assert any("HTML report" in button.label for button in app.get("download_button"))
 
+    # Verify acoustic benchmark cards rendered actual values without misleading references
+    assert any("CORE ACOUSTIC MEASUREMENTS" in md.value for md in app.markdown)
+    assert any("Mean Pitch (F0)" in md.value for md in app.markdown)
+    assert any("Local Jitter" in md.value for md in app.markdown)
+    assert any("Local Shimmer" in md.value for md in app.markdown)
+    assert any("Harmonics-to-Noise" in md.value for md in app.markdown)
+    feat_dict = app.session_state["voxneuro_features"]
+    expected_f0 = f"{feat_dict['f0_mean_hz']:.1f} Hz"
+    expected_jitter = f"{feat_dict['jitter_local'] * 100.0:.3f}%"
+    expected_shimmer = f"{feat_dict['shimmer_local'] * 100.0:.2f}%"
+    assert any(expected_f0 in md.value for md in app.markdown)
+    assert any(expected_jitter in md.value for md in app.markdown)
+    assert any(expected_shimmer in md.value for md in app.markdown)
+
     app.sidebar.radio[0].set_value("Signal analysis").run()
     assert not app.exception
     assert any(item.value == "Interactive 3D signal views" for item in app.subheader)

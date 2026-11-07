@@ -1112,6 +1112,11 @@ def _render_generic_glass_table(df: pd.DataFrame, headers: list[str] | None = No
                     formatted = f'<span class="vox-val-num">{val:.4f}</span>'
                 else:
                     formatted = f'<span class="vox-val-num">{val:.5f}</span>'
+            elif isinstance(val, (bool, np.bool_)):
+                if val:
+                    formatted = '<span class="vox-badge-ok">True</span>'
+                else:
+                    formatted = '<span class="vox-badge-na">False</span>'
             elif isinstance(val, (int, np.integer)):
                 formatted = f'<span class="vox-val-num">{val:,}</span>'
             elif str(val).lower() in ("valid", "true", "yes", "available", "hc"):
@@ -1205,43 +1210,48 @@ def _render_quality_cards(quality: dict) -> None:
 
 def _render_acoustic_benchmark_cards(features: dict) -> None:
     f0 = features.get("f0_mean_hz")
-    jitter = features.get("jitter_local_percent")
-    shimmer = features.get("shimmer_local_percent")
+    jitter = features.get("jitter_local")
+    shimmer = features.get("shimmer_local")
     hnr = features.get("hnr_mean_db")
 
     f0_str = f"{f0:.1f} Hz" if isinstance(f0, Real) and np.isfinite(f0) else "—"
-    jitter_str = f"{jitter:.3f}%" if isinstance(jitter, Real) and np.isfinite(jitter) else "—"
-    shimmer_str = f"{shimmer:.2f}%" if isinstance(shimmer, Real) and np.isfinite(shimmer) else "—"
+    jitter_str = (
+        f"{jitter * 100.0:.3f}%" if isinstance(jitter, Real) and np.isfinite(jitter) else "—"
+    )
+    shimmer_str = (
+        f"{shimmer * 100.0:.2f}%" if isinstance(shimmer, Real) and np.isfinite(shimmer) else "—"
+    )
     hnr_str = f"{hnr:.1f} dB" if isinstance(hnr, Real) and np.isfinite(hnr) else "—"
 
     html = (
         '<div class="vox-glass-card" style="margin-top:1.25rem;">'
         '<div class="vox-kicker" style="margin-bottom:0.4rem;">'
-        "EXPLORATORY ACOUSTIC BENCHMARK · UAMS SUSTAINED /A/ COHORT</div>"
+        "CORE ACOUSTIC MEASUREMENTS · SUSTAINED /A/ PHONATION</div>"
         '<p style="color:#A7B8B5; font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">'
-        "Observed vocal metrics relative to typical sustained vowel reference distributions. "
-        "Strictly exploratory for bioengineering analysis; does NOT output a medical diagnosis."
+        "Descriptive vocal stability and harmonic measurements extracted from the recording. "
+        "Strictly exploratory for bioengineering analysis; no universal normal range or "
+        "diagnostic disease threshold is assigned."
         "</p>"
         '<div class="vox-quality-grid">'
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Mean Pitch (F0)</div>'
         f'<div class="vox-qc-value">{f0_str}</div>'
-        '<div class="vox-qc-sub">Ref: 110–220 Hz</div>'
+        '<div class="vox-qc-sub">Estimated fundamental frequency</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Local Jitter</div>'
         f'<div class="vox-qc-value">{jitter_str}</div>'
-        '<div class="vox-qc-sub">Ref: &lt; 1.04%</div>'
+        '<div class="vox-qc-sub">Cycle-to-cycle frequency variation</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Local Shimmer</div>'
         f'<div class="vox-qc-value">{shimmer_str}</div>'
-        '<div class="vox-qc-sub">Ref: &lt; 3.81%</div>'
+        '<div class="vox-qc-sub">Cycle-to-cycle amplitude variation</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Harmonics-to-Noise</div>'
         f'<div class="vox-qc-value">{hnr_str}</div>'
-        '<div class="vox-qc-sub">Ref: &gt; 15.0 dB</div>'
+        '<div class="vox-qc-sub">Relative periodic vs noise energy</div>'
         "</div>"
         "</div>"
         "</div>"

@@ -38,8 +38,12 @@ def preprocess_audio(
     report = validate_audio(record, config)
     if not report.valid:
         raise AudioValidationError(" ".join(report.errors))
-    if target_sample_rate < 4000:
-        raise ValueError("Target sample rate must be at least 4000 Hz.")
+    if (
+        isinstance(target_sample_rate, bool)
+        or not isinstance(target_sample_rate, (int, np.integer))
+        or not 8000 <= int(target_sample_rate) <= 48000
+    ):
+        raise ValueError("Target sample rate must be an integer between 8000 and 48000 Hz.")
     if mono_policy != "average_with_phase_check":
         raise ValueError(f"Unsupported mono conversion policy: {mono_policy!r}.")
     original = record.samples
