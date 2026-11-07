@@ -20,7 +20,19 @@ def extract_spectral_features(
     rolloff_fraction: float = 0.85,
 ) -> dict[str, float]:
     """Calculate temporal summaries after enforcing a shared source-compatible band."""
-    x = np.asarray(samples, dtype=np.float32)
+    try:
+        raw = np.asarray(samples)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Spectral extraction requires a rectangular numeric array.") from exc
+    if (
+        isinstance(raw, (bool, np.bool_))
+        or raw.dtype == np.bool_
+        or not np.issubdtype(raw.dtype, np.number)
+        or np.iscomplexobj(raw)
+        or np.issubdtype(raw.dtype, np.complexfloating)
+    ):
+        raise ValueError("Spectral extraction requires real numeric audio samples.")
+    x = raw.astype(np.float32, copy=False)
     if x.ndim != 1:
         raise ValueError("Spectral extraction requires mono 1D audio.")
     if x.size < max(fft_window_samples // 2, 64):

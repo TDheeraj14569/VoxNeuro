@@ -5,7 +5,27 @@ from matplotlib.figure import Figure
 
 
 def waveform_figure(samples: np.ndarray, sample_rate: int, title: str = "Waveform"):
-    arr = np.asarray(samples, dtype=np.float64)
+    if (
+        isinstance(sample_rate, (bool, np.bool_))
+        or not isinstance(sample_rate, (int, np.integer))
+        or sample_rate <= 0
+    ):
+        raise ValueError("sample_rate must be a positive integer.")
+    try:
+        raw = np.asarray(samples)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("samples must be a numeric array.") from exc
+    if (
+        isinstance(raw, (bool, np.bool_))
+        or raw.dtype == np.bool_
+        or not np.issubdtype(raw.dtype, np.number)
+        or np.iscomplexobj(raw)
+        or np.issubdtype(raw.dtype, np.complexfloating)
+    ):
+        raise ValueError("samples must contain real numeric values.")
+    if not np.isfinite(raw).all():
+        raise ValueError("samples must contain finite numeric values without NaN or Inf.")
+    arr = raw.astype(np.float64, copy=False)
     if arr.ndim == 2:
         if arr.shape[1] in (1, 2):
             x = arr.mean(axis=1)

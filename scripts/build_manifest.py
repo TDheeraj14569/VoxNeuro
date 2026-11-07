@@ -91,15 +91,29 @@ def main() -> int:
         return 2
     demo = tables["Parselmouth"].copy()
     normalized = {str(c).strip().casefold().replace(" ", "_"): c for c in demo.columns}
-    id_col = next(
-        (
+    # Explicit priority for sample identifier matching
+    id_col = None
+    for priority_candidates in (
+        {"sample_id", "sampleid", "recording_id"},
+        {"participant_id", "subject_id"},
+        {"id"},
+    ):
+        matches = [
             original
             for key, original in normalized.items()
-            if key in {"sample_id", "sampleid", "id", "subject_id", "participant_id"}
-            or ("sample" in key.split("_") and "id" in key.split("_"))
-        ),
-        None,
-    )
+            if key in priority_candidates
+            or any(
+                all(tok in key.split("_") for tok in cand.split("_"))
+                for cand in priority_candidates
+                if "_" in cand
+            )
+        ]
+        if len(matches) == 1:
+            id_col = matches[0]
+            break
+        if len(matches) > 1:
+            print(f"Ambiguous identifier column match among {matches} in sheet.")
+            return 2
     age_col = next(
         (
             original

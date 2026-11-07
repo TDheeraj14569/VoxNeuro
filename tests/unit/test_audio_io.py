@@ -165,3 +165,13 @@ def test_decode_audio_rejects_audio_exceeding_duration_limit(monkeypatch):
     monkeypatch.setattr(sf, "info", lambda _: FakeInfo())
     with pytest.raises(AudioReadError, match="Audio duration of 305.0 s exceeds maximum"):
         decode_audio(dummy_wav)
+
+
+@pytest.mark.parametrize(
+    "bad_max_dur",
+    [float("nan"), float("inf"), float("-inf"), -1.0, 0.0, True, False, "300"],
+)
+def test_decode_audio_rejects_invalid_max_duration_seconds(bad_max_dur):
+    dummy_wav = wav_bytes(sustained_vowel(duration=0.1), 16000)
+    with pytest.raises(ValueError, match="max_duration_seconds"):
+        decode_audio(dummy_wav, max_duration_seconds=bad_max_dur)

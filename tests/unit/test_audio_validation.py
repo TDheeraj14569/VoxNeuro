@@ -294,3 +294,47 @@ def test_audio_validation_config_from_dict_and_thresholds():
     assert cfg.second_harmonic_min_factor == 1.7
     assert cfg.second_harmonic_max_factor == 2.3
     assert cfg.second_harmonic_trigger_overtone_fraction == 0.06
+
+
+def test_audio_validation_config_from_dict_rejects_type_coercion():
+    base_cfg = {
+        "min_duration_seconds": 1.0,
+        "max_duration_seconds": 30.0,
+        "min_rms": 0.003,
+        "max_peak": 0.999,
+        "clipping_fraction_limit": 0.01,
+        "min_voiced_fraction": 0.15,
+        "frame_ms": 20,
+        "mono_policy": "average_with_phase_check",
+        "min_harmonic_overtone_fraction": 0.005,
+        "min_second_harmonic_fraction": 0.0003,
+        "min_waveform_kurtosis": 1.15,
+    }
+    with pytest.raises(TypeError, match="frame_ms"):
+        AudioValidationConfig.from_dict({**base_cfg, "frame_ms": 20.9})
+    with pytest.raises(TypeError, match="min_rms"):
+        AudioValidationConfig.from_dict({**base_cfg, "min_rms": True})
+    with pytest.raises(TypeError, match="mono_policy"):
+        AudioValidationConfig.from_dict({**base_cfg, "mono_policy": 123})
+
+
+def test_audio_validation_config_from_yaml_loader():
+    from voxneuro.config import load_config
+
+    audio_yaml = load_config("audio_config.yaml")
+    feature_yaml = load_config("feature_config.yaml")
+    cfg = AudioValidationConfig.from_dict(audio_yaml, feature_yaml)
+    assert cfg.second_harmonic_min_factor == 1.8
+    assert cfg.second_harmonic_max_factor == 2.2
+    assert cfg.second_harmonic_trigger_overtone_fraction == 0.05
+
+
+def test_validate_audio_early_exit_on_invalid_duration():
+    long_samples = sustained_vowel(duration=31.0)
+    result = validate_audio(record(long_samples))
+    assert not result.valid
+    assert any("too long" in e for e in result.errors)
+    assert result.duration_seconds == 31.0
+    assert result.peak_amplitude > 0.0
+    assert result.rms_amplitude > 0.0
+    assert result.voiced_fraction == 0.0

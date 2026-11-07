@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from io import BytesIO
 
@@ -73,6 +74,14 @@ def decode_audio(
         decompression memory bombs. Fine-grained vocal task duration (e.g. 30 s) is
         enforced downstream by AudioValidationConfig during validate_audio.
     """
+    if (
+        isinstance(max_duration_seconds, (bool, np.bool_))
+        or not isinstance(max_duration_seconds, (int, float, np.number))
+        or not math.isfinite(max_duration_seconds)
+        or max_duration_seconds <= 0
+    ):
+        raise ValueError("max_duration_seconds must be a finite, positive, non-boolean number.")
+
     try:
         data = payload.getvalue() if isinstance(payload, BytesIO) else bytes(payload)
         info = sf.info(BytesIO(data))

@@ -13,7 +13,40 @@ def spectrogram_figure(
     n_fft: int = 1024,
     hop_length: int = 160,
 ):
-    arr = np.asarray(samples, dtype=np.float32)
+    if (
+        isinstance(sample_rate, (bool, np.bool_))
+        or not isinstance(sample_rate, (int, np.integer))
+        or sample_rate <= 0
+    ):
+        raise ValueError("sample_rate must be a positive integer.")
+    if (
+        isinstance(n_fft, (bool, np.bool_))
+        or not isinstance(n_fft, (int, np.integer))
+        or n_fft <= 0
+    ):
+        raise ValueError("n_fft must be a positive integer.")
+    if (
+        isinstance(hop_length, (bool, np.bool_))
+        or not isinstance(hop_length, (int, np.integer))
+        or hop_length <= 0
+        or hop_length > n_fft
+    ):
+        raise ValueError("hop_length must be a positive integer less than or equal to n_fft.")
+    try:
+        raw = np.asarray(samples)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("samples must be a numeric array.") from exc
+    if (
+        isinstance(raw, (bool, np.bool_))
+        or raw.dtype == np.bool_
+        or not np.issubdtype(raw.dtype, np.number)
+        or np.iscomplexobj(raw)
+        or np.issubdtype(raw.dtype, np.complexfloating)
+    ):
+        raise ValueError("samples must contain real numeric values.")
+    if not np.isfinite(raw).all():
+        raise ValueError("samples must contain finite numeric values without NaN or Inf.")
+    arr = raw.astype(np.float32, copy=False)
     if arr.ndim == 2:
         if arr.shape[1] in (1, 2):
             x = arr.mean(axis=1)

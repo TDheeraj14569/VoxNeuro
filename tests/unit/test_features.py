@@ -165,3 +165,45 @@ def test_extract_features_rejects_complex_boolean_and_string_arrays(bad_samples)
 def test_extract_features_rejects_invalid_sample_rates(bad_sr):
     with pytest.raises(FeatureExtractionError, match="sample rate"):
         extract_features(sustained_vowel(), bad_sr)
+
+
+@pytest.mark.parametrize(
+    "bad_orig_sr",
+    [16000.5, True, False, 0, 4000, 96000, "16000", -16000],
+)
+def test_extract_features_rejects_invalid_original_sample_rates(bad_orig_sr):
+    with pytest.raises(FeatureExtractionError, match="Original sample rate"):
+        extract_features(sustained_vowel(), 16000, original_sample_rate=bad_orig_sr)
+
+
+def test_lower_level_extractors_reject_non_numeric_and_complex_arrays():
+    from voxneuro.features.parselmouth_features import extract_praat_features
+    from voxneuro.features.spectral_features import extract_spectral_features
+
+    complex_arr = np.array([1.0 + 1.0j, 2.0 - 1.0j])
+    bool_arr = np.array([True, False, True])
+    obj_arr = np.array(["1.0", "2.0"], dtype=object)
+
+    for bad in (complex_arr, bool_arr, obj_arr):
+        with pytest.raises(ValueError, match="numeric"):
+            extract_praat_features(bad, 16000)
+        with pytest.raises(ValueError, match="numeric"):
+            extract_spectral_features(bad, 16000)
+
+
+@pytest.mark.parametrize(
+    ("param_kwargs", "err_match"),
+    [
+        ({"pitch_floor_hz": 0.0}, "pitch_floor_hz"),
+        ({"pitch_floor_hz": 600.0, "pitch_ceiling_hz": 500.0}, "pitch_floor_hz"),
+        ({"pitch_step_seconds": 0.5}, "pitch_step_seconds"),
+        ({"mel_bands": 10}, "mel_bands"),
+        ({"fft_window_samples": 1000}, "fft_window_samples"),
+        ({"hop_samples": 2048, "fft_window_samples": 1024}, "hop_samples"),
+        ({"mel_min_hz": -10.0}, "mel_min_hz"),
+        ({"spectral_rolloff_fraction": 1.5}, "spectral_rolloff_fraction"),
+    ],
+)
+def test_extract_features_validates_parameter_bounds(param_kwargs, err_match):
+    with pytest.raises(FeatureExtractionError, match=err_match):
+        extract_features(sustained_vowel(), 16000, **param_kwargs)

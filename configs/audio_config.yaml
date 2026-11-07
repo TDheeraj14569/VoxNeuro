@@ -10,6 +10,9 @@ frame_ms: 20
 min_voiced_fraction: 0.15
 min_harmonic_overtone_fraction: 0.005
 min_second_harmonic_fraction: 0.0003
+second_harmonic_min_factor: 1.8
+second_harmonic_max_factor: 2.2
+second_harmonic_trigger_overtone_fraction: 0.05
 min_waveform_kurtosis: 1.15
 mono_policy: average_with_phase_check
 

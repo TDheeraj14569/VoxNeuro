@@ -62,3 +62,30 @@ def test_waveform_and_spectrogram_handle_multichannel_downmix_safely():
         waveform_figure(four_channel, 16000)
     with pytest.raises(ValueError, match="Multichannel"):
         spectrogram_figure(four_channel, 16000)
+
+
+def test_waveform_and_spectrogram_validate_arguments():
+    import numpy as np
+    import pytest
+
+    valid_samples = sustained_vowel()
+    for bad_sr in (0, -16000, 16000.5, True, False, "16000"):
+        with pytest.raises(ValueError, match="sample_rate"):
+            waveform_figure(valid_samples, bad_sr)
+        with pytest.raises(ValueError, match="sample_rate"):
+            spectrogram_figure(valid_samples, bad_sr)
+
+    with pytest.raises(ValueError, match="finite"):
+        waveform_figure(np.array([1.0, np.nan, 2.0]), 16000)
+    with pytest.raises(ValueError, match="finite"):
+        spectrogram_figure(np.array([1.0, np.inf, 2.0]), 16000)
+
+    with pytest.raises(ValueError, match="numeric"):
+        waveform_figure(np.array([1.0 + 1.0j, 2.0]), 16000)
+    with pytest.raises(ValueError, match="numeric"):
+        spectrogram_figure(np.array([1.0 + 1.0j, 2.0]), 16000)
+
+    with pytest.raises(ValueError, match="n_fft"):
+        spectrogram_figure(valid_samples, 16000, n_fft=0)
+    with pytest.raises(ValueError, match="hop_length"):
+        spectrogram_figure(valid_samples, 16000, hop_length=2048, n_fft=1024)

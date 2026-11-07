@@ -1,3 +1,4 @@
+import hashlib
 import shutil
 from io import BytesIO
 from pathlib import Path
@@ -45,6 +46,8 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     assert app.session_state["voxneuro_report"]["model_assessment"]["status"].startswith(
         "Unavailable"
     )
+    expected_sha256 = hashlib.sha256(payload.getvalue()).hexdigest()
+    assert expected_sha256 in app.session_state["voxneuro_html_report"]
     assert "mfcc_12_sd" in app.session_state["voxneuro_html_report"]
     assert any("HTML report" in button.label for button in app.get("download_button"))
 
@@ -91,6 +94,7 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     assert len(app.get("download_button")) == 3
     assert any("Limit: ≤ 1.00%" in md.value for md in app.markdown)
     assert any("Mono" in md.value for md in app.markdown)
+    assert any(expected_sha256 in md.value for md in app.markdown)
     assert any("Method &amp; Interpretation" in md.value for md in app.markdown)
 
 

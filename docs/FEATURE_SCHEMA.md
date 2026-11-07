@@ -33,6 +33,11 @@ The MFCC row covers 26 ordered feature names: `mfcc_00_mean`, `mfcc_00_sd`, `mfc
 - All six F0 summaries are undefined unless at least three voiced pitch frames are available. The current schema fixes the MFCC count at 13; changing it requires a schema revision.
 - Text values such as `"NaN"`, `"null"`, or `"several"` are malformed in feature tables; only native missing values represent legitimate undefined measurements.
 
+## Schema Versioning & Cryptographic Migration Policy
+
+- **Authoritative Identifier:** The version string `voxneuro.voice.v3` represents the Core39 measurement specification. The authoritative cryptographic compatibility contract is the 256-bit SHA-256 schema fingerprint (`schema_fingerprint`), which binds the exact feature list, ordering, and underlying definitions.
+- **HNR Definition Refinement:** In `voxneuro.voice.v3`, `hnr_mean_db` was refined to explicitly exclude Praat's `-200 dB` unvoiced sentinel (`hnr > -199.0`), aligning with Praat's native `Get mean` harmonicity. Model bundles and evaluation receipts enforce `schema_fingerprint` verification at load time, rejecting unmigrated artifacts. Any prospective addition, deletion, or column re-ordering will advance the major contract to `voxneuro.voice.v4`.
+
 ## Interpretation boundary
 
 These acoustic summaries describe a short phonation task. They do not capture connected speech, articulation, speech rate, intelligibility, or conversational prosody. No healthy range, disease threshold, or validated biomarker interpretation is assigned.

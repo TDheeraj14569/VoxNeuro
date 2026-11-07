@@ -27,6 +27,9 @@ _CONFIG_KEYS: dict[str, set[str]] = {
         "min_voiced_fraction",
         "min_harmonic_overtone_fraction",
         "min_second_harmonic_fraction",
+        "second_harmonic_min_factor",
+        "second_harmonic_max_factor",
+        "second_harmonic_trigger_overtone_fraction",
         "min_waveform_kurtosis",
         "mono_policy",
     },
@@ -135,6 +138,30 @@ def _validate_config(name: str, value: dict[str, Any]) -> None:
         _require_number(
             value["min_second_harmonic_fraction"],
             "min_second_harmonic_fraction",
+            minimum=0,
+            maximum=1,
+        )
+        _require_number(
+            value["second_harmonic_min_factor"],
+            "second_harmonic_min_factor",
+            minimum=1.0,
+            maximum=3.0,
+            strict_minimum=True,
+        )
+        _require_number(
+            value["second_harmonic_max_factor"],
+            "second_harmonic_max_factor",
+            minimum=1.0,
+            maximum=4.0,
+            strict_minimum=True,
+        )
+        if value["second_harmonic_min_factor"] >= value["second_harmonic_max_factor"]:
+            raise ValueError(
+                "second_harmonic_min_factor must be less than second_harmonic_max_factor."
+            )
+        _require_number(
+            value["second_harmonic_trigger_overtone_fraction"],
+            "second_harmonic_trigger_overtone_fraction",
             minimum=0,
             maximum=1,
         )

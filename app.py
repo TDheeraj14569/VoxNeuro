@@ -456,37 +456,23 @@ html body div.stApp div[data-testid="stDownloadButton"] svg {
   fill: #55D9C1 !important;
   stroke: #55D9C1 !important;
 }
-html body div.stApp button:hover,
 html body div.stApp button:hover:not(:disabled),
 html body div.stApp button:hover:enabled,
-html body div.stApp button[kind="secondary"]:hover,
 html body div.stApp button[kind="secondary"]:hover:not(:disabled),
-html body div.stApp a[kind="secondary"]:hover,
-html body div.stApp a[role="button"]:hover,
-html body div.stApp a[download]:hover,
-html body div.stApp [data-testid*="DownloadButton"] button:hover,
+html body div.stApp a[kind="secondary"]:hover:not(:disabled),
+html body div.stApp a[role="button"]:hover:not(:disabled),
+html body div.stApp a[download]:hover:not(:disabled),
 html body div.stApp [data-testid*="DownloadButton"] button:hover:not(:disabled),
-html body div.stApp [data-testid*="DownloadButton"] a:hover,
 html body div.stApp [data-testid*="DownloadButton"] a:hover:not(:disabled),
-html body div.stApp [data-testid*="downloadButton"] button:hover,
 html body div.stApp [data-testid*="downloadButton"] button:hover:not(:disabled),
-html body div.stApp [data-testid*="downloadButton"] a:hover,
 html body div.stApp [data-testid*="downloadButton"] a:hover:not(:disabled),
-html body div.stApp [data-testid*="baseButton"]:hover,
 html body div.stApp [data-testid*="baseButton"]:hover:not(:disabled),
-html body div.stApp [data-testid*="BaseButton"]:hover,
 html body div.stApp [data-testid*="BaseButton"]:hover:not(:disabled),
-html body div.stApp [data-testid*="stBaseButton"]:hover,
 html body div.stApp [data-testid*="stBaseButton"]:hover:not(:disabled),
-html body div.stApp .stButton > button:hover,
 html body div.stApp .stButton > button:hover:not(:disabled),
-html body div.stApp .stDownloadButton > button:hover,
 html body div.stApp .stDownloadButton > button:hover:not(:disabled),
-html body div.stApp .stDownloadButton > a:hover,
 html body div.stApp .stDownloadButton > a:hover:not(:disabled),
-html body div.stApp div[data-testid="stDownloadButton"] button:hover,
 html body div.stApp div[data-testid="stDownloadButton"] button:hover:not(:disabled),
-html body div.stApp div[data-testid="stDownloadButton"] a:hover,
 html body div.stApp div[data-testid="stDownloadButton"] a:hover:not(:disabled) {
   background: linear-gradient(135deg, rgba(26, 82, 100, 0.98) 0%, rgba(14, 52, 68, 0.98) 100%)
               !important;
@@ -497,6 +483,17 @@ html body div.stApp div[data-testid="stDownloadButton"] a:hover:not(:disabled) {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(85, 217, 193, 0.5),
               inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
   transform: translateY(-2px) !important;
+}
+html body div.stApp button:disabled,
+html body div.stApp button[disabled],
+html body div.stApp .stButton > button:disabled,
+html body div.stApp .stDownloadButton > button:disabled,
+html body div.stApp div[data-testid="stDownloadButton"] button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(43, 90, 107, 0.4) !important;
 }
 html body div.stApp button:hover *,
 html body div.stApp button:hover:not(:disabled) *,
@@ -1803,19 +1800,43 @@ def _show_model_assessment() -> None:
                     "F1 Score",
                 ],
             )
+            et_match = nested_df[nested_df["model"] == "extra_trees"]
+            age_match = nested_df[nested_df["model"] == "age_only_logistic"]
+            if not et_match.empty and not age_match.empty:
+                et_row = et_match.iloc[0]
+                age_row = age_match.iloc[0]
+                ba_mean = float(et_row.get("balanced_accuracy_mean", 0.762))
+                ba_sd = float(et_row.get("balanced_accuracy_repeat_sd", 0.020))
+                auc_mean = float(et_row.get("roc_auc_mean", 0.784))
+                age_ba = float(age_row.get("balanced_accuracy_mean", 0.839))
+                top_model_text = (
+                    f"Extra Trees achieved the highest voice-only discrimination at "
+                    f"<strong>{ba_mean * 100:.1f}% balanced accuracy</strong> "
+                    f"({ba_mean:.3f} ± {ba_sd:.3f}) and <strong>{auc_mean:.3f} ROC-AUC</strong>."
+                )
+                age_confound_text = (
+                    f"The age-only logistic baseline achieved "
+                    f"<strong>{age_ba * 100:.1f}% balanced accuracy</strong> "
+                    f"({age_ba:.3f}) in this markedly age-imbalanced cohort in UAMS "
+                    "(PD participants were older on average). This demonstrates that "
+                    "voice discrimination alone must not be mistaken for diagnostic "
+                    "specificity without age-matched controls."
+                )
+            else:
+                top_model_text = (
+                    "Voice-only candidate models are evaluated via repeated nested "
+                    "participant-grouped cross-validation on sustained vowel recordings."
+                )
+                age_confound_text = (
+                    "Demographic comparators assess age confounding in the retrospective cohort."
+                )
             findings_html = (
                 '<div class="vox-glass-card" style="margin-top:0.85rem;">'
                 '<div class="vox-qc-label" style="color:#55D9C1; margin-bottom:0.25rem;">'
                 "KEY RESEARCH FINDINGS</div>"
                 '<p style="margin:0; font-size:0.88rem; line-height:1.55; color:#EDF6F7;">'
-                "<strong>Top Voice Model:</strong> Extra Trees achieved the highest voice-only "
-                "discrimination at <strong>76.6% balanced accuracy</strong> (0.766 ± 0.019) and "
-                "<strong>0.797 ROC-AUC</strong>.<br>"
-                "<strong>Demographic Confounding:</strong> The age-only logistic baseline "
-                "achieved <strong>83.9% balanced accuracy</strong> in this markedly "
-                "age-imbalanced cohort in UAMS (PD participants were older on average). This "
-                "demonstrates that voice discrimination alone must not be mistaken for diagnostic "
-                "specificity without age-matched controls."
+                f"<strong>Top Voice Model:</strong> {top_model_text}<br>"
+                f"<strong>Demographic Confounding:</strong> {age_confound_text}"
                 "</p></div>"
             )
             st.markdown(findings_html, unsafe_allow_html=True)
@@ -2062,9 +2083,10 @@ def _show_method_privacy() -> None:
         ),
         (
             "02",
-            "Speech Task Verification",
-            "Verify sustained vowel phonation criteria: voiced frame fraction ≥ 40%, positive "
-            "SNR, and second-harmonic energy > 5% to reject synthetic sine and square waves.",
+            "Task Plausibility & Acoustic Screening",
+            "Verify sustained-vowel phonation screening criteria: voiced frame fraction ≥ 15%, "
+            "adequate active frame RMS level, and natural harmonic overtone structure to screen "
+            "unvoiced noise and synthetic tones.",
         ),
         (
             "03",

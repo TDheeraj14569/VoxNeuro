@@ -39,28 +39,57 @@ class AudioValidationConfig:
     def from_dict(cls, audio_cfg: dict, feature_cfg: dict | None = None) -> AudioValidationConfig:
         """Construct a validated AudioValidationConfig from parsed yaml configuration mappings."""
         feature_cfg = feature_cfg or {}
+
+        def _get_float(d: dict, key: str, default: float | None = None) -> float:
+            if key not in d:
+                if default is not None:
+                    return float(default)
+                raise KeyError(f"Missing required configuration key {key!r}.")
+            val = d[key]
+            if isinstance(val, (bool, np.bool_)) or not isinstance(val, (int, float, np.number)):
+                raise TypeError(f"{key} must be numeric, not {type(val).__name__}.")
+            if not math.isfinite(val):
+                raise ValueError(f"{key} must be a finite number.")
+            return float(val)
+
+        def _get_int(d: dict, key: str) -> int:
+            if key not in d:
+                raise KeyError(f"Missing required configuration key {key!r}.")
+            val = d[key]
+            if isinstance(val, (bool, np.bool_)) or not isinstance(val, (int, np.integer)):
+                raise TypeError(f"{key} must be an integer, not {type(val).__name__}.")
+            return int(val)
+
+        def _get_str(d: dict, key: str) -> str:
+            if key not in d:
+                raise KeyError(f"Missing required configuration key {key!r}.")
+            val = d[key]
+            if not isinstance(val, str):
+                raise TypeError(f"{key} must be a string, not {type(val).__name__}.")
+            return str(val)
+
         return cls(
-            min_duration_seconds=float(audio_cfg["min_duration_seconds"]),
-            max_duration_seconds=float(audio_cfg["max_duration_seconds"]),
-            min_rms=float(audio_cfg["min_rms"]),
-            max_peak=float(audio_cfg["max_peak"]),
-            clipping_fraction_limit=float(audio_cfg["clipping_fraction_limit"]),
-            min_voiced_fraction=float(audio_cfg["min_voiced_fraction"]),
-            frame_ms=int(audio_cfg["frame_ms"]),
-            mono_policy=str(audio_cfg["mono_policy"]),
-            pitch_floor_hz=float(
-                feature_cfg.get("pitch_floor_hz", audio_cfg.get("pitch_floor_hz", 75.0))
+            min_duration_seconds=_get_float(audio_cfg, "min_duration_seconds"),
+            max_duration_seconds=_get_float(audio_cfg, "max_duration_seconds"),
+            min_rms=_get_float(audio_cfg, "min_rms"),
+            max_peak=_get_float(audio_cfg, "max_peak"),
+            clipping_fraction_limit=_get_float(audio_cfg, "clipping_fraction_limit"),
+            min_voiced_fraction=_get_float(audio_cfg, "min_voiced_fraction"),
+            frame_ms=_get_int(audio_cfg, "frame_ms"),
+            mono_policy=_get_str(audio_cfg, "mono_policy"),
+            pitch_floor_hz=_get_float(
+                feature_cfg, "pitch_floor_hz", _get_float(audio_cfg, "pitch_floor_hz", 75.0)
             ),
-            pitch_ceiling_hz=float(
-                feature_cfg.get("pitch_ceiling_hz", audio_cfg.get("pitch_ceiling_hz", 500.0))
+            pitch_ceiling_hz=_get_float(
+                feature_cfg, "pitch_ceiling_hz", _get_float(audio_cfg, "pitch_ceiling_hz", 500.0)
             ),
-            min_harmonic_overtone_fraction=float(audio_cfg["min_harmonic_overtone_fraction"]),
-            min_second_harmonic_fraction=float(audio_cfg["min_second_harmonic_fraction"]),
-            min_waveform_kurtosis=float(audio_cfg["min_waveform_kurtosis"]),
-            second_harmonic_min_factor=float(audio_cfg.get("second_harmonic_min_factor", 1.8)),
-            second_harmonic_max_factor=float(audio_cfg.get("second_harmonic_max_factor", 2.2)),
-            second_harmonic_trigger_overtone_fraction=float(
-                audio_cfg.get("second_harmonic_trigger_overtone_fraction", 0.05)
+            min_harmonic_overtone_fraction=_get_float(audio_cfg, "min_harmonic_overtone_fraction"),
+            min_second_harmonic_fraction=_get_float(audio_cfg, "min_second_harmonic_fraction"),
+            min_waveform_kurtosis=_get_float(audio_cfg, "min_waveform_kurtosis"),
+            second_harmonic_min_factor=_get_float(audio_cfg, "second_harmonic_min_factor", 1.8),
+            second_harmonic_max_factor=_get_float(audio_cfg, "second_harmonic_max_factor", 2.2),
+            second_harmonic_trigger_overtone_fraction=_get_float(
+                audio_cfg, "second_harmonic_trigger_overtone_fraction", 0.05
             ),
         )
 
@@ -206,6 +235,36 @@ def validate_audio(
     peak = float(np.max(np.abs(x))) if x.size else 0.0
     rms = float(np.sqrt(np.mean(np.square(x)))) if x.size else 0.0
     clipping = float(np.mean(np.abs(x) >= cfg.max_peak)) if x.size else 0.0
+
+    if peak == 0.0 or rms < cfg.min_rms:
+        errors.append(
+            "Signal level is very low or the recording is silent. Move closer and record again."
+        )
+    if clipping > cfg.clipping_fraction_limit:
+        errors.append(
+            "Too many samples are clipped. Review the recording or exclude it under the "
+            "documented quality-control policy."
+        )
+
+    # Avoid expensive pitch tracking and harmonic analysis if duration or audio basics failed
+    if (
+        duration < cfg.min_duration_seconds
+        or duration > cfg.max_duration_seconds
+        or x.size == 0
+        or peak == 0.0
+    ):
+        return AudioQuality(
+            valid=False,
+            errors=errors,
+            warnings=warnings,
+            duration_seconds=duration,
+            peak_amplitude=peak,
+            rms_amplitude=rms,
+            clipping_fraction=clipping,
+            voiced_fraction=0.0,
+            active_fraction=0.0,
+        )
+
     mono = x.mean(axis=1) if x.ndim == 2 and x.size else np.asarray([], dtype=np.float64)
     if mono.size and record.sample_rate > 0:
         _, levels = frame_rms(mono, record.sample_rate, cfg.frame_ms)
@@ -231,17 +290,6 @@ def validate_audio(
         except (parselmouth.PraatError, ValueError, RuntimeError):
             voiced = 0.0
             frequencies = np.empty(0, dtype=np.float64)
-    if rms < cfg.min_rms:
-        errors.append(
-            "Signal level is very low or the recording is silent. Move closer and record again."
-        )
-    # The configured value is the maximum allowed clipped-sample fraction;
-    # equality is accepted, and zero means that no clipped samples are allowed.
-    if clipping > cfg.clipping_fraction_limit:
-        errors.append(
-            "Too many samples are clipped. Review the recording or exclude it under the "
-            "documented quality-control policy."
-        )
     if voiced < cfg.min_voiced_fraction:
         errors.append(
             "Too little voiced signal was detected. Use a steady sustained vowel and retry."

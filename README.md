@@ -72,7 +72,7 @@ The project verification command checks required files and imports. Dataset comm
 
 ## Local 3D signal views
 
-The Overview page uses a decorative acoustic ribbon; the Signal analysis page renders the processed waveform and configured STFT spectrogram from the recording in the current local session. The Three.js bundle is included locally, so the viewer makes no CDN or third-party asset requests. The Three.js MIT license is included beside the frontend package. If you edit the frontend source, rebuild it with Node.js 20, 22, or 24 (Node.js 24 recommended):
+The Overview page uses a decorative acoustic ribbon; the Signal analysis page renders the processed waveform and configured STFT spectrogram from the recording in the current local session. The Three.js bundle is included locally, so the viewer makes no CDN or third-party asset requests. The Three.js MIT license is included beside the frontend package. If you edit the frontend source, rebuild it with Node.js 22 or 24 (Node.js 24 recommended):
 
 ```powershell
 Set-Location frontend\acoustic-visualizer

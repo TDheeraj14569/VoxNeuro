@@ -19,7 +19,19 @@ def extract_praat_features(
     pitch_step_seconds: float = 0.01,
 ) -> dict[str, float]:
     """Return F0 summaries, local jitter/shimmer, and mean HNR; invalid measures are NaN."""
-    x = np.asarray(samples, dtype=np.float64)
+    try:
+        raw = np.asarray(samples)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Praat feature extraction requires a rectangular numeric array.") from exc
+    if (
+        isinstance(raw, (bool, np.bool_))
+        or raw.dtype == np.bool_
+        or not np.issubdtype(raw.dtype, np.number)
+        or np.iscomplexobj(raw)
+        or np.issubdtype(raw.dtype, np.complexfloating)
+    ):
+        raise ValueError("Praat feature extraction requires real numeric audio samples.")
+    x = raw.astype(np.float64, copy=False)
     if x.ndim != 1:
         raise ValueError("Praat feature extraction requires mono one-dimensional audio.")
     sound = parselmouth.Sound(x, sampling_frequency=sample_rate)

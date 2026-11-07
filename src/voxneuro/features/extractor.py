@@ -42,6 +42,60 @@ def extract_features(
             "Feature extraction requires an integer sample rate between 8,000 and 48,000 Hz; "
             f"got {sample_rate!r}."
         )
+    if original_sample_rate is not None:
+        if (
+            isinstance(original_sample_rate, (bool, np.bool_))
+            or not isinstance(original_sample_rate, (int, np.integer))
+            or not (8000 <= int(original_sample_rate) <= 48000)
+        ):
+            raise FeatureExtractionError(
+                "Original sample rate must be an integer between 8,000 and 48,000 Hz."
+            )
+
+    # Validate numeric parameters
+    for p_name, p_val in (
+        ("pitch_floor_hz", pitch_floor_hz),
+        ("pitch_ceiling_hz", pitch_ceiling_hz),
+        ("pitch_step_seconds", pitch_step_seconds),
+        ("mel_min_hz", mel_min_hz),
+        ("common_max_hz", common_max_hz),
+        ("spectral_rolloff_fraction", spectral_rolloff_fraction),
+    ):
+        if (
+            isinstance(p_val, (bool, np.bool_))
+            or not isinstance(p_val, (int, float, np.number))
+            or not np.isfinite(p_val)
+        ):
+            raise FeatureExtractionError(f"{p_name} must be a finite real number.")
+
+    if pitch_floor_hz <= 0 or pitch_ceiling_hz <= pitch_floor_hz:
+        raise FeatureExtractionError("pitch_floor_hz must be > 0 and < pitch_ceiling_hz.")
+    if pitch_step_seconds <= 0 or pitch_step_seconds > 0.1:
+        raise FeatureExtractionError("pitch_step_seconds must be positive and <= 0.1s.")
+
+    for p_name, p_val in (
+        ("mel_bands", mel_bands),
+        ("fft_window_samples", fft_window_samples),
+        ("hop_samples", hop_samples),
+    ):
+        if isinstance(p_val, (bool, np.bool_)) or not isinstance(p_val, (int, np.integer)):
+            raise FeatureExtractionError(f"{p_name} must be an integer.")
+
+    if mel_bands < 13 or mel_bands > 256:
+        raise FeatureExtractionError("mel_bands must be between 13 and 256.")
+    if fft_window_samples <= 0 or (fft_window_samples & (fft_window_samples - 1)) != 0:
+        raise FeatureExtractionError("fft_window_samples must be a positive power of two.")
+    if hop_samples <= 0 or hop_samples > fft_window_samples:
+        raise FeatureExtractionError("hop_samples must be positive and <= fft_window_samples.")
+    if mel_min_hz < 0:
+        raise FeatureExtractionError("mel_min_hz must be non-negative.")
+    effective_rate = original_sample_rate if original_sample_rate is not None else sample_rate
+    if common_max_hz <= mel_min_hz or common_max_hz > (effective_rate / 2):
+        raise FeatureExtractionError(
+            f"common_max_hz must be > mel_min_hz and <= Nyquist ({effective_rate / 2} Hz)."
+        )
+    if not (0.0 < spectral_rolloff_fraction < 1.0):
+        raise FeatureExtractionError("spectral_rolloff_fraction must be between 0.0 and 1.0.")
     try:
         raw = np.asarray(samples)
     except (TypeError, ValueError) as exc:
@@ -92,7 +146,7 @@ def extract_features(
                 rolloff_fraction=spectral_rolloff_fraction,
             )
         )
-    except (ValueError, RuntimeError, FloatingPointError) as exc:
+    except Exception as exc:
         raise FeatureExtractionError(f"Acoustic feature extraction failed: {exc}") from exc
     missing = set(FEATURE_NAMES) - values.keys()
     if missing:

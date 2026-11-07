@@ -252,6 +252,16 @@ def render_nested_evaluation_html(
         if "auc_mean" in fold_summary.columns
         else ""
     )
+    fold_ap_note = (
+        ", ".join(
+            f"{MODEL_LABELS.get(str(row['model']), str(row['model']))}: "
+            f"{float(row['ap_mean']):.3f} ± {float(row['ap_std']):.3f}"
+            for _, row in fold_summary.iterrows()
+            if not math.isnan(float(row["ap_mean"]))
+        )
+        if "ap_mean" in fold_summary.columns
+        else ""
+    )
     roc_svg = _curve_svg(predictions, primary_seed, "roc")
     pr_svg = _curve_svg(predictions, primary_seed, "pr")
     html_parts = [
@@ -355,6 +365,14 @@ def render_nested_evaluation_html(
                 f"OOF): {html.escape(fold_auc_note)}.</p>"
             ]
             if fold_auc_note
+            else []
+        ),
+        *(
+            [
+                f"<p>Outer-fold Average Precision (fold-averaged across outer folds, distinct from "
+                f"pooled OOF): {html.escape(fold_ap_note)}.</p>"
+            ]
+            if fold_ap_note
             else []
         ),
         (

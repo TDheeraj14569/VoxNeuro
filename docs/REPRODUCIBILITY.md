@@ -8,10 +8,10 @@
 
 ## UAMS nested run provenance
 
-- Source fingerprint: a4ea2987db07b813e5f7f1c98c7748c52a5fb4835f4bcdfba07bd564ae323390.
+- Source fingerprint: 1cedbb32605d6ffc3868efa499208d3248895b2e11ee757356972e795c17c53d.
 - Feature schema: voxneuro.voice.v3; schema fingerprint a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f.
 - Feature configuration fingerprint: 190e79c16b8a92f6c7fa8de47956531ade096c43e5f3974d9ce9b5d88b74b5f9.
-- Preprocessing configuration fingerprint: daf06f327e49ae71561d3daf61d40acc1dd0158953a7aa9c458a33ed8304b12c.
+- Preprocessing configuration fingerprint: 8cd060e419204da2beb98454d8511631e3f00e87971b17b3ea732d39e606189d.
 - Manifest SHA-256: 697e422f2631ded7be3b6ac737ce2655747340491ab8a49ab5ba40ed0454264e.
 - Extracted feature-table SHA-256: 732202ca2de13e54c7049f4b15775b964265f13931b93c0fb574f6cf9cd43fc0.
 - Outer/inner splits: 5/3; repeats: seeds 2026, 2027, 2028; 1,000 participant bootstrap iterations for the primary repeat.
