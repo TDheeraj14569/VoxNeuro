@@ -316,9 +316,20 @@ export function mount(root, data) {
   const axes = root.querySelector("[data-axis-labels]");
   if (axes) {
     axes.dataset.mode = data.mode;
-    axes.textContent = data.mode === "spectrogram"
-      ? "X Time (s) · Y Frequency (Hz) · Z Magnitude (dB re 1.0)"
-      : "X Time (s) · Y Amplitude (full scale) · Z Display depth only";
+    if (data.mode === "spectrogram") {
+      const maxT = (data.times?.at(-1) || 0).toFixed(2);
+      const maxF = (data.frequencies_hz?.at(-1) || 0).toFixed(0);
+      axes.innerHTML = `<div><strong>Spectrogram 3D</strong> · Time: 0 – ${maxT}s · Freq: 0 – ${maxF} Hz</div>` +
+        `<div style="display:inline-flex; align-items:center; gap:6px; margin-top:3px;">` +
+        `<span style="font-size:10px; color:#A7B8B5;">-90 dB</span>` +
+        `<span style="display:inline-block; width:70px; height:6px; border-radius:2px; background:linear-gradient(to right, #112d36, #2d7a72, #55d9c1); border: 1px solid rgba(85,217,193,0.3);"></span>` +
+        `<span style="font-size:10px; color:#55D9C1; font-weight:600;">0 dB</span></div>`;
+    } else if (data.mode === "waveform") {
+      const dur = (data.duration_seconds || data.points?.at(-1)?.[0] || 0).toFixed(2);
+      axes.innerHTML = `<div><strong>Waveform 3D</strong> · Time: 0 – ${dur}s · Amplitude: -1.0 to +1.0 FS</div>`;
+    } else {
+      axes.textContent = "Decorative acoustic field · no patient recording";
+    }
   }
   let frame = 0;
   let renderedFrames = 0;

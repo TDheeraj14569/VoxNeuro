@@ -44,12 +44,19 @@ def _truthy(value: str | None) -> bool:
     return (value or "").strip().casefold() in {"true", "1", "yes", "y"}
 
 
-def _render_aggregate_dataset_audit() -> bytes:
+def _render_aggregate_dataset_audit(
+    manifest_path: Path | None = None,
+    extraction_path: Path | None = None,
+) -> bytes:
     """Render cohort QC counts without publishing sample-level identifiers."""
-    manifest_path = ROOT / "data/processed/feature_manifest.csv"
-    extraction_path = ROOT / "data/processed/feature_extraction_report.csv"
-    manifest = _read_csv(manifest_path)
-    extraction = _read_csv(extraction_path)
+    manifest_file = manifest_path or (ROOT / "data/processed/feature_manifest.csv")
+    extraction_file = extraction_path or (ROOT / "data/processed/feature_extraction_report.csv")
+    if not manifest_file.is_file():
+        raise FileNotFoundError(f"Required manifest file is missing: {manifest_file}")
+    if not extraction_file.is_file():
+        raise FileNotFoundError(f"Required extraction report is missing: {extraction_file}")
+    manifest = _read_csv(manifest_file)
+    extraction = _read_csv(extraction_file)
     labels = {row["sample_id"]: row["class_label"].strip().upper() for row in manifest}
     if not manifest or not extraction or set(labels) != {row["sample_id"] for row in extraction}:
         raise ValueError(
@@ -123,9 +130,10 @@ participant-level predictions are not included.</p>
 </body>
 </html>"""
     rendered = content.encode("utf-8")
-    output = ROOT / "artifacts/reports/dataset_audit/uams_dataset_audit.html"
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_bytes(rendered)
+    if manifest_path is None:
+        output = ROOT / "artifacts/reports/dataset_audit/uams_dataset_audit.html"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(rendered)
     return rendered
 
 
@@ -170,13 +178,35 @@ def _write_member(archive: zipfile.ZipFile, name: str, payload: bytes) -> None:
     archive.writestr(info, payload)
 
 
-def build_review_bundle(output_path: Path | None = None) -> dict[str, object]:
+def build_review_bundle(
+    output_path: Path | None = None,
+    *,
+    manifest_path: Path | None = None,
+    extraction_report_path: Path | None = None,
+    evidence_sources: dict[str, Path] | None = None,
+    source_archive_path: Path | None = None,
+) -> dict[str, object]:
     """Rebuild the source archive and add only aggregate, hashed review evidence."""
-    source_report = build_archive()
-    evidence = {"uams_dataset_audit.html": _render_aggregate_dataset_audit()}
-    for name, path in EVIDENCE_SOURCES.items():
+    active_evidence = evidence_sources if evidence_sources is not None else EVIDENCE_SOURCES
+    for _name, path in active_evidence.items():
         if not path.is_file():
             raise FileNotFoundError(f"Required review evidence is missing: {path}")
+
+    audit_payload = _render_aggregate_dataset_audit(
+        manifest_path=manifest_path, extraction_path=extraction_report_path
+    )
+
+    if source_archive_path is not None and source_archive_path.is_file():
+        source_archive = source_archive_path
+        with zipfile.ZipFile(source_archive) as sz:
+            source_members_count = len(sz.namelist())
+    else:
+        source_report = build_archive()
+        source_archive = SOURCE_ARCHIVE
+        source_members_count = source_report["members"]
+
+    evidence = {"uams_dataset_audit.html": audit_payload}
+    for name, path in active_evidence.items():
         payload = path.read_bytes()
         if name == "uams_feature_extraction_receipt.json":
             receipt = json.loads(payload)
@@ -196,7 +226,7 @@ def build_review_bundle(output_path: Path | None = None) -> dict[str, object]:
     ) as temporary:
         temporary_path = Path(temporary.name)
     try:
-        with zipfile.ZipFile(SOURCE_ARCHIVE) as source_zip:
+        with zipfile.ZipFile(source_archive) as source_zip:
             source_names = source_zip.namelist()
             if source_zip.testzip() is not None:
                 raise zipfile.BadZipFile("Source archive CRC validation failed.")
@@ -247,7 +277,7 @@ def build_review_bundle(output_path: Path | None = None) -> dict[str, object]:
         "path": str(output),
         "bytes": size,
         "members": len(source_names) + len(evidence) + 1,
-        "source_members": source_report["members"],
+        "source_members": source_members_count,
         "sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
     }
 

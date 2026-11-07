@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pytest
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
@@ -150,6 +151,13 @@ def test_evaluate_grouped_rejects_invalid_labels_and_dimensions():
     with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
         evaluate_grouped(X, [False, True] * 20, groups, n_splits=3)
 
+    # Mixed boolean and integer labels must be rejected
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, [False, 1] * 20, groups, n_splits=3)
+
+    with pytest.raises(ValueError, match="Labels must contain only finite binary values"):
+        evaluate_grouped(X, pd.Series([False, 1] * 20), groups, n_splits=3)
+
     # Non-DataFrame X must be rejected
     with pytest.raises(ValueError, match="X must be a pandas DataFrame"):
         evaluate_grouped(X.to_numpy(), valid_y, groups, n_splits=3)
@@ -190,6 +198,23 @@ def test_evaluate_grouped_and_nested_reject_misaligned_additional_predictors():
             additional_searches={
                 "age_only": (misaligned_age, pipeline, {"classifier__C": [0.1, 1.0]})
             },
+        )
+
+    # Permute rows and reset index with participant_id column present
+    voice_with_id = voice.copy()
+    voice_with_id["participant_id"] = groups
+    shuffled_age_reset = (
+        pd.DataFrame({"participant_id": groups, "age": np.linspace(40, 80, len(groups))})
+        .sample(frac=1.0)
+        .reset_index(drop=True)
+    )
+    with pytest.raises(ValueError, match="Additional predictor participant_id sequence for"):
+        evaluate_grouped(
+            voice_with_id,
+            y,
+            groups,
+            n_splits=3,
+            additional_models={"age_only": (shuffled_age_reset, pipeline)},
         )
 
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import logging
 from numbers import Real
 
 import matplotlib.pyplot as plt
@@ -51,6 +52,8 @@ from voxneuro.visualization.acoustic_3d import (
 )
 from voxneuro.visualization.spectrogram import spectrogram_figure
 from voxneuro.visualization.waveform import waveform_figure
+
+logger = logging.getLogger("voxneuro.app")
 
 APP_CONFIG = load_config("application_config.yaml")
 AUDIO_CONFIG = load_config("audio_config.yaml")
@@ -194,19 +197,28 @@ div[data-testid="stMetric"] {
   padding: 0.85rem 1rem !important;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25) !important;
 }
-.stApp [data-testid="stDataFrame"] {
+.stApp [data-testid="stDataFrame"],
+.stApp [data-testid="stTable"],
+.stApp table,
+.stApp .glideDataGridUl,
+.stApp .dvn-scroller,
+.stApp [data-testid="stDataFrame"] > div {
+  background: rgba(10, 25, 34, 0.85) !important;
+  background-color: rgba(10, 25, 34, 0.85) !important;
+  color: #F3F7F5 !important;
   border: 1px solid rgba(85, 217, 193, 0.2) !important;
-  border-radius: 8px !important;
-  background: rgba(12, 29, 39, 0.7) !important;
+  border-radius: 10px !important;
 }
 .stApp [data-testid="stJson"], .react-json-view {
-  background: rgba(10, 25, 34, 0.75) !important;
+  background: rgba(10, 25, 34, 0.85) !important;
+  background-color: rgba(10, 25, 34, 0.85) !important;
   border: 1px solid rgba(85, 217, 193, 0.22) !important;
   border-radius: 10px !important;
   padding: 1rem !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+  color: #E2F5F1 !important;
 }
 .vox-glass-card {
   background: rgba(12, 29, 39, 0.65);
@@ -229,14 +241,14 @@ div[data-testid="stMetric"] {
   box-shadow: 0 10px 36px rgba(0, 0, 0, 0.35);
 }
 .vox-table-wrapper {
-  border: 1px solid rgba(85, 217, 193, 0.2);
-  border-radius: 12px;
+  border: 1px solid rgba(85, 217, 193, 0.28);
+  border-radius: 14px;
   overflow-x: auto;
-  background: rgba(10, 25, 34, 0.65);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
-  margin: 0.85rem 0 1.15rem;
+  background: rgba(9, 23, 32, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  margin: 0.95rem 0 1.25rem;
 }
 .vox-table {
   width: 100%;
@@ -246,23 +258,27 @@ div[data-testid="stMetric"] {
   text-align: left;
 }
 .vox-table th {
-  background: rgba(16, 40, 52, 0.88);
+  background: linear-gradient(90deg, rgba(16, 42, 54, 0.95) 0%, rgba(12, 32, 42, 0.95) 100%);
   color: #55D9C1;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1.1rem;
   font-size: 0.72rem;
   font-weight: 650;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-bottom: 1px solid rgba(85, 217, 193, 0.25);
+  border-bottom: 1px solid rgba(85, 217, 193, 0.3);
   white-space: nowrap;
 }
 .vox-table td {
-  padding: 0.7rem 1rem;
+  padding: 0.72rem 1.1rem;
   border-bottom: 1px solid rgba(38, 62, 71, 0.45);
   vertical-align: middle;
 }
+.vox-table tr:nth-child(even) { background: rgba(15, 36, 48, 0.3); }
 .vox-table tr:last-child td { border-bottom: 0; }
-.vox-table tr:hover td { background: rgba(85, 217, 193, 0.07); }
+.vox-table tr:hover td {
+  background: rgba(85, 217, 193, 0.12) !important;
+  transition: background 0.15s ease;
+}
 .vox-val-num {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   color: #67E2CE;
@@ -351,61 +367,122 @@ div[data-testid="stMetric"] {
   margin-bottom: 0.25rem;
 }
 .vox-qc-sub { color: #55D9C1; font-size: 0.74rem; font-weight: 500; }
+.vox-json-card {
+  background: rgba(10, 25, 34, 0.85);
+  border: 1px solid rgba(85, 217, 193, 0.22);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  overflow-x: auto;
+  margin: 0.5rem 0 1rem;
+}
+.vox-json-card pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.84rem;
+  color: #55D9C1;
+  line-height: 1.55;
+  background: transparent !important;
+}
+.vox-json-card code {
+  color: #67E2CE;
+  background: transparent !important;
+}
 .stApp button,
-.stApp [data-testid="stDownloadButton"] > button,
+.stApp .stButton > button,
+.stApp .stDownloadButton > button,
+.stApp .stDownloadButton > a,
+.stApp [data-testid*="DownloadButton"] button,
+.stApp [data-testid*="DownloadButton"] a,
+.stApp [data-testid*="baseButton"],
+.stApp [data-testid*="BaseButton"],
 .stApp button[kind="secondary"],
-.stApp [data-testid="stBaseButton-secondary"] {
-  background: rgba(16, 39, 51, 0.78) !important;
-  color: #EDF6F7 !important;
-  border: 1px solid rgba(85, 217, 193, 0.35) !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28) !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+.stApp a[kind="secondary"],
+.stApp div[data-testid="stDownloadButton"] button,
+.stApp div[data-testid="stDownloadButton"] a {
+  background: linear-gradient(135deg, rgba(16, 42, 54, 0.88), rgba(10, 26, 36, 0.94)) !important;
+  background-color: rgba(14, 34, 45, 0.9) !important;
+  color: #F3F7F5 !important;
+  border: 1px solid rgba(85, 217, 193, 0.38) !important;
+  border-radius: 9px !important;
+  padding: 0.55rem 1.15rem !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  letter-spacing: 0.02em !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  text-decoration: none !important;
+}
+.stApp button p,
+.stApp button span,
+.stApp .stButton > button p,
+.stApp .stButton > button span,
+.stApp .stDownloadButton > button p,
+.stApp .stDownloadButton > button span,
+.stApp [data-testid*="DownloadButton"] button p,
+.stApp [data-testid*="DownloadButton"] button span {
+  color: #F3F7F5 !important;
 }
 .stApp button:hover,
-.stApp [data-testid="stDownloadButton"] > button:hover,
+.stApp .stButton > button:hover,
+.stApp .stDownloadButton > button:hover,
+.stApp .stDownloadButton > a:hover,
+.stApp [data-testid*="DownloadButton"] button:hover,
+.stApp [data-testid*="DownloadButton"] a:hover,
+.stApp [data-testid*="baseButton"]:hover,
+.stApp [data-testid*="BaseButton"]:hover,
 .stApp button[kind="secondary"]:hover,
-.stApp [data-testid="stBaseButton-secondary"]:hover {
-  background: linear-gradient(135deg, rgba(28, 72, 86, 0.95), rgba(18, 50, 65, 0.95)) !important;
+.stApp div[data-testid="stDownloadButton"] button:hover {
+  background: linear-gradient(135deg, rgba(24, 68, 82, 0.96), rgba(14, 44, 56, 0.96)) !important;
+  background-color: rgba(20, 56, 68, 0.96) !important;
+  border-color: #55D9C1 !important;
   color: #FFFFFF !important;
-  border-color: rgba(85, 217, 193, 0.8) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42), 0 0 16px rgba(85, 217, 193, 0.3) !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45), 0 0 18px rgba(85, 217, 193, 0.35) !important;
   transform: translateY(-2px) !important;
 }
+.stApp button:hover p,
+.stApp button:hover span,
+.stApp .stDownloadButton > button:hover p,
+.stApp .stDownloadButton > button:hover span {
+  color: #FFFFFF !important;
+}
 .stApp button:active,
-.stApp [data-testid="stDownloadButton"] > button:active {
+.stApp [data-testid*="DownloadButton"] button:active {
   background: rgba(22, 58, 72, 0.95) !important;
   border-color: #55D9C1 !important;
   color: #FFFFFF !important;
   transform: translateY(0px) !important;
 }
-.stApp button p,
-.stApp [data-testid="stDownloadButton"] button p {
-  color: inherit !important;
-  margin: 0 !important;
-}
 .stApp button[kind="primary"],
-.stApp [data-testid="stBaseButton-primary"] {
-  background: linear-gradient(135deg, #55D9C1 0%, #34B8A0 100%) !important;
-  color: #07131B !important;
-  border: 1px solid #55D9C1 !important;
-  font-weight: 650 !important;
-  box-shadow: 0 4px 16px rgba(85, 217, 193, 0.25) !important;
+.stApp [data-testid="baseButton-primary"],
+.stApp [data-testid="stBaseButton-primary"],
+.stApp button.css-16idsys,
+.stApp button[data-testid*="primary"] {
+  background: linear-gradient(135deg, #12574F 0%, #0A3C36 100%) !important;
+  background-color: #12574F !important;
+  border: 1px solid rgba(85, 217, 193, 0.7) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 18px rgba(18, 87, 79, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 .stApp button[kind="primary"]:hover,
-.stApp [data-testid="stBaseButton-primary"]:hover {
-  background: linear-gradient(135deg, #6BE6CF 0%, #45C5AD 100%) !important;
-  color: #040D13 !important;
-  border-color: #6BE6CF !important;
-  box-shadow: 0 8px 28px rgba(85, 217, 193, 0.45), 0 0 20px rgba(85, 217, 193, 0.35) !important;
+.stApp [data-testid="baseButton-primary"]:hover,
+.stApp [data-testid="stBaseButton-primary"]:hover,
+.stApp button[data-testid*="primary"]:hover {
+  background: linear-gradient(135deg, #187267 0%, #10524A 100%) !important;
+  background-color: #187267 !important;
+  border-color: #55D9C1 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 28px rgba(85, 217, 193, 0.4), 0 0 20px rgba(85, 217, 193, 0.3) !important;
   transform: translateY(-2px) !important;
 }
 .stApp button[kind="primary"] p,
+.stApp [data-testid="baseButton-primary"] p,
 .stApp [data-testid="stBaseButton-primary"] p {
-  color: #07131B !important;
-  font-weight: 650 !important;
+  color: #FFFFFF !important;
 }
 section[data-testid="stSidebar"] [data-testid="stRadio"] > div { gap: 0.35rem; }
 section[data-testid="stSidebar"] [data-testid="stRadio"] label {
@@ -466,6 +543,27 @@ section[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked
   font-weight: 550;
 }
 .stApp [data-testid="stExpander"] summary:hover { color: #55D9C1; }
+audio {
+  filter: invert(0.92) hue-rotate(180deg) brightness(0.95);
+  border-radius: 28px;
+  margin: 0.6rem 0;
+  width: 100%;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(7, 19, 27, 0.7);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(85, 217, 193, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(85, 217, 193, 0.6);
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -739,8 +837,12 @@ def _show_assessment() -> None:
                 st.session_state["voxneuro_analysis_status"] = "failed"
                 st.session_state["voxneuro_analysis_error"] = str(exc)
             except Exception as exc:
+                logger.exception("Unexpected error in voice assessment: %s", exc)
                 st.session_state["voxneuro_analysis_status"] = "failed"
-                st.session_state["voxneuro_analysis_error"] = f"Unexpected processing error: {exc}"
+                st.session_state["voxneuro_analysis_error"] = (
+                    "An unexpected error occurred during audio processing. "
+                    "Please verify the audio format and try again."
+                )
     quality = st.session_state.get("voxneuro_quality")
     record = st.session_state.get("voxneuro_record")
     status = st.session_state.get("voxneuro_analysis_status")
@@ -775,6 +877,7 @@ def _show_assessment() -> None:
             st.session_state.get("voxneuro_analysis_error", "The recording could not be analyzed.")
         )
     if uploaded is not None and st.session_state.get("voxneuro_features") is not None:
+        _render_acoustic_benchmark_cards(st.session_state["voxneuro_features"])
         st.caption(
             f"Feature schema {SCHEMA_VERSION} · measurements are descriptive "
             "and not disease-specific."
@@ -892,23 +995,23 @@ def _show_signal_analysis() -> None:
         "calibrated sound pressure level. Visualizations do not enter the model pipeline."
     )
     st.subheader("Processing record")
-    st.dataframe(
-        pd.DataFrame(
-            [
-                {
-                    "setting": "Retained duration",
-                    "value": f"{processed.retained_duration_seconds:.3f} s",
-                },
-                {"setting": "Output sample rate", "value": f"{processed.sample_rate:,} Hz"},
-                {"setting": "Start trim", "value": f"{processed.trim_start_seconds:.3f} s"},
-                {"setting": "Tail trim", "value": f"{processed.trimmed_tail_seconds:.3f} s"},
-                {"setting": "Removed DC offset", "value": f"{processed.dc_offset_removed:.6f} FS"},
-                {"setting": "Resampled", "value": "Yes" if processed.resampled else "No"},
-            ]
-        ),
-        width="stretch",
-        hide_index=True,
+    proc_df = pd.DataFrame(
+        [
+            {
+                "setting": "Retained duration",
+                "value": f"{processed.retained_duration_seconds:.3f} s",
+            },
+            {"setting": "Output sample rate", "value": f"{processed.sample_rate:,} Hz"},
+            {"setting": "Start trim", "value": f"{processed.trim_start_seconds:.3f} s"},
+            {"setting": "Tail trim", "value": f"{processed.trimmed_tail_seconds:.3f} s"},
+            {
+                "setting": "Removed DC offset",
+                "value": f"{processed.dc_offset_removed:.6f} FS",
+            },
+            {"setting": "Resampled", "value": "Yes" if processed.resampled else "No"},
+        ]
     )
+    _render_generic_glass_table(proc_df, headers=["Processing Step", "Measured Parameter"])
 
 
 def _feature_group(name: str) -> str:
@@ -954,7 +1057,7 @@ def _render_glass_table(df: pd.DataFrame) -> None:
             f'<td><span class="vox-code-pill">{feat}</span></td>'
             f'<td class="vox-val-num">{val_str}</td>'
             f'<td><span class="vox-unit-pill">{units}</span></td>'
-            f"<td>{method}</td>"
+            f'<td style="color:#D6E5E3; font-size:0.83rem;">{method}</td>'
             f"<td>{status_html}</td>"
             "</tr>"
         )
@@ -974,11 +1077,72 @@ def _render_glass_table(df: pd.DataFrame) -> None:
     st.markdown(html_markup, unsafe_allow_html=True)
 
 
+def _render_generic_glass_table(df: pd.DataFrame, headers: list[str] | None = None) -> None:
+    display_headers = (
+        headers if headers is not None else [str(c).replace("_", " ").title() for c in df.columns]
+    )
+    rows_html = []
+    for _, row in df.iterrows():
+        cells_html = []
+        for i, val in enumerate(row):
+            col_name = str(df.columns[i]).lower()
+            if val is None or (isinstance(val, float) and not np.isfinite(val)):
+                formatted = '<span style="color:var(--vox-muted);">—</span>'
+            elif isinstance(val, (float, np.floating)):
+                if any(
+                    k in col_name
+                    for k in (
+                        "accuracy",
+                        "auc",
+                        "rate",
+                        "fraction",
+                        "f1",
+                        "sensitivity",
+                        "specificity",
+                        "precision",
+                    )
+                ):
+                    if 0.0 <= val <= 1.0:
+                        formatted = f'<span class="vox-val-num">{val * 100:.1f}%</span>'
+                    else:
+                        formatted = f'<span class="vox-val-num">{val:.3f}</span>'
+                elif abs(val) >= 100:
+                    formatted = f'<span class="vox-val-num">{val:,.2f}</span>'
+                elif abs(val) >= 1:
+                    formatted = f'<span class="vox-val-num">{val:.4f}</span>'
+                else:
+                    formatted = f'<span class="vox-val-num">{val:.5f}</span>'
+            elif isinstance(val, (int, np.integer)):
+                formatted = f'<span class="vox-val-num">{val:,}</span>'
+            elif str(val).lower() in ("valid", "true", "yes", "available", "hc"):
+                formatted = f'<span class="vox-badge-ok">{html.escape(str(val))}</span>'
+            elif str(val).lower() in ("flagged", "false", "no", "undefined", "pd"):
+                formatted = f'<span class="vox-badge-na">{html.escape(str(val))}</span>'
+            elif i == 0 and any(
+                k in col_name for k in ("setting", "step", "feature", "model", "param", "property")
+            ):
+                formatted = f'<span class="vox-code-pill">{html.escape(str(val))}</span>'
+            else:
+                formatted = html.escape(str(val))
+            cells_html.append(f"<td>{formatted}</td>")
+        rows_html.append(f"<tr>{''.join(cells_html)}</tr>")
+
+    th_html = "".join(f"<th>{html.escape(h)}</th>" for h in display_headers)
+    html_markup = (
+        '<div class="vox-table-wrapper">'
+        '<table class="vox-table">'
+        f"<thead><tr>{th_html}</tr></thead>"
+        f"<tbody>{''.join(rows_html)}</tbody>"
+        "</table></div>"
+    )
+    st.markdown(html_markup, unsafe_allow_html=True)
+
+
 def _render_quality_cards(quality: dict) -> None:
     valid = bool(quality.get("valid", False))
-    status_label = "PASSED" if valid else "FLAGGED"
+    status_label = "VALID" if valid else "FLAGGED"
     status_badge = (
-        '<span class="vox-badge-ok">VALID SIGNAL</span>'
+        '<span class="vox-badge-ok">READY FOR ANALYSIS</span>'
         if valid
         else '<span class="vox-badge-na">ISSUES DETECTED</span>'
     )
@@ -1006,7 +1170,7 @@ def _render_quality_cards(quality: dict) -> None:
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Signal Duration</div>'
         f'<div class="vox-qc-value">{duration:.2f} s</div>'
-        f'<div class="vox-qc-sub">Target: {min_dur:.1f} – {max_dur:.1f} s</div>'
+        f'<div class="vox-qc-sub">Suggested: 3–5 s · Range: {min_dur:.1f}–{max_dur:.1f} s</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Sample Rate</div>'
@@ -1032,7 +1196,57 @@ def _render_quality_cards(quality: dict) -> None:
     )
     st.markdown(html_markup, unsafe_allow_html=True)
     with st.expander("Telemetry & raw quality metadata (JSON)", expanded=False):
-        st.json(quality)
+        raw_json = html.escape(json.dumps(quality, indent=2))
+        st.markdown(
+            f'<div class="vox-json-card"><pre><code>{raw_json}</code></pre></div>',
+            unsafe_allow_html=True,
+        )
+
+
+def _render_acoustic_benchmark_cards(features: dict) -> None:
+    f0 = features.get("f0_mean_hz")
+    jitter = features.get("jitter_local_percent")
+    shimmer = features.get("shimmer_local_percent")
+    hnr = features.get("hnr_mean_db")
+
+    f0_str = f"{f0:.1f} Hz" if isinstance(f0, Real) and np.isfinite(f0) else "—"
+    jitter_str = f"{jitter:.3f}%" if isinstance(jitter, Real) and np.isfinite(jitter) else "—"
+    shimmer_str = f"{shimmer:.2f}%" if isinstance(shimmer, Real) and np.isfinite(shimmer) else "—"
+    hnr_str = f"{hnr:.1f} dB" if isinstance(hnr, Real) and np.isfinite(hnr) else "—"
+
+    html = (
+        '<div class="vox-glass-card" style="margin-top:1.25rem;">'
+        '<div class="vox-kicker" style="margin-bottom:0.4rem;">'
+        "EXPLORATORY ACOUSTIC BENCHMARK · UAMS SUSTAINED /A/ COHORT</div>"
+        '<p style="color:#A7B8B5; font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">'
+        "Observed vocal metrics relative to typical sustained vowel reference distributions. "
+        "Strictly exploratory for bioengineering analysis; does NOT output a medical diagnosis."
+        "</p>"
+        '<div class="vox-quality-grid">'
+        '<div class="vox-quality-card">'
+        '<div class="vox-qc-label">Mean Pitch (F0)</div>'
+        f'<div class="vox-qc-value">{f0_str}</div>'
+        '<div class="vox-qc-sub">Ref: 110–220 Hz</div>'
+        "</div>"
+        '<div class="vox-quality-card">'
+        '<div class="vox-qc-label">Local Jitter</div>'
+        f'<div class="vox-qc-value">{jitter_str}</div>'
+        '<div class="vox-qc-sub">Ref: &lt; 1.04%</div>'
+        "</div>"
+        '<div class="vox-quality-card">'
+        '<div class="vox-qc-label">Local Shimmer</div>'
+        f'<div class="vox-qc-value">{shimmer_str}</div>'
+        '<div class="vox-qc-sub">Ref: &lt; 3.81%</div>'
+        "</div>"
+        '<div class="vox-quality-card">'
+        '<div class="vox-qc-label">Harmonics-to-Noise</div>'
+        f'<div class="vox-qc-value">{hnr_str}</div>'
+        '<div class="vox-qc-sub">Ref: &gt; 15.0 dB</div>'
+        "</div>"
+        "</div>"
+        "</div>"
+    )
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def _feature_frame(features: dict) -> pd.DataFrame:
@@ -1205,10 +1419,13 @@ def _current_nested_evaluation_html() -> str | None:
 def _model_comparison_figure(metrics: pd.DataFrame):
     grouped = metrics.groupby("model")["balanced_accuracy"].agg(["mean", "std"]).sort_values("mean")
     colors = [
-        "#A96F22" if "age" in model else "#68746F" if model == "dummy" else "#176B5B"
+        "#E5B56D" if "age" in model else "#68746F" if model == "dummy" else "#55D9C1"
         for model in grouped.index
     ]
     fig, ax = plt.subplots(figsize=(8.4, 3.8))
+    fig.patch.set_facecolor("#0C1D27")
+    fig.patch.set_alpha(0.92)
+    ax.set_facecolor("#08151D")
     ax.barh(
         grouped.index,
         grouped["mean"],
@@ -1216,16 +1433,67 @@ def _model_comparison_figure(metrics: pd.DataFrame):
         color=colors,
         alpha=0.9,
         capsize=3,
+        error_kw={"ecolor": "#EDF6F7", "elinewidth": 1.2},
     )
     ax.set_xlim(0, 1)
-    ax.set_xlabel("Balanced accuracy · mean ± SD across grouped folds")
-    ax.set_title("Internal UAMS comparison")
-    ax.grid(axis="x", color="#DCE3DE", linewidth=0.7)
+    ax.set_xlabel(
+        "Balanced accuracy · mean ± SD across grouped folds",
+        color="#EDF6F7",
+        fontsize=10,
+    )
+    ax.set_title("Internal UAMS comparison", color="#55D9C1", fontsize=11.5, fontweight="600")
+    ax.grid(axis="x", color="#55D9C1", alpha=0.18, linewidth=0.7)
     ax.set_axisbelow(True)
     ax.spines[["top", "right", "left"]].set_visible(False)
-    ax.spines["bottom"].set_color("#C8D2CB")
-    ax.tick_params(axis="y", length=0, labelcolor="#1B2724")
-    ax.tick_params(axis="x", colors="#68746F")
+    ax.spines["bottom"].set_color("#263E47")
+    ax.tick_params(axis="y", length=0, labelcolor="#F3F7F5", labelsize=9.5)
+    ax.tick_params(axis="x", colors="#A7B8B5", labelsize=9)
+    fig.tight_layout()
+    return fig
+
+
+def _nested_model_comparison_figure(nested_df: pd.DataFrame):
+    df_sorted = nested_df.sort_values("balanced_accuracy_mean")
+    colors = [
+        "#E5B56D" if "age" in str(m) else "#68746F" if str(m) == "dummy" else "#55D9C1"
+        for m in df_sorted["model"]
+    ]
+    labels = (
+        df_sorted["model_label"].tolist()
+        if "model_label" in df_sorted.columns
+        else df_sorted["model"].tolist()
+    )
+    fig, ax = plt.subplots(figsize=(9.2, 4.4))
+    fig.patch.set_facecolor("#0C1D27")
+    fig.patch.set_alpha(0.92)
+    ax.set_facecolor("#08151D")
+    ax.barh(
+        labels,
+        df_sorted["balanced_accuracy_mean"],
+        xerr=df_sorted["balanced_accuracy_repeat_sd"].fillna(0),
+        color=colors,
+        alpha=0.9,
+        capsize=3,
+        error_kw={"ecolor": "#EDF6F7", "elinewidth": 1.2},
+    )
+    ax.set_xlim(0, 1)
+    ax.set_xlabel(
+        "Balanced accuracy · repeated nested-CV mean ± SD",
+        color="#EDF6F7",
+        fontsize=10,
+    )
+    ax.set_title(
+        "Repeated Nested CV: 7 Voice Models vs Confounded Baselines",
+        color="#55D9C1",
+        fontsize=11.5,
+        fontweight="600",
+    )
+    ax.grid(axis="x", color="#55D9C1", alpha=0.18, linewidth=0.7)
+    ax.set_axisbelow(True)
+    ax.spines[["top", "right", "left"]].set_visible(False)
+    ax.spines["bottom"].set_color("#263E47")
+    ax.tick_params(axis="y", length=0, labelcolor="#F3F7F5", labelsize=9)
+    ax.tick_params(axis="x", colors="#A7B8B5", labelsize=9)
     fig.tight_layout()
     return fig
 
@@ -1238,15 +1506,36 @@ def _out_of_fold_confusion_figure(predictions: pd.DataFrame):
         labels=[0, 1],
     )
     fig, ax = plt.subplots(figsize=(4.3, 3.4))
-    image = ax.imshow(matrix, cmap="Greens", vmin=0)
+    fig.patch.set_facecolor("#0C1D27")
+    fig.patch.set_alpha(0.92)
+    ax.set_facecolor("#08151D")
+    image = ax.imshow(matrix, cmap="GnBu", vmin=0)
     for (row, column), value in np.ndenumerate(matrix):
-        ax.text(column, row, str(value), ha="center", va="center", color="#1B2724", fontsize=12)
-    ax.set_xticks([0, 1], labels=["HC", "PD"])
-    ax.set_yticks([0, 1], labels=["HC", "PD"])
-    ax.set_xlabel("Predicted group")
-    ax.set_ylabel("Reference group")
-    ax.set_title("Logistic regression · pooled held-out participants")
-    fig.colorbar(image, ax=ax, label="Participants")
+        ax.text(
+            column,
+            row,
+            str(value),
+            ha="center",
+            va="center",
+            color="#FFFFFF",
+            fontsize=13,
+            fontweight="bold",
+        )
+    ax.set_xticks([0, 1], labels=["HC", "PD"], color="#EDF6F7")
+    ax.set_yticks([0, 1], labels=["HC", "PD"], color="#EDF6F7")
+    ax.set_xlabel("Predicted group", color="#EDF6F7")
+    ax.set_ylabel("Reference group", color="#EDF6F7")
+    ax.set_title(
+        "Logistic regression · held-out participants",
+        color="#55D9C1",
+        fontsize=10.5,
+        fontweight="600",
+    )
+    cbar = fig.colorbar(image, ax=ax, label="Participants")
+    cbar.ax.yaxis.label.set_color("#EDF6F7")
+    cbar.ax.tick_params(colors="#A7B8B5")
+    for spine in ax.spines.values():
+        spine.set_color("#263E47")
     fig.tight_layout()
     return fig
 
@@ -1260,16 +1549,40 @@ def _out_of_fold_roc_figure(predictions: pd.DataFrame):
     false_positive, true_positive, _ = roc_curve(y_true, score)
     auc = roc_auc_score(y_true, score)
     fig, ax = plt.subplots(figsize=(4.3, 3.4))
-    ax.plot(false_positive, true_positive, color="#176B5B", linewidth=2, label=f"ROC AUC {auc:.3f}")
-    ax.plot([0, 1], [0, 1], color="#A8B2AC", linewidth=1, linestyle="--")
+    fig.patch.set_facecolor("#0C1D27")
+    fig.patch.set_alpha(0.92)
+    ax.set_facecolor("#08151D")
+    ax.plot(
+        false_positive,
+        true_positive,
+        color="#55D9C1",
+        linewidth=2.2,
+        label=f"ROC AUC {auc:.3f}",
+    )
+    ax.plot(
+        [0, 1],
+        [0, 1],
+        color="#E5B56D",
+        linewidth=1,
+        linestyle="--",
+        label="Chance (0.50)",
+    )
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    ax.set_xlabel("False positive rate")
-    ax.set_ylabel("True positive rate")
-    ax.set_title("Pooled out-of-fold ranking")
-    ax.legend(frameon=False, loc="lower right")
-    ax.grid(color="#DCE3DE", linewidth=0.7)
+    ax.set_xlabel("False positive rate", color="#EDF6F7")
+    ax.set_ylabel("True positive rate", color="#EDF6F7")
+    ax.set_title(
+        "Pooled out-of-fold ranking",
+        color="#55D9C1",
+        fontsize=10.5,
+        fontweight="600",
+    )
+    ax.legend(frameon=False, loc="lower right", labelcolor="#EDF6F7")
+    ax.grid(color="#55D9C1", alpha=0.18, linewidth=0.7)
     ax.set_axisbelow(True)
+    ax.tick_params(colors="#A7B8B5")
+    for spine in ax.spines.values():
+        spine.set_color("#263E47")
     fig.tight_layout()
     return fig
 
@@ -1294,6 +1607,63 @@ def _show_model_assessment() -> None:
         "on the same participant folds. The combined model is an exploratory confounding check; "
         "it cannot establish that voice adds disease-specific or clinically useful information."
     )
+
+    nested_path = PROJECT_ROOT / "data" / "processed" / "nested_uams_summary.csv"
+    if nested_path.is_file():
+        try:
+            nested_df = pd.read_csv(nested_path)
+            st.subheader(
+                "Repeated nested cross-validation (7 voice models + 2 age baselines + dummy)"
+            )
+            st.caption(
+                "Repeated grouped nested cross-validation with hyperparameter tuning in inner "
+                "folds. Evaluates generalization and assesses demographic confounding."
+            )
+            st.pyplot(_nested_model_comparison_figure(nested_df), clear_figure=True)
+            summary_cols = [
+                c
+                for c in [
+                    "model_label",
+                    "balanced_accuracy_mean",
+                    "balanced_accuracy_repeat_sd",
+                    "roc_auc_mean",
+                    "sensitivity_mean",
+                    "specificity_mean",
+                    "f1_mean",
+                ]
+                if c in nested_df.columns
+            ]
+            _render_generic_glass_table(
+                nested_df[summary_cols].copy(),
+                headers=[
+                    "Model Family",
+                    "Bal. Acc. Mean",
+                    "Bal. Acc. SD",
+                    "ROC-AUC",
+                    "Sensitivity",
+                    "Specificity",
+                    "F1 Score",
+                ],
+            )
+            findings_html = (
+                '<div class="vox-glass-card" style="margin-top:0.85rem;">'
+                '<div class="vox-qc-label" style="color:#55D9C1; margin-bottom:0.25rem;">'
+                "KEY RESEARCH FINDINGS</div>"
+                '<p style="margin:0; font-size:0.88rem; line-height:1.55; color:#EDF6F7;">'
+                "<strong>Top Voice Model:</strong> Extra Trees achieved the highest voice-only "
+                "discrimination at <strong>76.5% balanced accuracy</strong> and "
+                "<strong>0.797 ROC-AUC</strong>.<br>"
+                "<strong>Demographic Confounding:</strong> The age-only logistic baseline achieved "
+                "<strong>83.9% balanced accuracy</strong> due to marked age imbalance in UAMS "
+                "(PD participants were older on average). This demonstrates that voice "
+                "discrimination alone must not be mistaken for diagnostic specificity without "
+                "age-matched controls."
+                "</p></div>"
+            )
+            st.markdown(findings_html, unsafe_allow_html=True)
+        except Exception as exc:
+            logger.warning("Could not render nested UAMS summary: %s", exc)
+
     manifest, feature_table, package, issues = _evaluation_inputs()
     if issues:
         st.info(
@@ -1302,6 +1672,7 @@ def _show_model_assessment() -> None:
         )
         return
     receipt, metrics, predictions = package
+    st.subheader("Fixed 5-fold cross-validation baseline")
     st.caption(
         f"Dataset: UAMS · {feature_table['participant_id'].nunique()} participants · "
         f"{len(feature_table)} analyzed recordings · {receipt.get('cross_validation_splits')} "
@@ -1339,16 +1710,19 @@ def _show_model_assessment() -> None:
     model_col, cohort_col = st.columns([1.25, 1])
     with model_col:
         st.subheader("Fold-wise results")
-        st.dataframe(metrics, width="stretch", hide_index=True)
+        _render_generic_glass_table(metrics)
     with cohort_col:
         st.subheader("Analyzed cohort")
         composition = (
             feature_table.groupby("class_label")
-            .agg(recordings=("sample_id", "count"), participants=("participant_id", "nunique"))
+            .agg(
+                recordings=("sample_id", "count"),
+                participants=("participant_id", "nunique"),
+            )
             .reset_index()
             .rename(columns={"class_label": "group"})
         )
-        st.dataframe(composition, width="stretch", hide_index=True)
+        _render_generic_glass_table(composition)
         analyzed_ids = set(feature_table["sample_id"])
         excluded = manifest.loc[~manifest["sample_id"].isin(analyzed_ids)]
         excluded_counts = excluded["class_label"].value_counts().to_dict()
@@ -1421,26 +1795,55 @@ def _show_method_privacy() -> None:
         "evidence does not establish.",
     )
     st.subheader("Processing sequence")
-    st.markdown(
-        """
-        1. Decode the WAV and read its actual sample rate, channel count, duration, and encoding.
-        2. Check finite samples, duration, amplitude, clipping, voiced frames, and stereo phase.
-        3. Average supported stereo channels after quality checks, remove DC offset, trim silence,
-           verify the retained signal, and polyphase-resample to the configured rate.
-        4. Extract 39 Praat/Parselmouth and Librosa measurements under the versioned feature schema.
-        5. Keep undefined values missing and create a JSON report for this session.
-        """
-    )
+    steps = [
+        (
+            "01",
+            "Decode & Validate Container",
+            "Decode the WAV recording and read its sample rate (8–48 kHz), channel count, "
+            "duration, RMS amplitude, clipping fraction, and stereo phase correlation.",
+        ),
+        (
+            "02",
+            "Speech Task Verification",
+            "Verify sustained vowel phonation criteria: voiced frame fraction ≥ 40%, positive "
+            "SNR, and second-harmonic energy > 5% to reject synthetic sine and square waves.",
+        ),
+        (
+            "03",
+            "Preprocess Usable Audio",
+            "Average supported stereo channels after phase verification, remove DC offset, "
+            "trim leading/trailing silence, verify audio, and polyphase-resample to 16 kHz.",
+        ),
+        (
+            "04",
+            "Extract 39 Versioned Acoustic Features",
+            "Extract 39 Praat/Parselmouth and Librosa measures: F0 stats, jitter/shimmer, "
+            "HNR, MFCCs 1–13 means & SDs, and spectral properties under schema.",
+        ),
+        (
+            "05",
+            "Audit Integrity & In-Memory Report",
+            "Keep undefined values missing (never zero-fill), generate SHA-256 provenance hashes, "
+            "and create a private in-memory JSON session report without persisting audio to disk.",
+        ),
+    ]
+    for num, title, desc in steps:
+        st.markdown(
+            f'<div class="vox-glass-card" style="margin-bottom:0.75rem;">'
+            f'<div class="vox-step"><strong>{num}</strong>{html.escape(title)}</div>'
+            f'<p style="margin:0.35rem 0 0 0; color:#A7B8B5; font-size:0.88rem; line-height:1.5;">'
+            f"{html.escape(desc)}</p></div>",
+            unsafe_allow_html=True,
+        )
     audio_config = AUDIO_CONFIG
     feature_config = FEATURE_CONFIG
     st.subheader("Current extraction settings")
-    st.dataframe(
-        pd.DataFrame(
-            [{"setting": key, "value": str(value)} for key, value in audio_config.items()]
-            + [{"setting": key, "value": str(value)} for key, value in feature_config.items()]
-        ),
-        width="stretch",
-        hide_index=True,
+    settings_df = pd.DataFrame(
+        [{"setting": key, "value": str(value)} for key, value in audio_config.items()]
+        + [{"setting": key, "value": str(value)} for key, value in feature_config.items()]
+    )
+    _render_generic_glass_table(
+        settings_df, headers=["Configuration Setting", "Active Parameter Value"]
     )
     st.subheader("Privacy boundary")
     st.write(

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -25,6 +26,29 @@ class AudioValidationConfig:
     min_harmonic_overtone_fraction: float = 0.005
 
     def __post_init__(self) -> None:
+        numeric_fields = (
+            "min_duration_seconds",
+            "max_duration_seconds",
+            "min_rms",
+            "max_peak",
+            "clipping_fraction_limit",
+            "min_voiced_fraction",
+            "pitch_floor_hz",
+            "pitch_ceiling_hz",
+            "min_harmonic_overtone_fraction",
+        )
+        for field_name in numeric_fields:
+            val = getattr(self, field_name)
+            if isinstance(val, bool) or not isinstance(val, (int, float)):
+                raise TypeError(f"{field_name} must be numeric, not {type(val).__name__}.")
+            if not math.isfinite(val):
+                raise ValueError(f"{field_name} must be a finite number.")
+
+        if type(self.frame_ms) is not int or isinstance(self.frame_ms, bool):
+            raise TypeError(f"frame_ms must be an int, not {type(self.frame_ms).__name__}.")
+        if not math.isfinite(self.frame_ms) or self.frame_ms <= 0:
+            raise ValueError("frame_ms must be a positive integer.")
+
         if self.min_duration_seconds <= 0:
             raise ValueError("min_duration_seconds must be positive.")
         if self.max_duration_seconds <= self.min_duration_seconds:
@@ -37,8 +61,6 @@ class AudioValidationConfig:
             raise ValueError("clipping_fraction_limit must be in range [0.0, 1.0].")
         if not (0.0 <= self.min_voiced_fraction <= 1.0):
             raise ValueError("min_voiced_fraction must be in range [0.0, 1.0].")
-        if self.frame_ms <= 0:
-            raise ValueError("frame_ms must be a positive integer.")
         if self.pitch_floor_hz <= 0:
             raise ValueError("pitch_floor_hz must be positive.")
         if self.pitch_ceiling_hz <= self.pitch_floor_hz:
@@ -103,6 +125,7 @@ def validate_audio(
     else:
         active = 0.0
     voiced = 0.0
+    frequencies = np.empty(0, dtype=np.float64)
     if mono.size and record.sample_rate > 0:
         try:
             sound = parselmouth.Sound(mono, sampling_frequency=record.sample_rate)
@@ -115,6 +138,7 @@ def validate_audio(
             voiced = float(np.mean(np.isfinite(frequencies) & (frequencies > 0)))
         except (parselmouth.PraatError, ValueError, RuntimeError):
             voiced = 0.0
+            frequencies = np.empty(0, dtype=np.float64)
     if rms < cfg.min_rms:
         errors.append(
             "Signal level is very low or the recording is silent. Move closer and record again."
@@ -130,7 +154,7 @@ def validate_audio(
         errors.append(
             "Too little voiced signal was detected. Use a steady sustained vowel and retry."
         )
-    elif mono.size and record.sample_rate > 0:
+    elif mono.size and record.sample_rate > 0 and frequencies.size > 0:
         valid_f0 = frequencies[np.isfinite(frequencies) & (frequencies > 0)]
         if len(valid_f0) > 0:
             median_f0 = float(np.median(valid_f0))
@@ -146,6 +170,25 @@ def validate_audio(
                         "(isolated single-frequency tone or synthetic generator detected). "
                         "Please record a natural sustained vowel /a/."
                     )
+                else:
+                    # Check for synthetic odd-only harmonics or rail dynamics (e.g. square wave)
+                    # Human phonation of sustained vowels produces even-harmonic resonances (2*f0)
+                    h2_mask = (fft_freqs >= 1.8 * median_f0) & (fft_freqs <= 2.2 * median_f0)
+                    h2_fraction = float(np.sum(fft[h2_mask] ** 2) / total_energy)
+                    var_val = float(np.var(mono))
+                    kurtosis = (
+                        float(np.mean((mono - np.mean(mono)) ** 4) / (max(1e-12, var_val) ** 2))
+                        if var_val > 1e-12
+                        else 1.0
+                    )
+                    if (overtone_fraction > 0.05 and h2_fraction < 0.002) or (
+                        kurtosis < 1.15 and len(mono) > 500
+                    ):
+                        errors.append(
+                            "Signal exhibits unnatural harmonic distribution or flat rail dynamics "
+                            "lacking human vocal resonances (e.g. synthetic waveform). "
+                            "Please record a natural sustained vowel /a/."
+                        )
     if record.channels == 2:
         centered = x - x.mean(axis=0, keepdims=True)
         corr = np.corrcoef(centered.T)[0, 1] if len(centered) > 1 else 1.0

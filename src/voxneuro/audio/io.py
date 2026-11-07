@@ -24,6 +24,10 @@ class AudioRecord:
         return float(len(self.samples) / self.sample_rate)
 
 
+MIN_SUPPORTED_SAMPLE_RATE: int = 8000
+MAX_SUPPORTED_SAMPLE_RATE: int = 48000
+
+
 def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:
     """Decode an audio byte stream while retaining the original channel layout."""
     try:
@@ -36,6 +40,11 @@ def decode_audio(payload: bytes | bytearray | BytesIO) -> AudioRecord:
         ) from exc
     if raw.size == 0 or sample_rate <= 0:
         raise AudioReadError("The WAV file contains no usable audio samples.")
+    if sample_rate < MIN_SUPPORTED_SAMPLE_RATE or sample_rate > MAX_SUPPORTED_SAMPLE_RATE:
+        raise AudioReadError(
+            f"Unsupported sample rate: {sample_rate} Hz. Supported range is "
+            f"{MIN_SUPPORTED_SAMPLE_RATE} Hz to {MAX_SUPPORTED_SAMPLE_RATE} Hz."
+        )
     # libsndfile distinguishes the WAVE extensible variant as WAVEX. It is
     # still a RIFF/WAVE container and is used by the public UAMS recordings.
     if str(info.format).upper() not in {"WAV", "WAVEX"}:

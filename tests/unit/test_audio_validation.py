@@ -3,7 +3,7 @@ import pytest
 
 from tests.fixtures.synthetic_audio import sustained_vowel
 from voxneuro.audio.io import AudioRecord
-from voxneuro.audio.validation import AudioValidationConfig, validate_audio
+from voxneuro.audio.validation import AudioQuality, AudioValidationConfig, validate_audio
 
 
 def record(samples, sample_rate=16000):
@@ -145,20 +145,34 @@ def test_unknown_mono_policy_fails_closed():
 def test_audio_validation_config_enforces_numeric_ranges():
     with pytest.raises(ValueError, match="min_duration_seconds must be positive"):
         AudioValidationConfig(min_duration_seconds=-1.0)
+    with pytest.raises(ValueError, match="min_duration_seconds must be a finite number"):
+        AudioValidationConfig(min_duration_seconds=float("nan"))
+    with pytest.raises(TypeError, match="min_duration_seconds must be numeric"):
+        AudioValidationConfig(min_duration_seconds=True)
     with pytest.raises(ValueError, match="max_duration_seconds must be greater"):
         AudioValidationConfig(min_duration_seconds=5.0, max_duration_seconds=2.0)
+    with pytest.raises(ValueError, match="max_duration_seconds must be a finite number"):
+        AudioValidationConfig(max_duration_seconds=float("nan"))
     with pytest.raises(ValueError, match="min_rms must be in range"):
         AudioValidationConfig(min_rms=-0.5)
+    with pytest.raises(ValueError, match="min_rms must be a finite number"):
+        AudioValidationConfig(min_rms=float("inf"))
     with pytest.raises(ValueError, match="max_peak must be in range"):
         AudioValidationConfig(max_peak=1.5)
     with pytest.raises(ValueError, match="clipping_fraction_limit must be in range"):
         AudioValidationConfig(clipping_fraction_limit=2.0)
     with pytest.raises(ValueError, match="min_voiced_fraction must be in range"):
         AudioValidationConfig(min_voiced_fraction=-0.1)
+    with pytest.raises(TypeError, match="frame_ms must be an int"):
+        AudioValidationConfig(frame_ms=20.5)
+    with pytest.raises(TypeError, match="frame_ms must be an int"):
+        AudioValidationConfig(frame_ms=True)
     with pytest.raises(ValueError, match="frame_ms must be a positive integer"):
         AudioValidationConfig(frame_ms=0)
     with pytest.raises(ValueError, match="pitch_floor_hz must be positive"):
         AudioValidationConfig(pitch_floor_hz=-50.0)
+    with pytest.raises(ValueError, match="pitch_floor_hz must be a finite number"):
+        AudioValidationConfig(pitch_floor_hz=float("nan"))
     with pytest.raises(ValueError, match="pitch_ceiling_hz must be greater"):
         AudioValidationConfig(pitch_floor_hz=300.0, pitch_ceiling_hz=200.0)
 
@@ -172,3 +186,26 @@ def test_pure_sine_tone_is_rejected_as_non_vocal():
     result = validate_audio(record(sine_wave, fs))
     assert not result.valid
     assert any("harmonic overtones" in err for err in result.errors)
+
+
+def test_square_wave_is_rejected_as_synthetic():
+    fs = 16000
+    duration = 3.0
+    t = np.arange(int(fs * duration), dtype=np.float64) / fs
+    square_wave = 0.2 * np.sign(np.sin(2 * np.pi * 130.0 * t))
+    result = validate_audio(record(square_wave, fs))
+    assert not result.valid
+    assert any("unnatural harmonic distribution" in err for err in result.errors)
+
+
+def test_praat_pitch_failure_with_zero_min_voiced_fraction_returns_clean_result(monkeypatch):
+    import parselmouth
+
+    def mock_sound(*args, **kwargs):
+        raise parselmouth.PraatError("Simulated pitch extraction crash")
+
+    monkeypatch.setattr(parselmouth, "Sound", mock_sound)
+    cfg = AudioValidationConfig(min_voiced_fraction=0.0)
+    result = validate_audio(record(sustained_vowel()), cfg)
+    assert isinstance(result, AudioQuality)
+    assert result.voiced_fraction == 0.0

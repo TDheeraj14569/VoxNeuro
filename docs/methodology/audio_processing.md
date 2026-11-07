@@ -3,7 +3,7 @@
 **Implemented prototype settings** are in `configs/audio_config.yaml` and `src/voxneuro/audio/`.
 
 1. Decode with libsndfile and retain sample rate, channels, format, and subtype from the WAV header.
-2. Require one or two channels, finite non-empty samples, 1–30 seconds, sufficient linear RMS, limited clipping, and a configurable pitch-voiced frame fraction. Praat autocorrelation pitch uses the shared 75–500 Hz floor/ceiling from `feature_config.yaml`; energy-active frame fraction is reported separately.
+2. Require one or two channels, finite non-empty samples, supported original sample rate (8,000 to 48,000 Hz), duration (1–30 s), linear RMS, limited clipping (≤ 1.00%), pitch-voiced frame fraction (≥ 15%), and vocal overtone/even-harmonic structure (rejecting synthetic single-frequency tones, rail waveforms, and non-vocal audio). Environmental noise, background speech, and room reverberation are not currently estimated or filtered, avoiding destructive alteration of perturbation measures like jitter and shimmer. Praat autocorrelation pitch uses the shared 75–500 Hz floor/ceiling from `feature_config.yaml`; energy-active frame fraction is reported separately.
 3. Apply the configured `average_with_phase_check` mono policy: detect strongly out-of-phase stereo and reject when averaging risks cancellation; otherwise average stereo channels. Unsupported policy values fail closed.
 4. Estimate and subtract DC offset. Do not loudness-normalize or denoise by default.
 5. Trim leading/trailing low-energy frames relative to the signal peak while leaving a 50 ms margin.

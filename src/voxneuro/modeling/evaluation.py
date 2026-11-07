@@ -107,6 +107,52 @@ def _participant_bootstrap_intervals(
     return intervals
 
 
+def _validate_binary_labels(y: object) -> np.ndarray:
+    """Validate that y contains strictly finite binary integers 0 and 1 without boolean types."""
+    if isinstance(y, (list, tuple)):
+        if any(isinstance(v, bool) for v in y):
+            raise ValueError("Labels must contain only finite binary values: 0 and 1.")
+    elif isinstance(y, pd.Series):
+        if y.dtype == bool or any(isinstance(v, bool) for v in y):
+            raise ValueError("Labels must contain only finite binary values: 0 and 1.")
+    elif isinstance(y, np.ndarray):
+        if y.dtype == bool or (y.dtype == object and any(isinstance(v, bool) for v in y.flat)):
+            raise ValueError("Labels must contain only finite binary values: 0 and 1.")
+    raw_labels = np.asarray(y)
+    if (
+        raw_labels.ndim != 1
+        or raw_labels.dtype.kind not in "iuf"
+        or not np.isfinite(raw_labels).all()
+        or not np.isin(raw_labels, [0, 1]).all()
+    ):
+        raise ValueError("Labels must contain only finite binary values: 0 and 1.")
+    return raw_labels.astype(int)
+
+
+def _validate_additional_predictors(
+    name: str,
+    predictors: pd.DataFrame,
+    X: pd.DataFrame,
+    groups: np.ndarray,
+    expected_rows: int,
+) -> None:
+    if not isinstance(predictors, pd.DataFrame) or len(predictors) != expected_rows:
+        raise ValueError(f"Predictor table for {name!r} must match labels and be a DataFrame.")
+    if not predictors.index.equals(X.index):
+        raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
+    for id_col in ("participant_id", "sample_id"):
+        if id_col in predictors.columns and id_col in X.columns:
+            if not predictors[id_col].equals(X[id_col]):
+                raise ValueError(
+                    f"Additional predictor {id_col} sequence for {name!r} does not match X."
+                )
+        elif id_col in predictors.columns:
+            if not np.array_equal(predictors[id_col].to_numpy(), groups):
+                raise ValueError(
+                    f"Additional predictor {id_col} sequence for {name!r} does not match groups."
+                )
+
+
 def evaluate_nested_grouped(
     X: pd.DataFrame,
     y: np.ndarray,
@@ -126,15 +172,7 @@ def evaluate_nested_grouped(
     participant. Confidence intervals resample participants from the first
     prespecified repeat and are conditional on those fitted outer-fold models.
     """
-    raw_labels = np.asarray(y)
-    if (
-        raw_labels.ndim != 1
-        or raw_labels.dtype.kind not in "iuf"
-        or not np.isfinite(raw_labels).all()
-        or not np.isin(raw_labels, [0, 1]).all()
-    ):
-        raise ValueError("Labels must contain only finite binary values: 0 and 1.")
-    labels = raw_labels.astype(int)
+    labels = _validate_binary_labels(y)
     group_values = np.asarray(groups)
     if not isinstance(X, pd.DataFrame):
         raise ValueError("X must be a pandas DataFrame.")
@@ -152,10 +190,7 @@ def evaluate_nested_grouped(
     for name, (predictors, estimator, grid) in (additional_searches or {}).items():
         if name in specs:
             raise ValueError(f"Additional model name {name!r} conflicts with a built-in model.")
-        if not isinstance(predictors, pd.DataFrame) or len(predictors) != len(labels):
-            raise ValueError(f"Predictor table for {name!r} must match labels and be a DataFrame.")
-        if not predictors.index.equals(X.index):
-            raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
+        _validate_additional_predictors(name, predictors, X, group_values, len(labels))
         if estimator is None or not hasattr(estimator, "fit") or not isinstance(grid, dict):
             raise ValueError(
                 f"Additional search for {name!r} needs an estimator and parameter grid."
@@ -357,31 +392,19 @@ def evaluate_grouped(
     lets demographic and combined-feature baselines use the identical folds without adding
     demographic columns to voice-only models.
     """
-    raw_labels = np.asarray(y)
-    if (
-        raw_labels.ndim != 1
-        or raw_labels.dtype.kind not in "iuf"
-        or not np.isfinite(raw_labels).all()
-        or not np.isin(raw_labels, [0, 1]).all()
-    ):
-        raise ValueError("Labels must contain only finite binary values: 0 and 1.")
-    labels = raw_labels.astype(int)
+    labels = _validate_binary_labels(y)
+    group_values = np.asarray(groups)
     if not isinstance(X, pd.DataFrame):
         raise ValueError("X must be a pandas DataFrame.")
     if len(X) != len(labels):
         raise ValueError("X and y must contain the same number of rows.")
-    folds = list(grouped_splits(labels, np.asarray(groups), n_splits, random_seed))
+    folds = list(grouped_splits(labels, group_values, n_splits, random_seed))
     models = {"dummy": None, **build_pipelines(random_seed)}
     predictor_tables = {name: X for name in models}
     for name, (predictors, estimator) in (additional_models or {}).items():
         if name in models:
             raise ValueError(f"Additional model name {name!r} conflicts with a built-in baseline.")
-        if not isinstance(predictors, pd.DataFrame) or len(predictors) != len(labels):
-            raise ValueError(
-                f"Predictor table for {name!r} must match the row count and be a DataFrame."
-            )
-        if not predictors.index.equals(X.index):
-            raise ValueError(f"Additional predictor rows for {name!r} must align with X.")
+        _validate_additional_predictors(name, predictors, X, group_values, len(labels))
         if estimator is None or not hasattr(estimator, "fit"):
             raise ValueError(f"Estimator for {name!r} must implement fit().")
         models[name] = estimator

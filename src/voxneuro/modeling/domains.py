@@ -109,6 +109,27 @@ def _validated_domains(report: object) -> list[str]:
         or participant_count < 1
     ):
         raise ValueError("Domain-validation results must include a positive participant count.")
+    RECOGNIZED_METRICS = {
+        "balanced_accuracy",
+        "roc_auc",
+        "sensitivity",
+        "specificity",
+        "precision",
+        "f1",
+        "average_precision",
+    }
+    supplied_metrics = [
+        key
+        for key in results
+        if key in RECOGNIZED_METRICS
+        and isinstance(results[key], Real)
+        and not isinstance(results[key], bool)
+    ]
+    if not supplied_metrics:
+        raise ValueError(
+            "Domain-validation results must supply at least one recognized metric: "
+            f"{sorted(RECOGNIZED_METRICS)}"
+        )
     scores = [
         value
         for key, value in results.items()
@@ -116,7 +137,7 @@ def _validated_domains(report: object) -> list[str]:
     ]
     if not scores or any(not 0.0 <= float(score) <= 1.0 for score in scores):
         raise ValueError(
-            "Domain-validation results must include a numeric outcome between zero and one."
+            "Domain-validation results must include numeric outcomes between zero and one."
         )
     return domains
 

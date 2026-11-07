@@ -54,3 +54,15 @@ def test_wave_extensible_container_is_accepted():
     record = decode_audio(out.getvalue())
     assert record.format == "WAVEX"
     assert record.sample_rate == 8000
+
+
+def test_unsupported_sample_rate_is_rejected():
+    out_low = BytesIO()
+    sf.write(out_low, sustained_vowel(sample_rate=4000), 4000, format="WAV", subtype="PCM_16")
+    with pytest.raises(AudioReadError, match="Unsupported sample rate: 4000 Hz"):
+        decode_audio(out_low.getvalue())
+
+    out_high = BytesIO()
+    sf.write(out_high, sustained_vowel(sample_rate=96000), 96000, format="WAV", subtype="PCM_16")
+    with pytest.raises(AudioReadError, match="Unsupported sample rate: 96000 Hz"):
+        decode_audio(out_high.getvalue())
