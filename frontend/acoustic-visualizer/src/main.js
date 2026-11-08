@@ -61,9 +61,9 @@ function drawFallback(canvas, data, message) {
   canvas.width = Math.max(1, Math.round(bounds.width * ratio));
   canvas.height = Math.max(1, Math.round(bounds.height * ratio));
   context.scale(ratio, ratio);
-  context.fillStyle = "#0a1922";
+  context.fillStyle = "#141922";
   context.fillRect(0, 0, bounds.width, bounds.height);
-  context.strokeStyle = "#21414a";
+  context.strokeStyle = "#222a36";
   context.lineWidth = 1;
   for (let y = 24; y < bounds.height; y += 32) {
     context.beginPath();
@@ -71,7 +71,7 @@ function drawFallback(canvas, data, message) {
     context.lineTo(bounds.width, y);
     context.stroke();
   }
-  context.strokeStyle = "#55d9c1";
+  context.strokeStyle = "#e5b56d";
   context.lineWidth = 1.8;
   if (data?.mode === "spectrogram") {
     const rows = data.magnitude_db;
@@ -79,8 +79,10 @@ function drawFallback(canvas, data, message) {
     const cellHeight = bounds.height / rows.length;
     rows.forEach((row, frequencyIndex) => row.forEach((value, timeIndex) => {
       const shade = Math.max(0, Math.min(1, (value + 90) / 90));
-      const hue = 190 - 25 * shade;
-      context.fillStyle = `hsl(${hue}, ${42 + 25 * shade}%, ${10 + 44 * shade}%)`;
+      const r = Math.round(28 + shade * 157);
+      const g = Math.round(40 + shade * 54);
+      const b = Math.round(54 + (1 - shade) * 50);
+      context.fillStyle = `rgb(${r}, ${g}, ${b})`;
       context.fillRect(
         timeIndex * cellWidth,
         bounds.height - (frequencyIndex + 1) * cellHeight,
@@ -454,9 +456,10 @@ export function mount(root, data) {
   const reset = () => controls.reset();
   resetButton?.addEventListener("click", reset);
 
+  const presetCleanup = [];
   const presetButtons = root.querySelectorAll("[data-camera-preset]");
   presetButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
+    const handlePreset = () => {
       const preset = btn.getAttribute("data-camera-preset");
       if (preset === "iso") {
         if (data.mode === "spectrogram") {
@@ -486,7 +489,9 @@ export function mount(root, data) {
       controls.target.set(0, 0, 0);
       controls.update();
       requestRender();
-    });
+    };
+    btn.addEventListener("click", handlePreset);
+    presetCleanup.push(() => btn.removeEventListener("click", handlePreset));
   });
 
   const notice = root.querySelector("#voxneuro-fallback-note");
@@ -497,9 +502,10 @@ export function mount(root, data) {
   if (axes) {
     axes.dataset.mode = data.mode;
     if (data.mode === "spectrogram") {
+      const minT = (data.times?.[0] || 0).toFixed(2);
       const maxT = (data.times?.at(-1) || 0).toFixed(2);
       const maxF = (data.frequencies_hz?.at(-1) || 0).toFixed(0);
-      axes.innerHTML = `<div><strong>Spectrogram 3D</strong> · Time: 0 – ${maxT}s · Freq: 0 – ${maxF} Hz</div>` +
+      axes.innerHTML = `<div><strong>Spectrogram 3D</strong> · Time: ${minT} – ${maxT}s · Freq: 0 – ${maxF} Hz</div>` +
         `<div style="display:inline-flex; align-items:center; gap:6px; margin-top:3px;">` +
         `<span style="font-size:10px; color:#A7B8B5;">-90 dB</span>` +
         `<span style="display:inline-block; width:70px; height:6px; border-radius:2px; background:linear-gradient(to right, #1c2836, #526a91, #e5b56d, #b95e46); border: 1px solid rgba(185,94,70,0.4);"></span>` +
@@ -581,6 +587,7 @@ export function mount(root, data) {
     canvas.removeEventListener("pointermove", handlePointerMove);
     canvas.removeEventListener("pointerleave", handlePointerLeave);
     resetButton?.removeEventListener("click", reset);
+    presetCleanup.forEach((clean) => clean());
     controls.dispose();
     disposeTree(scene);
     renderer.dispose();

@@ -14,7 +14,7 @@ if (!executablePath) {
   );
 }
 
-function syntheticWav({ seconds = 3.4, frequency = 180, sampleRate = 16000 } = {}) {
+function syntheticWav({ seconds = 3.4, frequency = 160, sampleRate = 16000 } = {}) {
   const sampleCount = Math.floor(seconds * sampleRate);
   const bytes = Buffer.alloc(44 + sampleCount * 2);
   bytes.write("RIFF", 0);
@@ -30,9 +30,20 @@ function syntheticWav({ seconds = 3.4, frequency = 180, sampleRate = 16000 } = {
   bytes.writeUInt16LE(16, 34);
   bytes.writeUInt32LE(sampleCount * 2, 40);
   bytes.write("data", 36);
+  const f0 = frequency;
   for (let index = 0; index < sampleCount; index += 1) {
-    const sample = Math.sin((2 * Math.PI * frequency * index) / sampleRate) * 0.18;
-    bytes.writeInt16LE(Math.round(sample * 32767), 44 + index * 2);
+    const t = index / sampleRate;
+    let env = 1.0;
+    if (t < 0.05) env = t / 0.05;
+    else if (t > seconds - 0.05) env = (seconds - t) / 0.05;
+    const s = env * (
+      0.35 * Math.sin(2 * Math.PI * f0 * t) +
+      0.18 * Math.sin(2 * Math.PI * 2 * f0 * t) +
+      0.10 * Math.sin(2 * Math.PI * 3 * f0 * t) +
+      0.05 * Math.sin(2 * Math.PI * 4 * f0 * t)
+    );
+    const intVal = Math.max(-32767, Math.min(32767, Math.round(s * 32767)));
+    bytes.writeInt16LE(intVal, 44 + index * 2);
   }
   return bytes;
 }
@@ -114,7 +125,7 @@ try {
   assert.equal(await page.locator("iframe").count(), 1, "Signal navigation duplicated the viewer.");
   assert.match(
     await signalView.locator("[data-axis-labels]").innerText(),
-    /X Time \(s\).*Y Amplitude/,
+    /Waveform 3D.*Time/,
   );
   const signalMode = await signalView.locator("canvas").getAttribute("data-render-mode");
   assert.ok(["webgl2", "2d"].includes(signalMode), `Unexpected signal render mode: ${signalMode}`);
@@ -142,7 +153,7 @@ try {
   });
   assert.match(
     await signalView.locator("[data-axis-labels]").innerText(),
-    /X Time \(s\).*Y Frequency \(Hz\).*Z Magnitude/,
+    /Spectrogram 3D.*Time.*Freq/,
   );
   await signalView.getByRole("button", { name: "Reset 3D camera view" }).click();
   await page.waitForTimeout(250);

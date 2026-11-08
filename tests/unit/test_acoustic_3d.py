@@ -47,6 +47,9 @@ def test_waveform_downsampling_preserves_short_transients():
         np.array([1.0 + 2.0j, 3.0 + 4.0j]),
         np.array([True, False]),
         np.array(["a", "b"], dtype=object),
+        np.array([100, 200], dtype=np.int16),
+        np.array([1.000001, 0.0], dtype=np.float64),
+        np.array([-1.5, 0.5], dtype=np.float64),
     ],
 )
 def test_waveform_payload_rejects_invalid_samples(samples):

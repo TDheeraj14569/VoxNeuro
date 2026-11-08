@@ -196,14 +196,29 @@ def test_lower_level_extractors_reject_non_numeric_and_complex_arrays():
     [
         ({"pitch_floor_hz": 0.0}, "pitch_floor_hz"),
         ({"pitch_floor_hz": 600.0, "pitch_ceiling_hz": 500.0}, "pitch_floor_hz"),
+        ({"pitch_ceiling_hz": 40.0}, "pitch_ceiling_hz"),
+        (
+            {"pitch_floor_hz": 300.0, "pitch_ceiling_hz": 200.0},
+            "pitch_floor_hz must be strictly less",
+        ),
         ({"pitch_step_seconds": 0.5}, "pitch_step_seconds"),
         ({"mel_bands": 10}, "mel_bands"),
         ({"fft_window_samples": 1000}, "fft_window_samples"),
         ({"hop_samples": 2048, "fft_window_samples": 1024}, "hop_samples"),
         ({"mel_min_hz": -10.0}, "mel_min_hz"),
+        ({"common_max_hz": 50.0}, "common_max_hz"),
+        ({"common_max_hz": 30000.0}, "common_max_hz"),
         ({"spectral_rolloff_fraction": 1.5}, "spectral_rolloff_fraction"),
     ],
 )
 def test_extract_features_validates_parameter_bounds(param_kwargs, err_match):
     with pytest.raises(FeatureExtractionError, match=err_match):
         extract_features(sustained_vowel(), 16000, **param_kwargs)
+
+
+@pytest.mark.parametrize("peak", [1.000001, -1.000001, 2.5, -3.0])
+def test_extract_features_rejects_unnormalized_amplitude(peak):
+    samples = sustained_vowel()
+    samples[0] = peak
+    with pytest.raises(FeatureExtractionError, match=r"normalized to \[-1\.0, 1\.0\]"):
+        extract_features(samples, 16000)

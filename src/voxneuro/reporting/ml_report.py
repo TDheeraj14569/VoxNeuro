@@ -88,22 +88,20 @@ def _format_value(value: object, digits: int = 3) -> str:
 
 
 def _comparison_table(summary: pd.DataFrame) -> str:
-    headers = ["Candidate", "Accuracy", "Precision", "Sensitivity", "Specificity", "BA"]
-    headers.extend(
-        ["F1", "ROC-AUC", "PR-AUC", "Average precision", "MCC", "Brier", "TN / FP / FN / TP"]
-    )
+    active_metrics = [
+        (metric, label) for metric, label in METRICS if f"{metric}_mean" in summary.columns
+    ]
+    headers = ["Candidate"] + [label for _, label in active_metrics] + ["TN / FP / FN / TP"]
     output = ["<table><caption>Participant-level out-of-fold results</caption><thead><tr>"]
     output.extend(f"<th scope='col'>{html.escape(value)}</th>" for value in headers)
     output.append("</tr></thead><tbody>")
     for _, row in summary.iterrows():
         output.append(f"<tr><th scope='row'>{html.escape(str(row['model_label']))}</th>")
-        for metric, _ in METRICS:
+        for metric, _ in active_metrics:
             mean_key = f"{metric}_mean"
             sd_key = f"{metric}_repeat_sd"
             ci_low_key = f"{metric}_ci_low"
             ci_high_key = f"{metric}_ci_high"
-            if mean_key not in row:
-                continue
             mean = _format_value(row[mean_key])
             sd = _format_value(row[sd_key])
             low = _format_value(row[ci_low_key])
@@ -134,6 +132,7 @@ def _curve_svg(predictions: pd.DataFrame, primary_seed: int, curve: str) -> str:
         "#35464f",
         "#9a6b45",
         "#c24f4f",
+        "#4a6b82",
     ]
     x0, y0, width, height = 66.0, 24.0, 500.0, 220.0
     paths = []
@@ -157,7 +156,7 @@ def _curve_svg(predictions: pd.DataFrame, primary_seed: int, curve: str) -> str:
             f"<polyline fill='none' stroke='{color}' stroke-width='2.4' "
             f"points='{' '.join(points)}'/>"
         )
-        legend_y = 278 + (index // 3) * 20
+        legend_y = 296 + (index // 3) * 20
         legend_x = 70 + (index % 3) * 180
         legends.append(
             f"<line x1='{legend_x}' y1='{legend_y}' x2='{legend_x + 20}' "
@@ -173,16 +172,25 @@ def _curve_svg(predictions: pd.DataFrame, primary_seed: int, curve: str) -> str:
         if curve == "roc"
         else ""
     )
+    ticks = (
+        "<text x='66' y='256' text-anchor='middle' font-size='10' fill='#526a73'>0.0</text>"
+        "<text x='316' y='256' text-anchor='middle' font-size='10' fill='#526a73'>0.5</text>"
+        "<text x='566' y='256' text-anchor='middle' font-size='10' fill='#526a73'>1.0</text>"
+        "<text x='58' y='247' text-anchor='end' font-size='10' fill='#526a73'>0.0</text>"
+        "<text x='58' y='137' text-anchor='end' font-size='10' fill='#526a73'>0.5</text>"
+        "<text x='58' y='28' text-anchor='end' font-size='10' fill='#526a73'>1.0</text>"
+    )
     return (
-        f"<svg viewBox='0 0 620 340' role='img' aria-label='{title} for primary seed "
+        f"<svg viewBox='0 0 620 380' role='img' aria-label='{title} for primary seed "
         f"{primary_seed}' xmlns='http://www.w3.org/2000/svg'>"
         f"<title>{title} from outer-fold participant-level scores</title>"
-        "<rect x='0' y='0' width='620' height='340' rx='10' fill='#fff'/>"
+        "<rect x='0' y='0' width='620' height='380' rx='10' fill='#fff'/>"
         f"<line x1='{x0}' y1='{y0 + height}' x2='{x0 + width}' "
         f"y2='{y0 + height}' stroke='#526a73'/>"
         f"<line x1='{x0}' y1='{y0}' x2='{x0}' y2='{y0 + height}' stroke='#526a73'/>"
+        f"{ticks}"
         f"{baseline}{''.join(paths)}"
-        f"<text x='316' y='266' text-anchor='middle' font-size='12'>{x_label}</text>"
+        f"<text x='316' y='272' text-anchor='middle' font-size='12'>{x_label}</text>"
         f"<text x='17' y='135' text-anchor='middle' font-size='12' "
         f"transform='rotate(-90 17 135)'>{y_label}</text>"
         f"{''.join(legends)}</svg>"
@@ -376,9 +384,10 @@ def render_nested_evaluation_html(
             else []
         ),
         (
-            "<p>Repeated recordings are grouped by participant and aggregated before scoring. "
-            "Imputation, scaling, fitting and hyperparameter selection occur inside training "
-            "data.</p></section>"
+            "<p>Cross-validation partitions are grouped strictly by participant. "
+            "In multi-recording cohorts, repeated samples are aggregated to the participant "
+            "level before scoring. Imputation, scaling, fitting and hyperparameter selection "
+            "occur strictly inside training folds.</p></section>"
         ),
         "<section><h2>Inner-fold selections</h2>",
         (

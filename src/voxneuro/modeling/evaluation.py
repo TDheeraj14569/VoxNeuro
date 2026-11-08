@@ -354,7 +354,19 @@ def evaluate_nested_grouped(
                     selected_parameters=("selected_parameters", "first"),
                     inner_best_balanced_accuracy=("inner_best_balanced_accuracy", "first"),
                 )
-                participant_rows["y_pred"] = (participant_rows["y_pred"] >= 0.5).astype(int)
+                if (
+                    "probability" in participant_rows
+                    and participant_rows["probability"].notna().all()
+                ):
+                    is_tied = participant_rows["y_pred"] == 0.5
+                    participant_rows.loc[is_tied, "y_pred"] = (
+                        participant_rows.loc[is_tied, "probability"] >= 0.5
+                    ).astype(int)
+                    participant_rows.loc[~is_tied, "y_pred"] = (
+                        participant_rows.loc[~is_tied, "y_pred"] > 0.5
+                    ).astype(int)
+                else:
+                    participant_rows["y_pred"] = (participant_rows["y_pred"] >= 0.5).astype(int)
                 score_values = participant_rows["score"].to_numpy(dtype=float)
                 score_ok = bool(np.isfinite(score_values).all())
                 probability_values = participant_rows["probability"].to_numpy(dtype=float)
@@ -528,7 +540,16 @@ def evaluate_grouped(
                 score=("score", "mean"),
                 n_recordings=("y_true", "size"),
             )
-            participant_rows["y_pred"] = (participant_rows["y_pred"] >= 0.5).astype(int)
+            if "score" in participant_rows and participant_rows["score"].notna().all():
+                is_tied = participant_rows["y_pred"] == 0.5
+                participant_rows.loc[is_tied, "y_pred"] = (
+                    participant_rows.loc[is_tied, "score"] >= 0.5
+                ).astype(int)
+                participant_rows.loc[~is_tied, "y_pred"] = (
+                    participant_rows.loc[~is_tied, "y_pred"] > 0.5
+                ).astype(int)
+            else:
+                participant_rows["y_pred"] = (participant_rows["y_pred"] >= 0.5).astype(int)
             participant_score = participant_rows["score"].to_numpy()
             has_score = bool(np.isfinite(participant_score).all())
             metrics = binary_metrics(

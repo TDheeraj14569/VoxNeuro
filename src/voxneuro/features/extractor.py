@@ -73,11 +73,6 @@ def extract_features(
         ):
             raise FeatureExtractionError(f"{p_name} must be a finite real number.")
 
-    if pitch_floor_hz <= 0 or pitch_ceiling_hz <= pitch_floor_hz:
-        raise FeatureExtractionError("pitch_floor_hz must be > 0 and < pitch_ceiling_hz.")
-    if pitch_step_seconds <= 0 or pitch_step_seconds > 0.1:
-        raise FeatureExtractionError("pitch_step_seconds must be positive and <= 0.1s.")
-
     for p_name, p_val in (
         ("mel_bands", mel_bands),
         ("fft_window_samples", fft_window_samples),
@@ -97,18 +92,54 @@ def extract_features(
                 "preprocessing_config_fingerprint must be None or a 64-character hex string."
             )
 
+    if (
+        isinstance(pitch_floor_hz, (bool, np.bool_))
+        or not isinstance(pitch_floor_hz, (int, float, np.number))
+        or not (30.0 < pitch_floor_hz <= 500.0)
+    ):
+        raise FeatureExtractionError(
+            "pitch_floor_hz must be a number strictly between 30.0 and 500.0 Hz."
+        )
+    if (
+        isinstance(pitch_ceiling_hz, (bool, np.bool_))
+        or not isinstance(pitch_ceiling_hz, (int, float, np.number))
+        or not (60.0 <= pitch_ceiling_hz <= 1200.0)
+    ):
+        raise FeatureExtractionError(
+            "pitch_ceiling_hz must be a number between 60.0 and 1200.0 Hz."
+        )
+    if pitch_floor_hz >= pitch_ceiling_hz:
+        raise FeatureExtractionError("pitch_floor_hz must be strictly less than pitch_ceiling_hz.")
+    if (
+        isinstance(pitch_step_seconds, (bool, np.bool_))
+        or not isinstance(pitch_step_seconds, (int, float, np.number))
+        or not (0.001 < pitch_step_seconds <= 0.1)
+    ):
+        raise FeatureExtractionError(
+            "pitch_step_seconds must be a number strictly between 0.001 and 0.1 seconds."
+        )
     if mel_bands < 13 or mel_bands > 256:
         raise FeatureExtractionError("mel_bands must be between 13 and 256.")
-    if fft_window_samples <= 0 or (fft_window_samples & (fft_window_samples - 1)) != 0:
-        raise FeatureExtractionError("fft_window_samples must be a positive power of two.")
-    if hop_samples <= 0 or hop_samples > fft_window_samples:
-        raise FeatureExtractionError("hop_samples must be positive and <= fft_window_samples.")
-    if mel_min_hz < 0:
-        raise FeatureExtractionError("mel_min_hz must be non-negative.")
-    effective_rate = original_sample_rate if original_sample_rate is not None else sample_rate
-    if common_max_hz <= mel_min_hz or common_max_hz >= (effective_rate / 2):
+    if (
+        fft_window_samples < 256
+        or fft_window_samples > 8192
+        or (fft_window_samples & (fft_window_samples - 1)) != 0
+    ):
         raise FeatureExtractionError(
-            f"common_max_hz must be > mel_min_hz and strictly below Nyquist "
+            "fft_window_samples must be a power of two between 256 and 8192."
+        )
+    if hop_samples < 1 or hop_samples > fft_window_samples:
+        raise FeatureExtractionError("hop_samples must be positive and <= fft_window_samples.")
+    if not (0.0 <= mel_min_hz <= 1000.0):
+        raise FeatureExtractionError("mel_min_hz must be between 0.0 and 1000.0 Hz.")
+    effective_rate = original_sample_rate if original_sample_rate is not None else sample_rate
+    if (
+        not (100.0 < common_max_hz <= 24000.0)
+        or common_max_hz <= mel_min_hz
+        or common_max_hz >= (effective_rate / 2)
+    ):
+        raise FeatureExtractionError(
+            f"common_max_hz must be > mel_min_hz, <= 24000.0 Hz, and strictly below Nyquist "
             f"({effective_rate / 2} Hz)."
         )
     if not (0.0 < spectral_rolloff_fraction < 1.0):
@@ -149,6 +180,11 @@ def extract_features(
     if x.size == 0 or not np.isfinite(x).all():
         raise FeatureExtractionError(
             "Feature input must be finite, non-empty audio with a valid sample rate."
+        )
+    if np.any(x < -1.0) or np.any(x > 1.0):
+        raise FeatureExtractionError(
+            f"Audio samples must be normalized to [-1.0, 1.0]; observed peak is "
+            f"{float(np.max(np.abs(x))):.3f}."
         )
     try:
         values = extract_praat_features(

@@ -13,7 +13,7 @@
 - **Strict Predictor Identity Contracts:** Enforced 1-to-1 matching for `sample_id` and `participant_id` between $X$ and additional predictors in `evaluate_grouped()`, rejecting one-sided presence and sequence mismatches.
 - **Audio Validation Hardening:** Rejected complex-valued, object, and boolean audio arrays with structured errors (`Audio samples must contain real numeric values.`). Validated sample rates independently in `AudioRecord.__post_init__()` and rejected 3-channel WAVs with `AudioReadError`.
 - **Harmonic Screening Reframing:** Reframed synthetic generator checks as acoustic task screening criteria. Added configurable thresholds to `audio_config.yaml`.
-- **Test Suite & Receipts:** Full suite expanded through intermediate checkpoints (247, 252, and 265 tests) to **296 passed tests** (288 unit/pipeline tests and 8 Streamlit AppTests) with 86.81% statement coverage. Regenerated model receipts, model bundle, and deterministic audit archives.
+- **Test Suite & Receipts:** Full suite expanded through intermediate checkpoints (247, 252, 265, 296, and 299 tests) to **310 passed tests** (302 unit/pipeline tests and 8 Streamlit AppTests) with 87.05% statement coverage across 2,232 statements. Regenerated model receipts, model bundle, and deterministic audit archives.
 
 ## Findings fixed
 
@@ -43,7 +43,7 @@
 
 ## Latest verification completed — 2026-11-07 (296-test suite)
 
-- **Test Suite & Coverage:** Expanded to **296 passed tests** (288 non-UI tests plus 8 Streamlit AppTests) with **86.81% statement coverage** in `src/voxneuro`.
+- **Test Suite & Coverage:** Expanded to **310 passed tests** (302 non-UI tests plus 8 Streamlit AppTests) with **87.05% statement coverage** across 2,232 statements in `src/voxneuro`.
 - **Feature Extraction Array Validation:** Enforced strict non-boolean, non-complex, finite numeric array requirements, bounded extraction parameters, and integer sample rate validation (8–48 kHz) in standalone `extract_features()`. Added comprehensive regression tests.
 - **Audio Validation Config & Early Exit:** Added `AudioValidationConfig.from_dict()` with strict non-coercing type validation, early-exit on invalid audio duration or silence before Praat/FFT execution, and configurable second harmonic overtone bounds.
 - **Manifest Sample Hierarchy:** Added prioritized ID tier matching (`sample_id` > `participant_id` > `id`) and ambiguous key rejection in `build_manifest.py`.

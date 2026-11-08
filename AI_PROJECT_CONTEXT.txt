@@ -1,18 +1,20 @@
 ================================================================================
 VOXNEURO — COMPREHENSIVE AI AGENT ARCHITECTURAL & PROJECT CONTEXT
 ================================================================================
-Generated for: AI Coding Agents, Evaluators, and Scientific Collaborators
+Generated for: AI Coding Agents, Evaluators, Reviewers, and Scientific Collaborators
 Repository: VoxNeuro (v0.1.0)
+Git Tracking: Root file `AI_PROJECT_CONTEXT.txt` (Registered in PROJECT_FILE_INVENTORY.md)
 Timestamp: 2026-11-08
 Primary Frameworks: Python 3.12 (Streamlit, Librosa, Parselmouth-Praat, Scikit-learn, SciPy)
-Frontend: Three.js WebGL2 3D Visualizer (esbuild bundled, zero CDN dependencies)
+Frontend: Three.js WebGL2 3D Visualizer (Pinned to Three.js v0.187.0, esbuild bundled)
+Test Suite: Exactly 310 Passed Tests (302 non-UI unit/integration + 8 UI AppTests; 87.05% coverage)
 ================================================================================
 
 1. EXECUTIVE OVERVIEW & NON-DIAGNOSTIC SAFETY BOUNDARY
 --------------------------------------------------------------------------------
-VoxNeuro is a local, privacy-preserving acoustic voice analysis and neurology
-research platform prototype designed to investigate acoustic biomarkers in sustained
-vowel recordings (/a/).
+VoxNeuro is a local, privacy-preserving acoustic voice analysis and neurology research
+platform prototype engineered to investigate literature-informed acoustic measurements
+in sustained vowel phonations (/a/).
 
 CRITICAL RESEARCH & SAFETY BOUNDARY:
 - VoxNeuro is an exploratory engineering prototype and research software platform.
@@ -22,101 +24,154 @@ CRITICAL RESEARCH & SAFETY BOUNDARY:
   which immediately rejects patient-level inference. This fail-closed safety gate
   prevents misapplication of retrospective research models trained on telephone
   recordings (UAMS cohort) to uncalibrated laptop or smartphone microphones.
-- Standalone HTML reports, JSON exports, and Streamlit UI panels prominently display
-  clinical disclaimers and omit diagnostic inferences.
+- Standalone HTML reports, JSON telemetry exports, and Streamlit UI panels prominently
+  display clinical disclaimers and omit diagnostic inferences.
+- Audio samples are held transiently in memory; zero raw audio or patient identifiers
+  are stored to disk by default.
 
 --------------------------------------------------------------------------------
-2. REPOSITORY ARCHITECTURE & DIRECTORY MAP
+2. EXHAUSTIVE REPOSITORY ARCHITECTURE & COMPLETE DIRECTORY MAP
 --------------------------------------------------------------------------------
-The codebase follows a modular, reproducible research engineering design:
+The codebase follows a modular, reproducible research engineering design across 182
+source files (and 11 review evidence attachments in the AI review bundle):
 
+Top-Level Application & Configuration:
 - `app.py`: Main Streamlit application with a scientific light editorial theme
   (burnt vermilion #B95E46, mineral blue #526A91, amber #E5B56D, observatory slate #141922).
   Features 5 core pages: Overview, Recording/Upload, Acoustic Features, Research Model,
   and Reports.
 - `configs/`: Typed YAML configurations with strict schema validation.
+  * `application_config.yaml`: Application UI, runtime parameters, non-storage flags.
   * `audio_config.yaml`: Sample rates, duration bounds, RMS and clipping thresholds.
   * `feature_config.yaml`: Praat pitch floor/ceiling, FFT parameters, filterbanks.
-  * `model_config.yaml`: Hyperparameter grids, cross-validation folds, seeds.
+  * `model_config.yaml`: Hyperparameter grids, cross-validation folds, repeat seeds.
   * `reviewed_exclusions.yaml`: Documented data exclusion rationale.
-- `src/voxneuro/`:
-  * `audio/`:
-    - `io.py`: WAV decoding via PySoundFile, container validation, duration limit.
-    - `preprocessing.py`: Monophonic downmixing, bandpass filtering, resampling.
-    - `validation.py`: Multi-stage audio quality checks (RMS, clipping, voiced fraction).
-  * `dataset/`:
-    - `audit.py`: Cohort manifest verification, integrity hashing, attrition tracking.
-    - `uci.py`: Loader and validator for the UCI Parkinson's benchmark.
-    - `validation.py`: Cryptographic receipt validation for data and model artifacts.
-  * `features/`:
-    - `extractor.py`: Core feature extraction orchestrator; enforces strict contracts.
-    - `parselmouth_features.py`: Praat-based pitch, jitter, shimmer, HNR extraction.
-    - `spectral_features.py`: Librosa-based spectral centroid, rolloff, MFCCs.
-    - `schema.py`: Core39 feature definitions, valid ranges, and unit definitions.
-  * `modeling/`:
-    - `evaluation.py`: Grouped Stratified K-Fold and repeated nested CV engine.
-    - `model_bundle.py`: Joblib serialization with SHA-256 sidecar checksums.
-    - `prediction.py`: Domain validation and out-of-fold inference pipelines.
-  * `reporting/`:
-    - `html_report.py`: Standalone, dependency-free HTML report generator.
-    - `report.py`: In-memory JSON technical telemetry report builder.
-  * `visualization/`:
-    - `acoustic_3d.py`: Downsampling, STFT grid generation, and WebGL iframe builder.
-- `frontend/acoustic-visualizer/`:
-  * Three.js WebGL2 visualizer with raycaster hover HUD, volumetric ribbon waveform,
-    dynamic dB color grading, and multiple camera view presets.
-- `tests/`: Over 299 unit and integration tests (pytest, pytest-cov).
-- `scripts/`: Verification, training, evaluation, and archive packaging scripts.
-- `docs/`: Comprehensive Biodesign, Regulatory, Clinical Validation, and Risk docs.
+  * `uci470_schema.json`: UCI #470 benchmark schema and column definitions.
+
+Core Python Library (`src/voxneuro/`):
+- `config.py`: Strict YAML config loader, type enforcer, and parameter validator.
+- `exceptions.py`: Custom typed exceptions (`AudioReadError`, `FeatureExtractionError`, etc.).
+- `logging_config.py`: Structured logging configuration with rotating file handlers.
+- `provenance.py`: Release provenance, code hashing, and fingerprinting tools.
+- `audio/`:
+  * `io.py`: WAV decoding via PySoundFile, container validation, duration limit.
+  * `preprocessing.py`: Monophonic downmixing, bandpass filtering, resampling.
+  * `quality.py`: Acoustic quality scoring, SNR estimation, clipping fractions.
+  * `validation.py`: Multi-stage audio quality checks (RMS, clipping, voiced fraction).
+- `dataset/`:
+  * `audit.py`: Cohort manifest verification, integrity hashing, attrition tracking.
+  * `loader.py`: Audio loading, format detection, and cohort ingestion.
+  * `manifest.py`: Cohort manifest builder, schema validator, and metadata matcher.
+  * `uci.py`: Loader and validator for the UCI Parkinson's benchmark.
+  * `validation.py`: Cryptographic receipt validation for data and model artifacts.
+- `features/`:
+  * `extractor.py`: Core feature extraction orchestrator; enforces strict contracts.
+  * `parselmouth_features.py`: Praat-based pitch, jitter, shimmer, HNR extraction.
+  * `spectral_features.py`: Librosa-based spectral centroid, rolloff, MFCCs.
+  * `schema.py`: Core39 feature definitions, valid ranges, units, and digests.
+- `modeling/`:
+  * `calibration.py`: Isotonic regression and sigmoid probability calibration.
+  * `domains.py`: Ingestion domain validation and fail-closed safety gatekeeper.
+  * `evaluation.py`: Repeated nested CV engine and participant-level bootstrap.
+  * `model_bundle.py`: Joblib serialization with SHA-256 sidecar checksums.
+  * `pipeline.py`: Estimator construction, scaling, imputation, and grid searches.
+  * `prediction.py`: Domain validation and out-of-fold inference pipelines.
+  * `splits.py`: Grouped Stratified K-Fold generator (`StratifiedGroupKFold`).
+  * `training.py`: Pipeline training orchestrator and cross-validation runners.
+- `reporting/`:
+  * `html_report.py`: Standalone, dependency-free single-recording HTML report generator.
+  * `ml_report.py`: Standalone nested evaluation HTML generator with SVG curves.
+  * `model_card.py`: Formal model card markdown and JSON generator.
+  * `report.py`: In-memory JSON technical telemetry report builder.
+- `visualization/`:
+  * `acoustic_3d.py`: Downsampling, STFT grid generation, and WebGL iframe builder.
+  * `metrics.py`: Matplotlib ROC, PR, and confusion matrix figure renderers.
+  * `spectrogram.py`: 2D Spectrogram generation and frequency mapping.
+  * `waveform.py`: 2D Oscillogram and temporal envelope visualizers.
+
+Frontend & Interactive Visualizer (`frontend/acoustic-visualizer/`):
+- Three.js WebGL2 visualizer (Pinned to Three.js v0.187.0) with Raycaster hover HUD,
+  volumetric ribbon waveform, dynamic dB color grading, multiple camera view presets,
+  and graceful 2D Canvas fallback.
+
+Automation Scripts (`scripts/`):
+- `analyze_voice.py`: CLI voice analysis tool for WAV recordings.
+- `audit_dataset.py`: Cohort manifest verification and audit CLI.
+- `build_ai_review_bundle.py`: Packages 193-file deterministic AI review ZIP.
+- `build_manifest.py`: Regenerates processed dataset manifests.
+- `build_source_archive.py`: Packages 182-file source audit ZIP.
+- `evaluate_model.py`: Fixed 5-fold baseline cross-validation runner.
+- `evaluate_nested_models.py`: Repeated nested cross-validation evaluation runner.
+- `extract_features.py`: Batch acoustic feature extraction across cohorts.
+- `inspect_dataset.py`: Interactive dataset inspection and visualization.
+- `train_model.py`: Reference model training and bundle serializer.
+- `verify_model.py`: Model bundle sidecar and provenance verifier.
+- `verify_project.py`: Architecture, imports, and file completeness verifier.
+
+Test Suite (`tests/`):
+- `tests/unit/`: 299 comprehensive unit tests covering all core modules.
+- `tests/integration/`: 3 non-UI integration tests and 8 Streamlit UI AppTests.
+- Total test count: Exactly 310 passed tests (87.05% coverage across 2,232 statements).
+
+Documentation (`docs/`):
+- Comprehensive Biodesign, Regulatory, Clinical Validation, Risk Management, and
+  Architecture specifications.
 
 --------------------------------------------------------------------------------
-3. ACOUSTIC FEATURE EXTRACTION PIPELINE (CORE39 SCHEMA)
+3. ACOUSTIC FEATURE EXTRACTION PIPELINE (EXACT CORE39 SCHEMA)
 --------------------------------------------------------------------------------
-VoxNeuro implements the `voxneuro.voice.v3` schema, extracting exactly 39 clinically
-grounded acoustic features from sustained /a/ phonations:
+VoxNeuro implements the `voxneuro.voice.v3` schema, extracting exactly 39
+literature-informed acoustic measurements from sustained /a/ phonations:
 
-1. Pitch & Fundamental Frequency (F0):
-   - `f0_mean_hz`, `f0_sd_hz`, `f0_min_hz`, `f0_max_hz`
-   - Extracted using Praat's accurate auto-correlation algorithm via Parselmouth.
+1. Pitch & Fundamental Frequency (F0) [6 Features]:
+   - `f0_mean_hz`: Mean voiced fundamental frequency across valid frames (Hz).
+   - `f0_median_hz`: Median voiced fundamental frequency across valid frames (Hz).
+   - `f0_sd_hz`: Sample standard deviation of voiced fundamental frequency (Hz).
+   - `f0_min_hz`: Minimum observed voiced fundamental frequency (Hz).
+   - `f0_max_hz`: Maximum observed voiced fundamental frequency (Hz).
+   - `f0_range_hz`: Pitch range (`f0_max_hz - f0_min_hz`) (Hz).
+   * Extracted using Praat's autocorrelation pitch tracker via Parselmouth.
 
-2. Perturbation & Instability Measures:
-   - Jitter: `jitter_local_percent`, `jitter_absolute_us`, `jitter_rap_percent`,
-     `jitter_ppq5_percent`, `jitter_ddp_percent`
-   - Shimmer: `shimmer_local_percent`, `shimmer_local_db`, `shimmer_apq3_percent`,
-     `shimmer_apq5_percent`, `shimmer_apq11_percent`, `shimmer_dda_percent`
+2. Voice Perturbation & Instability Measures [3 Features]:
+   - `jitter_local`: Praat local jitter; cycle-to-cycle pitch period variation (ratio).
+   - `shimmer_local`: Praat local shimmer; cycle-to-cycle peak amplitude variation (ratio).
+   - `hnr_mean_db`: Mean harmonics-to-noise ratio of valid voiced frames (dB).
+     * SCIENTIFIC NOTE: Praat marks unvoiced frames with -200 dB. VoxNeuro strictly
+       masks these undefined frames (`hnr > -199 dB`) before computing statistics,
+       ensuring scientific accuracy.
 
-3. Harmonicity & Noise:
-   - Harmonics-to-Noise Ratio: `hnr_mean_db`, `hnr_sd_db`
-     * NOTE: Praat marks unvoiced frames with -200 dB. VoxNeuro masks these frames
-       (hnr > -199 dB) before computing statistics, ensuring scientific accuracy.
-   - Noise-to-Harmonics Ratio: `nhr_mean`
-   - Autocorrelation: `autocorrelation_mean`, `autocorrelation_sd`
+3. Mel-Frequency Cepstral Coefficients (MFCC 00 to 12) [26 Features]:
+   - `mfcc_00_mean` through `mfcc_12_mean` (13 cepstral mean coefficients).
+   - `mfcc_00_sd` through `mfcc_12_sd` (13 cepstral standard deviations).
+   * Extracted via Librosa from the 40-band log-Mel power spectrum.
 
-4. Spectral Distribution & Timbre:
-   - `spectral_centroid_hz`, `spectral_bandwidth_hz`, `spectral_rolloff_hz` (85%)
-   - `spectral_flatness`, `spectral_contrast_mean_db`, `spectral_contrast_sd_db`
+4. Spectral Distribution & Temporal Dynamics [4 Features]:
+   - `spectral_centroid_mean_hz`: Mean spectral center of mass (Hz).
+   - `spectral_rolloff_mean_hz`: Mean 85% energy rolloff frequency (Hz).
+   - `spectral_bandwidth_mean_hz`: Mean second-order spectral spread (Hz).
+   - `zero_crossing_rate_mean`: Mean rate of sign-changes across frames (fraction).
 
-5. Mel-Frequency Cepstral Coefficients (MFCC 0 to 12):
-   - `mfcc_0_mean` through `mfcc_12_mean` (13 cepstral mean coefficients)
-   - `mfcc_0_sd` through `mfcc_12_sd` (13 cepstral standard deviations)
+Exact Schema Sum: 6 (Pitch) + 3 (Voice) + 26 (MFCC) + 4 (Spectral) = Exactly 39 Features.
 
-All extraction steps enforce strict preconditions: samples must be finite, real
-numeric float arrays in [-1.0, 1.0]; sample rates must be integers in 8000..48000 Hz;
-and Nyquist boundaries are strictly validated.
+Preconditions & Signal Contracts:
+- Audio samples must form a 1D monophonic float array normalized strictly to [-1.0, 1.0].
+- Values must be finite with no NaN or infinite entries.
+- Sample rates must be integers in 8,000..48,000 Hz.
+- Parameter boundaries (`pitch_floor_hz`, `pitch_ceiling_hz`, FFT windows) are validated.
 
 --------------------------------------------------------------------------------
 4. MACHINE LEARNING, DEMOGRAPHIC CONFOUNDING & EVALUATION
 --------------------------------------------------------------------------------
 - Retrospective Dataset: UAMS voice cohort (telephone recordings, 8000 Hz, 78 subjects:
   37 Parkinson's Disease [PD] and 41 Healthy Controls [HC]).
-- Strict Leakage Prevention:
-  * All evaluations enforce GroupKFold on `participant_id`. No participant's recordings
-    span across train and test folds.
-  * Repeated nested cross-validation (5 outer folds x 3 inner tuning folds x 3 repeats).
-- Demographic Confounding Analysis:
+- Participant-Disjoint Grouping:
+  * All evaluations enforce `StratifiedGroupKFold` on `participant_id`. No participant's
+    recordings span across train and test folds.
+  * Repeated nested cross-validation: 5 outer folds x 3 inner tuning folds x 3 repeat seeds.
+- Explicit Demographic Confounding Analysis:
   * In the UAMS cohort, PD participants were significantly older than HC participants
-    (PD Mean Age: 67.04 ± 8.98 yrs vs HC Mean Age: 47.73 ± 14.33 yrs; Δ = 19.3 yrs).
-  * An age-only logistic baseline achieves 83.9% Balanced Accuracy, outperforming
+    (PD Mean Age: 67.04 ± 8.76 yrs vs HC Mean Age: 47.73 ± 13.56 yrs; Δ = 19.31 yrs).
+  * An age-only logistic baseline achieves 83.9% ± 0.7% Balanced Accuracy, outperforming
     the top voice-only model (Extra Trees: 76.2% ± 2.0% BA, 0.784 ROC-AUC, 95% CI 0.664–0.850).
   * VoxNeuro prominently surfaces this confounding finding to alert researchers that
     acoustic discrimination without age-matched controls must not be mistaken for
@@ -129,7 +184,8 @@ and Nyquist boundaries are strictly validated.
 5. FRONTEND & 3D THREE.JS ACOUSTIC VISUALIZER
 --------------------------------------------------------------------------------
 - Located at `frontend/acoustic-visualizer/`.
-- Built with Three.js (r160) and bundled via esbuild into `dist/visualizer.bundle.js`.
+- Built with Three.js (Pinned to v0.187.0) and bundled via esbuild into
+  `dist/visualizer.bundle.js` (zero CDN dependencies).
 - Waveform 3D:
   * Renders a sculpted 3D volumetric ribbon with local-energy depth extrusion in Z.
   * Dynamic color grading from mineral blue to warm stone and burnt vermilion.
@@ -142,7 +198,7 @@ and Nyquist boundaries are strictly validated.
   * Camera Presets: One-click buttons for [3D Isometric], [Front Spectrum],
     [Top-Down Spectrogram], and [Reset].
 - Resilient Fallback: Automatic fallback to an accessible 2D HTML5 Canvas rendering
-  if WebGL2 is interrupted or unavailable.
+  styled to match scientific theme tokens (#141922, #222a36, #526a91, #e5b56d, #b95e46).
 
 --------------------------------------------------------------------------------
 6. QUALITY GATES & VERIFICATION COMMANDS

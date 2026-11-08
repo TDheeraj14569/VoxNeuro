@@ -1638,6 +1638,48 @@ def _current_nested_evaluation_package() -> tuple[pd.DataFrame | None, list[str]
     required_cols = {"model", "model_label", "balanced_accuracy_mean", "roc_auc_mean"}
     if not required_cols.issubset(df.columns) or df.empty or df["model"].duplicated().any():
         return None, ["Nested evaluation summary does not meet structural requirements."]
+
+    models = df["model"].astype(str)
+    labels = df["model_label"].astype(str)
+    if any(not m.strip() or "<" in m or ">" in m for m in models):
+        return None, ["Nested evaluation contains invalid or unescaped model identifiers."]
+    if any(not lbl.strip() or "<" in lbl or ">" in lbl for lbl in labels):
+        return None, ["Nested evaluation contains invalid or unescaped model labels."]
+
+    metric_cols = [
+        c
+        for c in [
+            "balanced_accuracy_mean",
+            "roc_auc_mean",
+            "sensitivity_mean",
+            "specificity_mean",
+            "f1_mean",
+        ]
+        if c in df.columns
+    ]
+    for col in metric_cols:
+        vals = pd.to_numeric(df[col], errors="coerce")
+        if vals.isna().any() or not vals.between(0.0, 1.0).all():
+            return None, [f"Nested evaluation metric '{col}' contains values outside [0.0, 1.0]."]
+
+    sd_cols = [
+        c
+        for c in ["balanced_accuracy_repeat_sd", "roc_auc_repeat_sd", "f1_repeat_sd"]
+        if c in df.columns
+    ]
+    for col in sd_cols:
+        vals = pd.to_numeric(df[col], errors="coerce")
+        if vals.isna().any() or (vals < 0.0).any():
+            return None, [
+                f"Nested evaluation metric '{col}' contains negative standard deviations."
+            ]
+
+    if "age_only_logistic" not in set(models):
+        return None, ["Nested evaluation summary must contain 'age_only_logistic' baseline."]
+    voice_models = set(models) - {"dummy", "age_only_logistic", "age_plus_voice_logistic"}
+    if not voice_models:
+        return None, ["Nested evaluation summary must contain at least one voice model candidate."]
+
     return df, []
 
 
@@ -1943,6 +1985,11 @@ def _show_model_assessment() -> None:
             st.markdown(findings_html, unsafe_allow_html=True)
         except Exception as exc:
             logger.warning("Could not render nested UAMS summary: %s", exc)
+    elif nested_issues:
+        st.info(
+            "Nested cross-validation results are currently unavailable: "
+            + "; ".join(nested_issues[:2])
+        )
 
     manifest, feature_table, package, issues = _evaluation_inputs()
     if issues:
@@ -2030,29 +2077,60 @@ def _show_model_assessment() -> None:
 
     hc_ages = pd.to_numeric(hc_manifest["age"], errors="coerce").dropna()
     pd_ages = pd.to_numeric(pd_manifest["age"], errors="coerce").dropna()
-    hc_age_mean = float(hc_ages.mean()) if not hc_ages.empty else 0.0
-    hc_age_sd = float(hc_ages.std()) if not hc_ages.empty else 0.0
-    pd_age_mean = float(pd_ages.mean()) if not pd_ages.empty else 0.0
-    pd_age_sd = float(pd_ages.std()) if not pd_ages.empty else 0.0
-    age_diff = abs(pd_age_mean - hc_age_mean)
+    hc_age_str = (
+        f"{float(hc_ages.mean()):.2f} ± {float(hc_ages.std()):.2f} yrs"
+        if len(hc_ages) >= 2
+        else f"{float(hc_ages.mean()):.2f} yrs"
+        if len(hc_ages) == 1
+        else "N/A"
+    )
+    pd_age_str = (
+        f"{float(pd_ages.mean()):.2f} ± {float(pd_ages.std()):.2f} yrs"
+        if len(pd_ages) >= 2
+        else f"{float(pd_ages.mean()):.2f} yrs"
+        if len(pd_ages) == 1
+        else "N/A"
+    )
+    if not hc_ages.empty and not pd_ages.empty:
+        age_diff = abs(float(pd_ages.mean()) - float(hc_ages.mean()))
+        age_diff_str = f"Δ = {age_diff:.2f} Years"
+    else:
+        age_diff_str = "Δ = N/A"
 
     excluded = manifest.loc[~manifest["sample_id"].isin(analyzed_sample_ids)]
     excl_count = len(excluded)
-    excl_classes = "/".join(sorted(excluded["class_label"].unique())) if excl_count > 0 else "none"
-    excl_ids_str = (
-        ", ".join(sorted(excluded["sample_id"]))
-        if 0 < excl_count <= 5
-        else f"{excl_count} recordings"
-    )
+    if excl_count > 0:
+        excl_by_class = excluded["class_label"].value_counts().to_dict()
+        excl_parts = [
+            f"{cls}: {excl_by_class.get(cls, 0)}"
+            for cls in sorted(manifest["class_label"].unique())
+        ]
+        excl_aggregate_text = (
+            f"{excl_count} recordings not included in feature table — {', '.join(excl_parts)}"
+        )
+    else:
+        excl_aggregate_text = "0 recordings excluded (100% feature table retention)"
 
     if nested_df is not None and not voice_candidates.empty and not age_match.empty:
         best_voice_label = best_voice["model_label"]
-        confound_sub = (
-            f"Age baseline ({age_ba * 100:.1f}% BA) &gt; "
-            f"{best_voice_label} ({ba_mean * 100:.1f}% BA)"
-        )
+        if age_ba > ba_mean:
+            confound_title = "Age &gt; Voice"
+            confound_sub = (
+                f"Age baseline ({age_ba * 100:.1f}% BA) &gt; "
+                f"{best_voice_label} ({ba_mean * 100:.1f}% BA)"
+            )
+        elif ba_mean > age_ba:
+            confound_title = "Voice &gt; Age"
+            confound_sub = (
+                f"{best_voice_label} ({ba_mean * 100:.1f}% BA) &gt; "
+                f"Age baseline ({age_ba * 100:.1f}% BA)"
+            )
+        else:
+            confound_title = "Voice = Age"
+            confound_sub = f"{best_voice_label} tied with Age baseline ({ba_mean * 100:.1f}% BA)"
     else:
-        confound_sub = "Age is a stronger discriminator than voice alone"
+        confound_title = "Comparison unavailable"
+        confound_sub = "Nested demographic baselines not loaded"
 
     demographics_html = (
         '<div class="vox-editorial-card" style="margin-top:1.15rem;">'
@@ -2068,25 +2146,26 @@ def _show_model_assessment() -> None:
         '<div class="vox-qc-label">Healthy Controls (HC)</div>'
         f'<div class="vox-qc-value" style="font-size:1.15rem; color:#39745A;">'
         f"{hc_kept} / {hc_tot} ({hc_pct:.1f}%)</div>"
-        f'<div class="vox-qc-sub">Mean Age: {hc_age_mean:.2f} ± {hc_age_sd:.2f} yrs · '
+        f'<div class="vox-qc-sub">Mean Age: {hc_age_str} · '
         f"{hc_att:.1f}% attrition</div>"
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Parkinson\'s Cohort (PD)</div>'
         f'<div class="vox-qc-value" style="font-size:1.15rem; color:#A76F24;">'
         f"{pd_kept} / {pd_tot} ({pd_pct:.1f}%)</div>"
-        f'<div class="vox-qc-sub">Mean Age: {pd_age_mean:.2f} ± {pd_age_sd:.2f} yrs · '
+        f'<div class="vox-qc-sub">Mean Age: {pd_age_str} · '
         f"{pd_att:.1f}% attrition</div>"
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Demographic Disparity</div>'
         f'<div class="vox-qc-value" style="font-size:1.15rem; color:#B95E46;">'
-        f"Δ = {age_diff:.1f} Years</div>"
+        f"{age_diff_str}</div>"
         '<div class="vox-qc-sub">Marked age disparity between diagnostic groups</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Confounding Implication</div>'
-        '<div class="vox-qc-value" style="font-size:1.15rem; color:#20232B;">Age &gt; Voice</div>'
+        f'<div class="vox-qc-value" style="font-size:1.15rem; color:#20232B;">'
+        f"{confound_title}</div>"
         f'<div class="vox-qc-sub">{confound_sub}</div>'
         "</div>"
         "</div>"
@@ -2094,12 +2173,12 @@ def _show_model_assessment() -> None:
         "border-left:3px solid var(--vox-vermilion); "
         "border-radius:4px; padding:0.85rem 1rem; font-size:0.84rem; color:#20232B; "
         'line-height:1.6;">'
-        f"<strong>Methodological Note:</strong> All {excl_count} excluded UAMS recordings "
-        f"({excl_ids_str}) belonged to the {excl_classes} class and were rejected during quality "
-        "checks. The observed performance is consistent with potential age "
-        "confounding (as older healthy controls were not available in this cohort), but it "
-        "does not establish a causal explanation. VoxNeuro reports this limitation "
-        "transparently rather than claiming unvalidated diagnostic accuracy."
+        f"<strong>Methodological Note:</strong> {excl_aggregate_text}. All excluded "
+        "recordings were rejected during automated quality checks. The observed performance "
+        "is consistent with potential age confounding (as older healthy controls were not "
+        "available in this cohort), but it does not establish a causal explanation. "
+        "VoxNeuro reports this limitation transparently rather than claiming unvalidated "
+        "diagnostic accuracy."
         "</div>"
         "</div>"
     )

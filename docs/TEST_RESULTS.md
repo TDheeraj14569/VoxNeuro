@@ -5,8 +5,8 @@ Verified on 2026-11-07 in the locked Windows/Python 3.12 environment. Full detai
 | Check | Result |
 |---|---|
 | Environment | Windows 11, CPython 3.12.14; uv 0.12.5; 71 locked Python packages checked. |
-| Python tests | **296 passed**: 288 non-UI tests and all 8 Streamlit AppTests. |
-| Source coverage | **87.36%** statement coverage across 2,183 statements in `src/voxneuro`. |
+| Python tests | **310 passed**: 302 non-UI tests and all 8 Streamlit AppTests. |
+| Source coverage | **87.05%** statement coverage across 2,232 statements in `src/voxneuro`. |
 | Ruff | Lint passed; formatter check passed across all repository files. |
 | Project verification | 11 required imports, 8 required files, and release provenance passed. |
 | Dataset audit | UAMS: 81 records (41 HC/40 PD), 81 participants, zero label, waveform-hash, demographic, or age-integrity issues. |
@@ -17,8 +17,8 @@ Verified on 2026-11-07 in the locked Windows/Python 3.12 environment. Full detai
 | Frontend | npm ci succeeded with zero reported vulnerabilities; three JavaScript tests passed; local visualizer bundle built and verified against git tree. |
 | Browser | Chrome workflow passed with synthetic WAV upload, analysis, 3D waveform/spectrogram, camera reset, hidden-tab resume, and WebGL-disabled responsive fallback; no page errors. |
 | WAV report | Actual UAMS training-cohort WAV passed decoding, quality validation and Core39 feature extraction; a local self-contained HTML smoke report was generated. No disease classification was made. |
-| Source archive | `VoxNeuro_source_audit.zip` rebuilt and CRC/inventory validated: 181 files. |
-| AI review bundle | 192 files: the same 181 source files plus 11 hashed aggregate-evidence attachments; CRC and inventory checks passed. |
-| Extracted bundle tests | The full 296-test suite passed from a clean extraction with the extracted `src/` explicitly first on `PYTHONPATH`; coverage meets gate requirements. |
+| Source archive | `VoxNeuro_source_audit.zip` rebuilt and CRC/inventory validated: 182 files. |
+| AI review bundle | 193 files: the same 182 source files plus 11 hashed aggregate-evidence attachments; CRC and inventory checks passed. |
+| Extracted bundle tests | The full 310-test suite passed from a clean extraction with the extracted `src/` explicitly first on `PYTHONPATH`; coverage meets gate requirements. |
 
 The browser upload used generated synthetic audio. The separate WAV smoke test used a development-cohort UAMS recording and is not independent validation. Physical microphone/OS permissions, external-cohort performance, clinical validity, and regulatory status remain unverified.

@@ -29,15 +29,23 @@ def _mono_finite(samples: np.ndarray, sample_rate: int) -> np.ndarray:
         isinstance(raw, (bool, np.bool_))
         or raw.dtype == np.bool_
         or np.iscomplexobj(raw)
-        or not np.issubdtype(raw.dtype, np.number)
+        or not np.issubdtype(raw.dtype, np.floating)
     ):
-        raise ValueError("3D signal visualization requires real numeric audio samples.")
+        raise ValueError(
+            "3D signal visualization requires normalized numeric floating-point audio samples in "
+            "[-1.0, 1.0]. Integer PCM must be normalized before visualization."
+        )
 
     values = raw.astype(np.float64, copy=False)
     if values.ndim != 1:
         raise ValueError("3D signal visualization requires mono 1D audio.")
     if values.size == 0 or not np.isfinite(values).all():
         raise ValueError("3D signal visualization requires finite, non-empty audio.")
+    if np.any(values < -1.0) or np.any(values > 1.0):
+        raise ValueError(
+            f"Audio samples must be normalized to [-1.0, 1.0]; observed peak is "
+            f"{float(np.max(np.abs(values))):.3f}."
+        )
     if isinstance(sample_rate, bool) or not isinstance(sample_rate, (int, np.integer)):
         raise ValueError("3D signal visualization requires an integer sample rate.")
     if sample_rate <= 0:
