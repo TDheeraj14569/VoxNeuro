@@ -125,16 +125,19 @@ def main() -> int:
             ]
         )
         grid = {"classifier__C": [0.01, 0.1, 1.0, 10.0, 100.0]}
-        age = frame[["age"]].copy()
-        age_plus_voice = frame[["age", *FEATURE_NAMES]].copy()
+        id_cols = [c for c in ("participant_id", "sample_id") if c in frame.columns]
+        age = frame[[*id_cols, "age"]].copy()
+        age_plus_voice = frame[[*id_cols, "age", *FEATURE_NAMES]].copy()
         additional_searches = {
             "age_only_logistic": (age, age_pipeline, grid),
             "age_plus_voice_logistic": (age_plus_voice, age_pipeline, grid),
         }
 
     start = time.perf_counter()
+    id_cols = [c for c in ("participant_id", "sample_id") if c in frame.columns]
+    feature_frame = frame[[*id_cols, *FEATURE_NAMES]] if id_cols else frame[FEATURE_NAMES]
     metrics, predictions, fold_metrics = evaluate_nested_grouped(
-        frame[FEATURE_NAMES],
+        feature_frame,
         labels,
         groups,
         outer_splits=int(cfg["cv_splits"]),

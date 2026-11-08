@@ -987,7 +987,12 @@ def _show_assessment() -> None:
             summary[0].metric("Duration", f"{quality.duration_seconds:.2f} s")
             summary[1].metric("Sample rate", f"{record.sample_rate:,} Hz")
             summary[2].metric("Channels", str(record.channels))
-            summary[3].metric("Voiced frames", f"{quality.voiced_fraction:.0%}")
+            voiced_display = (
+                "Not measured"
+                if (quality.voiced_fraction is None or np.isnan(quality.voiced_fraction))
+                else f"{quality.voiced_fraction:.0%}"
+            )
+            summary[3].metric("Voiced frames", voiced_display)
             for warning in quality.warnings:
                 st.warning(warning)
             if status == "complete":
@@ -1093,13 +1098,18 @@ def _show_signal_analysis() -> None:
             first_sample + round(detail_duration * processed.sample_rate),
         )
         render_acoustic_view(
-            waveform_payload(processed.samples[first_sample:last_sample], processed.sample_rate),
+            waveform_payload(
+                processed.samples[first_sample:last_sample],
+                processed.sample_rate,
+                start_seconds=detail_start,
+            ),
             height=440,
         )
         st.caption(
             f"The 3D waveform shows actual processed samples from {detail_start:.2f} to "
-            f"{detail_start + detail_duration:.2f} seconds. Use the slider to move the detail "
-            "window; the plots below show the full recording. Display depth is only a viewing axis."
+            f"{detail_start + detail_duration:.2f} seconds. Ribbon depth varies with "
+            "instantaneous absolute amplitude. Use the slider to move the detail window; "
+            "the plots below show the full recording."
         )
     else:
         render_acoustic_view(
@@ -1348,6 +1358,11 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
         1 for v in features.values() if isinstance(v, Real) and np.isfinite(float(v))
     )
     schema_ver = html.escape(str(features.get("schema_version", "voxneuro.voice.v3")))
+    voiced_text = (
+        "Not measured"
+        if (quality.voiced_fraction is None or np.isnan(quality.voiced_fraction))
+        else f"{quality.voiced_fraction:.0%} voiced"
+    )
     html_markup = (
         '<div class="vox-editorial-card" style="margin-top:1.15rem; '
         'border-color: var(--vox-border);">'
@@ -1364,7 +1379,7 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
         '<div class="vox-qc-label">Stage 1 · Quality Gate</div>'
         '<div class="vox-qc-value" style="font-size:1.05rem; color:var(--vox-success);">PASS</div>'
         f'<div class="vox-qc-sub">{quality.duration_seconds:.1f}s · '
-        f"{quality.voiced_fraction:.0%} voiced · "
+        f"{voiced_text} · "
         f"{quality.clipping_fraction:.2%} clipped</div>"
         "</div>"
         '<div class="vox-quality-card">'
@@ -1639,11 +1654,13 @@ def _current_nested_evaluation_package() -> tuple[pd.DataFrame | None, list[str]
     if not required_cols.issubset(df.columns) or df.empty or df["model"].duplicated().any():
         return None, ["Nested evaluation summary does not meet structural requirements."]
 
-    models = df["model"].astype(str)
-    labels = df["model_label"].astype(str)
-    if any(not m.strip() or "<" in m or ">" in m for m in models):
+    if df["model"].isna().any() or df["model_label"].isna().any():
+        return None, ["Nested evaluation summary contains missing model identifiers or labels."]
+    models = df["model"].astype(str).str.strip()
+    labels = df["model_label"].astype(str).str.strip()
+    if any(not m or m.lower() == "nan" or "<" in m or ">" in m for m in models):
         return None, ["Nested evaluation contains invalid or unescaped model identifiers."]
-    if any(not lbl.strip() or "<" in lbl or ">" in lbl for lbl in labels):
+    if any(not lbl or lbl.lower() == "nan" or "<" in lbl or ">" in lbl for lbl in labels):
         return None, ["Nested evaluation contains invalid or unescaped model labels."]
 
     metric_cols = [
@@ -1926,17 +1943,21 @@ def _show_model_assessment() -> None:
                 ]
                 if c in nested_df.columns
             ]
+            col_to_header = {
+                "model_label": "Model Family",
+                "balanced_accuracy_mean": "Bal. Acc. Mean",
+                "balanced_accuracy_repeat_sd": "Bal. Acc. SD",
+                "roc_auc_mean": "ROC-AUC",
+                "sensitivity_mean": "Sensitivity",
+                "specificity_mean": "Specificity",
+                "f1_mean": "F1 Score",
+            }
+            summary_headers = [
+                col_to_header.get(c, c.replace("_", " ").title()) for c in summary_cols
+            ]
             _render_generic_glass_table(
                 nested_df[summary_cols].copy(),
-                headers=[
-                    "Model Family",
-                    "Bal. Acc. Mean",
-                    "Bal. Acc. SD",
-                    "ROC-AUC",
-                    "Sensitivity",
-                    "Specificity",
-                    "F1 Score",
-                ],
+                headers=summary_headers,
             )
             voice_candidates = nested_df[
                 ~nested_df["model"].isin(["age_only_logistic", "age_plus_voice_logistic", "dummy"])
@@ -2077,15 +2098,19 @@ def _show_model_assessment() -> None:
 
     hc_ages = pd.to_numeric(hc_manifest["age"], errors="coerce").dropna()
     pd_ages = pd.to_numeric(pd_manifest["age"], errors="coerce").dropna()
+    hc_sd_sample = float(hc_ages.std(ddof=1)) if len(hc_ages) > 1 else 0.0
+    hc_sd_pop = float(hc_ages.std(ddof=0)) if len(hc_ages) > 0 else 0.0
+    pd_sd_sample = float(pd_ages.std(ddof=1)) if len(pd_ages) > 1 else 0.0
+    pd_sd_pop = float(pd_ages.std(ddof=0)) if len(pd_ages) > 0 else 0.0
     hc_age_str = (
-        f"{float(hc_ages.mean()):.2f} ± {float(hc_ages.std()):.2f} yrs"
+        f"{float(hc_ages.mean()):.2f} ± {hc_sd_sample:.2f} yrs (sample; pop: ±{hc_sd_pop:.2f})"
         if len(hc_ages) >= 2
         else f"{float(hc_ages.mean()):.2f} yrs"
         if len(hc_ages) == 1
         else "N/A"
     )
     pd_age_str = (
-        f"{float(pd_ages.mean()):.2f} ± {float(pd_ages.std()):.2f} yrs"
+        f"{float(pd_ages.mean()):.2f} ± {pd_sd_sample:.2f} yrs (sample; pop: ±{pd_sd_pop:.2f})"
         if len(pd_ages) >= 2
         else f"{float(pd_ages.mean()):.2f} yrs"
         if len(pd_ages) == 1
@@ -2143,17 +2168,17 @@ def _show_model_assessment() -> None:
         '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); '
         'gap:0.75rem; margin-bottom:1rem;">'
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Healthy Controls (HC)</div>'
+        '<div class="vox-qc-label">Healthy Controls (HC) · Manifest N=41</div>'
         f'<div class="vox-qc-value" style="font-size:1.15rem; color:#39745A;">'
         f"{hc_kept} / {hc_tot} ({hc_pct:.1f}%)</div>"
-        f'<div class="vox-qc-sub">Mean Age: {hc_age_str} · '
+        f'<div class="vox-qc-sub">Age: {hc_age_str} · '
         f"{hc_att:.1f}% attrition</div>"
         "</div>"
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Parkinson\'s Cohort (PD)</div>'
+        '<div class="vox-qc-label">Parkinson\'s Cohort (PD) · Manifest N=40</div>'
         f'<div class="vox-qc-value" style="font-size:1.15rem; color:#A76F24;">'
         f"{pd_kept} / {pd_tot} ({pd_pct:.1f}%)</div>"
-        f'<div class="vox-qc-sub">Mean Age: {pd_age_str} · '
+        f'<div class="vox-qc-sub">Age: {pd_age_str} · '
         f"{pd_att:.1f}% attrition</div>"
         "</div>"
         '<div class="vox-quality-card">'

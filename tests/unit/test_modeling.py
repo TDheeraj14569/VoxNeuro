@@ -49,8 +49,12 @@ def test_grouped_baselines_produce_fold_metrics_and_oof_rows():
 
 def test_demographic_and_combined_baselines_share_grouped_folds():
     voice, y, groups = binary_groups(30, 2)
-    age = voice[["feature_a"]].rename(columns={"feature_a": "age"}) + 45
-    combined = age.join(voice)
+    voice["participant_id"] = groups
+    age = pd.DataFrame({"participant_id": groups, "age": voice["feature_a"] + 45})
+    combined = age.copy()
+    for col in voice.columns:
+        if col not in combined:
+            combined[col] = voice[col]
     pipeline = Pipeline(
         [
             ("imputer", SimpleImputer(strategy="median")),
@@ -406,3 +410,41 @@ def test_validate_additional_predictors_rejects_duplicate_sample_ids():
             n_splits=2,
             additional_models={"demo": (preds, pipeline)},
         )
+
+
+def test_validate_additional_predictors_rejects_range_index_without_identifiers():
+    X, y, groups = binary_groups(10, 2)
+    # RangeIndex with no sample_id or participant_id
+    preds = pd.DataFrame({"feat_demo": np.random.randn(len(groups))})
+    pipeline = Pipeline([("clf", LogisticRegression())])
+    with pytest.raises(ValueError, match="must explicitly include 'sample_id' or 'participant_id'"):
+        evaluate_grouped(
+            X,
+            y,
+            groups,
+            n_splits=2,
+            additional_models={"demo": (preds, pipeline)},
+        )
+
+
+def test_evaluate_grouped_tie_breaking_for_svm_and_probability():
+    from sklearn.svm import LinearSVC
+
+    # 4 participants, 2 recordings each
+    X = pd.DataFrame({"feat": [1.0, -1.0, 2.0, -2.0, 0.5, -0.5, -1.0, 1.0]})
+    y = np.array([1, 1, 1, 1, 0, 0, 0, 0])
+    groups = np.array(["p1", "p1", "p2", "p2", "p3", "p3", "p4", "p4"])
+    svc = Pipeline([("clf", LinearSVC(random_state=42, dual=True))])
+    metrics, preds = evaluate_grouped(
+        X,
+        y,
+        groups,
+        n_splits=2,
+        random_seed=42,
+        additional_models={
+            "svm_model": (pd.DataFrame({"feat": X["feat"], "participant_id": groups}), svc)
+        },
+    )
+    assert not metrics.empty
+    svm_preds = preds[preds["model"] == "svm_model"]
+    assert not svm_preds.empty

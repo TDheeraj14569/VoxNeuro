@@ -38,8 +38,9 @@ source files (and 11 review evidence attachments in the AI review bundle):
 Top-Level Application & Configuration:
 - `app.py`: Main Streamlit application with a scientific light editorial theme
   (burnt vermilion #B95E46, mineral blue #526A91, amber #E5B56D, observatory slate #141922).
-  Features 5 core pages: Overview, Recording/Upload, Acoustic Features, Research Model,
-  and Reports.
+  Features 7 dedicated sections: Overview, Voice Recording & Intake, Signal Processing
+  (Interactive 3D Visualizer), Acoustic Features, Research Model & Confounding Analysis,
+  Clinical & Technical Reports, and Methodology & Privacy.
 - `configs/`: Typed YAML configurations with strict schema validation.
   * `application_config.yaml`: Application UI, runtime parameters, non-storage flags.
   * `audio_config.yaml`: Sample rates, duration bounds, RMS and clipping thresholds.
@@ -109,9 +110,9 @@ Automation Scripts (`scripts/`):
 - `verify_project.py`: Architecture, imports, and file completeness verifier.
 
 Test Suite (`tests/`):
-- `tests/unit/`: 299 comprehensive unit tests covering all core modules.
+- `tests/unit/`: 305 comprehensive unit tests covering all core modules.
 - `tests/integration/`: 3 non-UI integration tests and 8 Streamlit UI AppTests.
-- Total test count: Exactly 310 passed tests (87.05% coverage across 2,232 statements).
+- Total test count: Exactly 316 passed tests (86.91% coverage across src/voxneuro).
 
 Documentation (`docs/`):
 - Comprehensive Biodesign, Regulatory, Clinical Validation, Risk Management, and
@@ -162,15 +163,18 @@ Preconditions & Signal Contracts:
 --------------------------------------------------------------------------------
 4. MACHINE LEARNING, DEMOGRAPHIC CONFOUNDING & EVALUATION
 --------------------------------------------------------------------------------
-- Retrospective Dataset: UAMS voice cohort (telephone recordings, 8000 Hz, 78 subjects:
-  37 Parkinson's Disease [PD] and 41 Healthy Controls [HC]).
+- Retrospective Dataset: UAMS voice cohort (telephone recordings, 8000 Hz; source
+  manifest: 81 participants [40 PD, 41 HC]; analyzed model cohort: 78 participants
+  [37 PD, 41 HC] after quality exclusion of 3 clipped PD recordings).
 - Participant-Disjoint Grouping:
   * All evaluations enforce `StratifiedGroupKFold` on `participant_id`. No participant's
     recordings span across train and test folds.
   * Repeated nested cross-validation: 5 outer folds x 3 inner tuning folds x 3 repeat seeds.
 - Explicit Demographic Confounding Analysis:
-  * In the UAMS cohort, PD participants were significantly older than HC participants
-    (PD Mean Age: 67.04 ± 8.76 yrs vs HC Mean Age: 47.73 ± 13.56 yrs; Δ = 19.31 yrs).
+  * In the source UAMS manifest, PD participants were significantly older than HC participants:
+    HC mean age: 47.73 ± 14.33 yrs (sample SD, ddof=1; population SD: ±13.56 yrs, ddof=0; N=41);
+    PD mean age: 67.04 ± 8.98 yrs (sample SD, ddof=1; population SD: ±8.76 yrs, ddof=0; N=40);
+    Age disparity Δ = 19.31 yrs.
   * An age-only logistic baseline achieves 83.9% ± 0.7% Balanced Accuracy, outperforming
     the top voice-only model (Extra Trees: 76.2% ± 2.0% BA, 0.784 ROC-AUC, 95% CI 0.664–0.850).
   * VoxNeuro prominently surfaces this confounding finding to alert researchers that
@@ -187,7 +191,9 @@ Preconditions & Signal Contracts:
 - Built with Three.js (Pinned to v0.187.0) and bundled via esbuild into
   `dist/visualizer.bundle.js` (zero CDN dependencies).
 - Waveform 3D:
-  * Renders a sculpted 3D volumetric ribbon with local-energy depth extrusion in Z.
+  * Renders a sculpted 3D volumetric ribbon whose depth extrusion in Z derives from
+    instantaneous absolute amplitude (z ∝ |amplitude|).
+  * Detail slices support absolute timeline coordinates (`start_seconds`) matching UI sliders.
   * Dynamic color grading from mineral blue to warm stone and burnt vermilion.
   * Illuminated with hemisphere and directional lighting, plus a glowing crest line.
 - Spectrogram 3D:

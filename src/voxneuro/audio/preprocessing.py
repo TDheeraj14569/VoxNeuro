@@ -102,6 +102,12 @@ def preprocess_audio(
         processed = resample_poly(
             segment, target_sample_rate // common, record.sample_rate // common
         )
+        resampled_peak = float(np.max(np.abs(processed))) if len(processed) else 0.0
+        if resampled_peak > 1.0:
+            # Polyphase FIR filtering can exhibit Gibbs phenomenon overshoot of 0.05-0.2%
+            # on near-full-scale input audio. Rescale back to unit peak to preserve the
+            # strict [-1.0, 1.0] amplitude contract without artificially amplifying quiet audio.
+            processed = processed / resampled_peak
     else:
         processed = segment
     processed = np.asarray(processed, dtype=np.float64)

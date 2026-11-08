@@ -56,6 +56,11 @@ def extract_spectral_features(
         raise ValueError("Spectral extraction requires mono 1D audio.")
     if x.size == 0 or not np.isfinite(x).all():
         raise ValueError("Spectral extraction requires finite audio samples.")
+    if np.any(x < -1.0) or np.any(x > 1.0):
+        raise ValueError(
+            f"Spectral extraction requires normalized audio in [-1.0, 1.0]; observed peak is "
+            f"{float(np.max(np.abs(x))):.3f}."
+        )
     if x.size < max(fft_window_samples // 2, 64):
         raise ValueError("Audio is too short for stable spectral summaries.")
     nyquist = float(sample_rate) / 2

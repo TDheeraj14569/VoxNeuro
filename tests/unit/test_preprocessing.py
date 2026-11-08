@@ -70,3 +70,19 @@ def test_preprocessing_uses_configured_frame_size_for_silence_trimming():
     short_trim = preprocess_audio(record, validation_config=short_frame).trim_start_seconds
     long_trim = preprocess_audio(record, validation_config=long_frame).trim_start_seconds
     assert short_trim != long_trim
+
+
+@pytest.mark.parametrize("sr", [22050, 44100, 48000])
+def test_preprocessing_resampling_filter_overshoot_is_bounded(sr):
+    from voxneuro.features.extractor import extract_features
+
+    # Synthetic signal normalized close to full-scale (0.998)
+    sig = sustained_vowel(sample_rate=sr, duration=2.0)
+    sig = sig / np.max(np.abs(sig)) * 0.998
+    rec = AudioRecord(sig.reshape(-1, 1), sr, 1, "FLOAT", "WAV")
+    res = preprocess_audio(rec, target_sample_rate=16000)
+    peak = float(np.max(np.abs(res.samples)))
+    assert peak <= 1.0
+    # Strict feature extraction check must pass without amplitude range error
+    feats = extract_features(res.samples, res.sample_rate)
+    assert len(feats) >= 39

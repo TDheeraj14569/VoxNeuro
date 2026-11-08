@@ -21,7 +21,7 @@
 - Feature extraction: 78/81 recordings accepted under the explicit reviewed exclusion policy. The three excluded recordings are clipped PD samples. Class-specific missingness can bias model estimates.
 - Current Core39 feature table: 78 participants (37 PD, 41 HC), one recording per participant. Feature schema is voxneuro.voice.v3.
 - UCI #470: strict validation passed for 756 source rows, 252 participants, three repeats per participant, binary and participant-consistent metadata, and finite predictors. There is one exact duplicate row for one participant; a separate deduplication sensitivity analysis was run.
-- Source/model provenance fingerprint: 5f91197eea6d975e173c1a42d37d12081b6223fe65f54556780810138f484408.
+- Source/model provenance fingerprint: 6e238abd4573e0305b3b1348ab325a1519462e6ffb71760867960831e32d7359.
 - UAMS feature schema fingerprint: a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f.
 - UAMS manifest SHA-256: 697e422f2631ded7be3b6ac737ce2655747340491ab8a49ab5ba40ed0454264e.
 - UAMS extracted feature-table SHA-256: 732202ca2de13e54c7049f4b15775b964265f13931b93c0fb574f6cf9cd43fc0.

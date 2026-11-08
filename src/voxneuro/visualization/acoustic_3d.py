@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from functools import lru_cache
 from typing import Any
 
@@ -53,9 +54,22 @@ def _mono_finite(samples: np.ndarray, sample_rate: int) -> np.ndarray:
     return values
 
 
-def waveform_payload(samples: np.ndarray, sample_rate: int) -> dict[str, Any]:
+def waveform_payload(
+    samples: np.ndarray,
+    sample_rate: int,
+    *,
+    start_seconds: float = 0.0,
+) -> dict[str, Any]:
     """Return at most 1,200 time/amplitude points, preserving local extrema."""
     values = _mono_finite(samples, sample_rate)
+    if (
+        isinstance(start_seconds, (bool, np.bool_))
+        or not isinstance(start_seconds, (int, float, np.number))
+        or not math.isfinite(start_seconds)
+        or start_seconds < 0.0
+    ):
+        raise ValueError("start_seconds must be a non-negative finite number.")
+    start_sec = float(start_seconds)
     if values.size <= MAX_WAVEFORM_POINTS:
         indices = np.arange(values.size, dtype=np.int64)
     else:
@@ -70,11 +84,15 @@ def waveform_payload(samples: np.ndarray, sample_rate: int) -> dict[str, Any]:
             maximum = int(start + np.argmax(segment))
             extrema.extend(sorted((minimum, maximum)))
         indices = np.unique(np.asarray([0, *extrema, values.size - 1], dtype=np.int64))
-    points = [[round(int(index) / int(sample_rate), 6), float(values[index])] for index in indices]
+    points = [
+        [round(start_sec + int(index) / int(sample_rate), 6), float(values[index])]
+        for index in indices
+    ]
     return {
         "mode": "waveform",
         "sample_rate_hz": int(sample_rate),
         "duration_seconds": values.size / int(sample_rate),
+        "start_seconds": start_sec,
         "points": points,
     }
 

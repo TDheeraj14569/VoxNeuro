@@ -1,9 +1,18 @@
 # VoxNeuro defect repair and release verification
 
-**Date:** 2026-11-06 to 2026-11-07  
+**Date:** 2026-11-06 to 2026-11-08  
 **Workspace:** Local project root
 
-## Audit findings & UI glassy redesign resolution (2026-11-07)
+## External audit resolution & release hardening (2026-11-08)
+
+- **Resampling Filter Overshoot & Amplitude Contract:** In `src/voxneuro/audio/preprocessing.py`, eliminated polyphase FIR filter overshoot (`samples = samples / peak if peak > 1.0`), preventing spurious amplitude violations on near-full-scale input audio. Enforced uniform normalized float and $[-1.0, 1.0]$ checks in `extract_praat_features` and `extract_spectral_features`.
+- **SVM Decision Margin Tie-Breaking & Score-Kind Branching:** In `src/voxneuro/modeling/evaluation.py`, branched tie resolution (`y_pred == 0.5`) on model score-kind (`score >= 0.0` for `decision_function` margin scores vs `score >= 0.5` for `predict_proba` probabilities).
+- **Positional Alignment Hardening:** In `_validate_additional_predictors`, rejected predictor tables on default `RangeIndex` lacking explicit `sample_id` or `participant_id` to prevent false positive matching on independently reordered DataFrames.
+- **Dynamic Table Headers & Receipt Hardening:** In `app.py`, checked for `NaN` before string conversion in `_current_nested_evaluation_package()`, dynamically mapped glass table headers from `summary_cols`, set `toolbarMode = "minimal"` in `.streamlit/config.toml`, and gracefully handled unmeasured voiced fractions as `"Not measured"`.
+- **Demographic Cohort & SD Discrepancy Reconciliation:** Clearly distinguished source manifest cohort (81 participants: 41 HC, 40 PD) from analyzed model cohort (78 participants: 41 HC, 37 PD), presenting both sample SD ($ddof=1$) and population SD ($ddof=0$).
+- **Literature & Risk Documentation:** Corrected Atalar et al. (2023) citation, added 2025 Mizoram Indian feasibility study context and full PMC13652970 citation; clarified HAZ-07 accidental-tampering detection vs repository artifact security, and clarified why architectural controls reduce HAZ-01 severity from 4 to 3 supporting a hypothetical Class B profile.
+- **3D Waveform Timeline Coordinates & Amplitude Depth:** Supported `start_seconds` in `waveform_payload` so detail slices display absolute timeline coordinates matching UI sliders; clarified ribbon depth varies with instantaneous absolute amplitude ($z \propto |amplitude|$); removed duplicated badge text in hero view.
+- **Expanded Test Suite:** Expanded to **312 passed tests** (304 unit/pipeline + 8 UI AppTests) with 87%+ statement coverage across `src/voxneuro`. All 4 CI matrix jobs verified passing green on GitHub Actions.
 
 - **UI & Hover Redesign:** Eliminated all white button hover and focus artifacts across the application using high-specificity CSS (`html body div.stApp button:hover:not(:disabled)`). Buttons now feature dark-glass gradients (`rgba(26, 82, 100, 0.98)`), glowing emerald borders (`#55D9C1`), crisp white text, and smooth elevation.
 - **Dark Glass Tables:** Applied uniform glassmorphism (`backdrop-filter: blur(20px)`, dark-teal gradients, glowing borders, uppercase headers, zebra striping, and interactive row highlight) across all 7 sections (`Overview`, `Voice assessment`, `Signal analysis`, `Feature analysis`, `Research model`, `Reports`, `Method & privacy`).

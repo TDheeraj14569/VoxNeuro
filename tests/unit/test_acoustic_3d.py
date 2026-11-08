@@ -25,6 +25,21 @@ def test_waveform_payload_is_mono_finite_and_render_bounded():
     assert all(np.isfinite(point).all() for point in payload["points"])
 
 
+def test_waveform_payload_supports_start_seconds_offset():
+    samples = sustained_vowel(duration=1.0)
+    payload = waveform_payload(samples, 16000, start_seconds=2.5)
+    assert payload["start_seconds"] == 2.5
+    assert payload["points"][0][0] == 2.5
+    assert payload["points"][-1][0] == pytest.approx(3.5, abs=0.01)
+
+    with pytest.raises(ValueError, match="start_seconds must be a non-negative finite number"):
+        waveform_payload(samples, 16000, start_seconds=-1.0)
+    with pytest.raises(ValueError, match="start_seconds must be a non-negative finite number"):
+        waveform_payload(samples, 16000, start_seconds=float("nan"))
+    with pytest.raises(ValueError, match="start_seconds must be a non-negative finite number"):
+        waveform_payload(samples, 16000, start_seconds=True)
+
+
 def test_waveform_downsampling_preserves_short_transients():
     samples = np.zeros(5000, dtype=np.float64)
     samples[1234] = 1.0

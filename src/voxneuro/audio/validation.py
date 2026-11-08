@@ -136,9 +136,14 @@ class AudioValidationConfig:
             raise ValueError("clipping_fraction_limit must be in range [0.0, 1.0].")
         if not (0.0 <= self.min_voiced_fraction <= 1.0):
             raise ValueError("min_voiced_fraction must be in range [0.0, 1.0].")
-        if not (10.0 <= self.pitch_floor_hz < self.pitch_ceiling_hz <= 2000.0):
+        if not (
+            30.0 < self.pitch_floor_hz <= 500.0
+            and 60.0 <= self.pitch_ceiling_hz <= 1200.0
+            and self.pitch_floor_hz < self.pitch_ceiling_hz
+        ):
             raise ValueError(
-                "pitch limits must satisfy 10.0 <= pitch_floor_hz < pitch_ceiling_hz <= 2000.0."
+                "pitch limits must satisfy 30.0 < pitch_floor_hz <= 500.0, "
+                "60.0 <= pitch_ceiling_hz <= 1200.0, and pitch_floor_hz < pitch_ceiling_hz."
             )
         if not (0.0 <= self.min_harmonic_overtone_fraction <= 1.0):
             raise ValueError("min_harmonic_overtone_fraction must be in range [0.0, 1.0].")
@@ -278,8 +283,8 @@ def validate_audio(
             peak_amplitude=peak,
             rms_amplitude=rms,
             clipping_fraction=clipping,
-            voiced_fraction=0.0,
-            active_fraction=0.0,
+            voiced_fraction=float("nan"),
+            active_fraction=float("nan"),
         )
 
     mono = x.mean(axis=1) if x.ndim == 2 and x.size else np.asarray([], dtype=np.float64)

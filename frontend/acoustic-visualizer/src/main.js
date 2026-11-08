@@ -165,9 +165,11 @@ function makeWaveform(scene, data) {
   const crestPositions = [];
 
   const points = data.points;
+  const startSec = data.start_seconds || points?.[0]?.[0] || 0;
   for (let i = 0; i < points.length; i += 1) {
     const [time, amplitude] = points[i];
-    const x = ((time / duration) - 0.5) * 16;
+    const relTime = time - startSec;
+    const x = ((relTime / duration) - 0.5) * 16;
     const y = amplitude * 4;
     const absAmp = Math.min(1.0, Math.abs(amplitude));
     const zWidth = 0.15 + 0.65 * absAmp;
@@ -511,10 +513,12 @@ export function mount(root, data) {
         `<span style="display:inline-block; width:70px; height:6px; border-radius:2px; background:linear-gradient(to right, #1c2836, #526a91, #e5b56d, #b95e46); border: 1px solid rgba(185,94,70,0.4);"></span>` +
         `<span style="font-size:10px; color:#B95E46; font-weight:700;">0 dB</span></div>`;
     } else if (data.mode === "waveform") {
-      const dur = (data.duration_seconds || data.points?.at(-1)?.[0] || 0).toFixed(2);
-      axes.innerHTML = `<div><strong>Waveform 3D</strong> · Time: 0 – ${dur}s · Volumetric Ribbon</div>`;
+      const minT = (data.start_seconds || data.points?.[0]?.[0] || 0).toFixed(2);
+      const dur = data.duration_seconds || 0;
+      const maxT = ((data.start_seconds || 0) + dur).toFixed(2);
+      axes.innerHTML = `<div><strong>Waveform 3D</strong> · Time: ${minT} – ${maxT}s · Volumetric Ribbon</div>`;
     } else {
-      axes.textContent = "Decorative acoustic field · no patient recording";
+      axes.innerHTML = "<div><strong>Ambient Synthesizer</strong> · Synthetic acoustic field</div>";
     }
   }
   let frame = 0;

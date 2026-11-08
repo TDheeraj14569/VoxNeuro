@@ -184,6 +184,16 @@ def _validate_additional_predictors(
                 f"Additional predictor participant_id sequence for {name!r} does not match groups."
             )
 
+    if (
+        "sample_id" not in predictors.columns
+        and "participant_id" not in predictors.columns
+        and isinstance(predictors.index, pd.RangeIndex)
+    ):
+        raise ValueError(
+            f"Predictor table for {name!r} with default RangeIndex must explicitly include "
+            "'sample_id' or 'participant_id' column to prevent unvalidated positional alignment."
+        )
+
     feature_cols = [c for c in predictors.columns if c not in ("participant_id", "sample_id")]
     if not feature_cols:
         raise ValueError(
@@ -354,11 +364,23 @@ def evaluate_nested_grouped(
                     selected_parameters=("selected_parameters", "first"),
                     inner_best_balanced_accuracy=("inner_best_balanced_accuracy", "first"),
                 )
-                if (
+                kind = (
+                    str(participant_rows["score_kind"].iloc[0])
+                    if not participant_rows.empty
+                    else ""
+                )
+                is_tied = participant_rows["y_pred"] == 0.5
+                if kind == "decision_function" and participant_rows["score"].notna().all():
+                    participant_rows.loc[is_tied, "y_pred"] = (
+                        participant_rows.loc[is_tied, "score"] >= 0.0
+                    ).astype(int)
+                    participant_rows.loc[~is_tied, "y_pred"] = (
+                        participant_rows.loc[~is_tied, "y_pred"] > 0.5
+                    ).astype(int)
+                elif (
                     "probability" in participant_rows
                     and participant_rows["probability"].notna().all()
                 ):
-                    is_tied = participant_rows["y_pred"] == 0.5
                     participant_rows.loc[is_tied, "y_pred"] = (
                         participant_rows.loc[is_tied, "probability"] >= 0.5
                     ).astype(int)
@@ -524,8 +546,12 @@ def evaluate_grouped(
             score = None
             if hasattr(fitted, "predict_proba"):
                 score = fitted.predict_proba(X_clean.iloc[test])[:, 1]
+                score_kind = "uncalibrated_probability"
             elif hasattr(fitted, "decision_function"):
                 score = fitted.decision_function(X_clean.iloc[test])
+                score_kind = "decision_function"
+            else:
+                score_kind = "hard_label"
             fold_records = pd.DataFrame(
                 {
                     "participant_id": group_values[test],
@@ -542,9 +568,14 @@ def evaluate_grouped(
             )
             if "score" in participant_rows and participant_rows["score"].notna().all():
                 is_tied = participant_rows["y_pred"] == 0.5
-                participant_rows.loc[is_tied, "y_pred"] = (
-                    participant_rows.loc[is_tied, "score"] >= 0.5
-                ).astype(int)
+                if score_kind == "decision_function":
+                    participant_rows.loc[is_tied, "y_pred"] = (
+                        participant_rows.loc[is_tied, "score"] >= 0.0
+                    ).astype(int)
+                else:
+                    participant_rows.loc[is_tied, "y_pred"] = (
+                        participant_rows.loc[is_tied, "score"] >= 0.5
+                    ).astype(int)
                 participant_rows.loc[~is_tied, "y_pred"] = (
                     participant_rows.loc[~is_tied, "y_pred"] > 0.5
                 ).astype(int)

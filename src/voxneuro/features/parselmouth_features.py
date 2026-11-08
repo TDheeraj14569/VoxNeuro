@@ -42,6 +42,11 @@ def extract_praat_features(
         raise ValueError("Praat feature extraction requires mono one-dimensional audio.")
     if x.size == 0 or not np.isfinite(x).all():
         raise ValueError("Praat feature extraction requires finite, non-empty audio samples.")
+    if np.any(x < -1.0) or np.any(x > 1.0):
+        raise ValueError(
+            f"Praat feature extraction requires normalized audio in [-1.0, 1.0]; observed peak is "
+            f"{float(np.max(np.abs(x))):.3f}."
+        )
     sound = parselmouth.Sound(x, sampling_frequency=sample_rate)
     pitch = sound.to_pitch_ac(
         time_step=pitch_step_seconds,

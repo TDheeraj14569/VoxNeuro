@@ -132,7 +132,7 @@ def test_stereo_phase_cancellation_is_invalid_before_processing():
     stereo = np.column_stack((mono, -mono))
     result = validate_audio(AudioRecord(stereo, 16000, 2, "FLOAT", "WAV"))
     assert not result.valid
-    assert result.voiced_fraction == 0.0
+    assert np.isnan(result.voiced_fraction)
 
 
 def test_unknown_mono_policy_fails_closed():
@@ -337,4 +337,5 @@ def test_validate_audio_early_exit_on_invalid_duration():
     assert result.duration_seconds == 31.0
     assert result.peak_amplitude > 0.0
     assert result.rms_amplitude > 0.0
-    assert result.voiced_fraction == 0.0
+    assert np.isnan(result.voiced_fraction)
+    assert np.isnan(result.active_fraction)
