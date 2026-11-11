@@ -1,19 +1,43 @@
-# Clinical workflow hypothesis
+# Clinical Workflow Hypothesis & Pathway Exploration
 
-**Status: DESIGN ASSUMPTION. No local workflow has been observed.**
+**Course / Project:** Biodesign Concept & Practice — Clinical Workflow Mapping
+**Working Concept:** VoxNeuro Early Neurological Triage Prototype
+**Evidence Framework & Status:**
+- **Evidence Tier:** **Design Assumption & Simulated Workflow Scenario.**
+- **Primary Research Status:** **Primary Research Pending.** No live clinical workflows, consultation observations, or hospital handoffs have been observed or collected. Prospective field observations require prior IEC/IRB ethical clearance and authorized clinical site agreements.
+
+---
+
+## 1. Hypothesized Clinical Referral Pathway (Design Assumption)
 
 ```text
-Person notices movement / speech change
-        → first-contact clinician gathers history and performs assessment
-        → clinician considers differential causes and referral need
-        → neurology / movement-disorder assessment and reference diagnosis
-        → speech-language evaluation if indicated
-        → follow-up with clinical measures and patient-reported function
+Person / Family notices speech/motor change (Simulated Symptom Presentation)
+        ↓
+First-contact primary care physician gathers history & performs routine examination (Simulated PHC / OPD)
+        ↓
+Clinician considers differential etiology and specialist referral requirement (Hypothesized Triage Point)
+        ↓
+Neurology / movement-disorder specialist assessment & reference diagnosis (Tertiary Setting)
+        ↓
+Speech-language pathologist (SLP) phonatory/articulatory evaluation if indicated
+        ↓
+Longitudinal clinical follow-up with standardized motor and functional measures
 ```
 
-VoxNeuro is currently outside this pathway: it is a local research tool for signal quality and acoustic feature review. A future clinician-reviewed report would require agreement on its intended decision role, acquisition protocol, population, harm controls, and clinical validity. Do not insert an experimental classifier into a patient's referral or treatment pathway.
+---
 
-## Map to replace after discovery
+## 2. Research Scope & Current Operational Boundary
 
-For each actual step, record: responsible role, input, output, handoff, time, failure mode, access barrier, technology, and evidence source. Explicitly validate the pathway separately for hospital, OPD, PHC, rehabilitation, home, and telemedicine settings.
+* **VoxNeuro is Currently Outside the Clinical Care Pathway:** The current software prototype is strictly a local research tool for acoustic signal quality verification and isolated sustained-vowel (`/a/`) acoustic feature extraction.
+* **No Diagnostic Insertion:** The experimental software must not be inserted into clinical referral, triage, or diagnostic pathways.
+* **Microphone Inference Gated:** Live recording predictions are disabled until multi-device calibration, domain shift adaptation, and prospective clinical validation studies are completed.
 
+---
+
+## 3. Fieldwork Discovery Requirements (Primary Research Pending)
+
+When institutional ethics approvals are secured, prospective primary research will map:
+1. **Responsible Roles:** Primary care physicians, community health workers (ASHAs), SLPs, and neurologists.
+2. **Clinical Handoffs:** Referral documentation formats, turnaround times, and drop-out rates.
+3. **Workflow Barriers:** Consultation time constraints (<4 minutes in high-volume OPDs), linguistic diversity, and rural specialist scarcity.
+4. **Failure Modes:** Diagnostic misattribution (e.g., confusing hypokinetic dysarthria with benign presbyphonia or respiratory fatigue).
