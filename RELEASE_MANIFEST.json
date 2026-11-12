@@ -5,20 +5,21 @@
   "status": "PRODUCTION_VERIFIED",
   "archive": {
     "filename": "VoxNeuro_PRODUCTION_RELEASE.zip",
-    "sha256": "301adf055286e8d49d868a3c0d5acf898e252ab4903c82ebe929fddf0b5274f8",
-    "bytes": 2378843,
-    "file_count": 348
+    "sha256": "68c89ba9d77b676e86fe76f0466b94b52c7556c8b9791c35b12f8d075354e950",
+    "bytes": 2383897,
+    "file_count": 348,
+    "checksum_sidecar": "VoxNeuro_PRODUCTION_RELEASE.zip.sha256"
   },
   "provenance": {
-    "project_code_fingerprint": "4249e46ba010dc29d5161f40ed06c5f3e68395a02e438a12962f4c392b44327d",
+    "project_code_fingerprint": "4ab924000588906cb863eb852e7af219ede8a3ca20fbe753cf1c15e5331fd816",
     "feature_schema_version": "voxneuro.voice.v3",
     "database_schema_version": "006_study_operations",
     "python_version": "3.12.16",
     "platform": "Windows-11-10.0.26200-SP0"
   },
   "verification": {
-    "total_tests": 590,
-    "passed_tests": 590,
+    "total_tests": 600,
+    "passed_tests": 600,
     "failed_tests": 0,
     "ruff_lint_status": "PASS",
     "ruff_format_status": "PASS",

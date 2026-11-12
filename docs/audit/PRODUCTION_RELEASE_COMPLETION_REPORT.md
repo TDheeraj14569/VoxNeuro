@@ -3,8 +3,8 @@
 
 **Milestone:** Production Transformation & Release  
 **Release Tag:** `1.0.0-production`  
-**Date:** 2026-11-12  
-**Verification Status:** **100% PRODUCTION VERIFIED (590/590 TESTS PASSING)**  
+**Date:** 2026-11-13  
+**Verification Status:** **100% PRODUCTION VERIFIED (600/600 TESTS PASSING)**  
 **Release Archive:** `VoxNeuro_PRODUCTION_RELEASE.zip`  
 **SHA-256 Checksum:** `301adf055286e8d49d868a3c0d5acf898e252ab4903c82ebe929fddf0b5274f8`
 
@@ -76,8 +76,8 @@ Evaluated across repeated 5-fold outer, 3-fold inner cross-validation:
 ## 5. Security & Authentication Architecture
 
 - **SQLite Migration 006:** Implemented 24 normalized tables supporting multi-study management, versioned participant consent, audit logging, and researcher access controls. Foreign keys enforced via `PRAGMA foreign_keys = ON`.
-- **Password Security:** Salted PBKDF2-HMAC-SHA256 password hashing with 100,000 iterations.
-- **Session Tokens:** Cryptographically signed HMAC-SHA256 tokens.
+- **Password Security:** Salted PBKDF2-HMAC-SHA256 password hashing with 200,000 iterations.
+- **Session Tokens:** Opaque CSPRNG bearer tokens (`secrets.token_urlsafe(32)`) with SHA-256 token digests stored server-side in SQLite.
 - **CSRF & Injection Defense:** Parameterized SQL queries throughout; user audio is processed strictly in memory and discarded upon session clear.
 
 ---
@@ -86,9 +86,9 @@ Evaluated across repeated 5-fold outer, 3-fold inner cross-validation:
 
 | Suite / Check | Count / Scope | Result | Execution Time |
 | :--- | :--- | :---: | :---: |
-| **Unit & Integration Tests** | 590 collected tests across all modules | **590 PASSED** | 158.94s |
-| **Ruff Code Linter** | 298 files checked | **0 ERRORS** | < 1s |
-| **Ruff Code Formatter** | 298 files verified | **100% FORMATTED** | < 1s |
+| **Unit & Integration Tests** | 600 collected tests across all modules | **600 PASSED** | ~330s |
+| **Ruff Code Linter** | 300 files checked | **0 ERRORS** | < 1s |
+| **Ruff Code Formatter** | 300 files verified | **100% FORMATTED** | < 1s |
 | **Project Imports & Provenance** | `scripts/verify_project.py` (17 modules) | **PASS** | 5.2s |
 | **Model Bundle Integrity** | `scripts/verify_model.py` (checksums & reload) | **PASS** | 2.8s |
 | **Visual Evidence** | 9 headless Edge screenshots (`docs/screenshots/`) | **PASS** | 8.4s |

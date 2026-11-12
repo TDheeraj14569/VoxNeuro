@@ -15,7 +15,6 @@ frontend: 7
 LICENSE: 1
 pyproject.toml: 1
 README.md: 1
-RELEASE_MANIFEST.json: 1
 requirements-lock.txt: 1
 scripts: 23
 src: 85
@@ -23,4 +22,4 @@ tests: 85
 uv.lock: 1
 WORK_LOG.md: 1
 
-Total: 349
+Total: 348

@@ -154,7 +154,6 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-13. 
 - `LICENSE`
 - `pyproject.toml`
 - `README.md`
-- `RELEASE_MANIFEST.json`
 - `requirements-lock.txt`
 - `scripts/analyze_scientific_bias.py`
 - `scripts/analyze_voice.py`
@@ -352,4 +351,4 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-13. 
 - `uv.lock`
 - `WORK_LOG.md`
 
-Total included source/documentation files: **349**.
+Total included source/documentation files: **348**.
