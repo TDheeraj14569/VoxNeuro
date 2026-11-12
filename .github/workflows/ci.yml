@@ -52,6 +52,11 @@ jobs:
           PYTHONPATH: src
         run: python -m pytest -v --cov=src/voxneuro --cov-fail-under=85
 
+      - name: Publish Test Summary On Failure
+        if: failure()
+        run: |
+          python -c "import os, subprocess, sys; s = os.environ.get('GITHUB_STEP_SUMMARY'); open(s, 'a', encoding='utf-8').write('### Test Failure Summary\n```\n' + subprocess.run([sys.executable, '-m', 'pytest', '--last-failed', '--tb=short', '-q'], capture_output=True, text=True).stdout + '\n```\n') if s else None"
+
   frontend-test:
     name: Frontend Three.js Visualizer Tests & Build
     runs-on: ubuntu-latest
