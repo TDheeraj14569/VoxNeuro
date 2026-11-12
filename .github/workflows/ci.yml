@@ -55,7 +55,7 @@ jobs:
       - name: Publish Test Summary On Failure
         if: failure()
         run: |
-          python -c "import subprocess, sys; res = subprocess.run([sys.executable, '-m', 'pytest', '-v', '--cov=src/voxneuro', '--cov-report=term-missing', '-q'], capture_output=True, text=True); [print(f'::error::{line}') for line in (res.stdout + res.stderr).splitlines()[-45:]]"
+          python -c "import subprocess, sys; res = subprocess.run([sys.executable, '-m', 'pytest', '-v', '--cov=src/voxneuro', '--cov-report=term-missing', '-q'], capture_output=True, text=True); msg = '%0A'.join((res.stdout + res.stderr).splitlines()[-35:]); print(f'::error::{msg}')"
 
   frontend-test:
     name: Frontend Three.js Visualizer Tests & Build
