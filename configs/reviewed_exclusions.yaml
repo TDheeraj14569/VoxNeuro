@@ -1,16 +1,15 @@
 reviewed_exclusions:
-  uams-045:
+  exclusion_group_clipping:
     review_status: reviewed
     category: clipping
     expected_failure_fragment: "Too many samples are clipped"
-    reason: "Excluded from the exploratory UAMS analysis because the recording exceeds the configured clipping fraction limit."
-  uams-046:
-    review_status: reviewed
-    category: clipping
-    expected_failure_fragment: "Too many samples are clipped"
-    reason: "Excluded from the exploratory UAMS analysis because the recording exceeds the configured clipping fraction limit."
-  uams-047:
-    review_status: reviewed
-    category: clipping
-    expected_failure_fragment: "Too many samples are clipped"
-    reason: "Excluded from the exploratory UAMS analysis because the recording exceeds the configured clipping fraction limit."
+    reason: "Excluded from exploratory analysis because recordings exceed the configured clipping fraction limit (3 recordings)."
+reviewed_exclusions_policy:
+  policy_status: "reviewed_aggregate"
+  review_status: "reviewed"
+  total_excluded: 3
+  categories:
+    clipping: 3
+  expected_failure_fragment: "Too many samples are clipped"
+  reasons:
+    - "Excluded from exploratory UAMS analysis because 3 recordings exceed the configured clipping fraction limit."

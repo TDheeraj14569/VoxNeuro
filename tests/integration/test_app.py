@@ -103,6 +103,7 @@ def test_app_all_navigation_sections_render_without_exceptions():
     pages = [
         "Overview",
         "Voice assessment",
+        "Multi-task assessment",
         "Signal analysis",
         "Feature analysis",
         "Research model",

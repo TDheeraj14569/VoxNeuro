@@ -84,15 +84,22 @@ def _validate_config(name: str, value: dict[str, Any]) -> None:
     expected = _CONFIG_KEYS.get(name)
     if expected is None:
         raise ValueError(f"Unsupported configuration file: {name!r}.")
-    missing = expected - value.keys()
-    unknown = value.keys() - expected
-    if missing or unknown:
-        details = []
-        if missing:
-            details.append(f"missing keys: {sorted(missing)}")
+    if name == "reviewed_exclusions.yaml":
+        unknown = value.keys() - {"reviewed_exclusions", "reviewed_exclusions_policy"}
+        if "reviewed_exclusions" not in value and "reviewed_exclusions_policy" not in value:
+            raise ValueError(f"Invalid {name}: missing required reviewed_exclusions key")
         if unknown:
-            details.append(f"unknown keys: {sorted(unknown)}")
-        raise ValueError(f"Invalid {name}: " + "; ".join(details))
+            raise ValueError(f"Invalid {name}: unknown keys: {sorted(unknown)}")
+    else:
+        missing = expected - value.keys()
+        unknown = value.keys() - expected
+        if missing or unknown:
+            details = []
+            if missing:
+                details.append(f"missing keys: {sorted(missing)}")
+            if unknown:
+                details.append(f"unknown keys: {sorted(unknown)}")
+            raise ValueError(f"Invalid {name}: " + "; ".join(details))
 
     if name == "application_config.yaml":
         if not isinstance(value["application_name"], str) or not value["application_name"].strip():
@@ -256,30 +263,50 @@ def _validate_config(name: str, value: dict[str, Any]) -> None:
         if value["allow_user_microphone_inference"]:
             raise ValueError("Microphone disease inference is not supported by this prototype.")
     elif name == "reviewed_exclusions.yaml":
-        exclusions = value["reviewed_exclusions"]
-        if not isinstance(exclusions, dict) or not exclusions:
-            raise ValueError("reviewed_exclusions must be a non-empty mapping.")
-        required = {"review_status", "category", "expected_failure_fragment", "reason"}
-        for sample_id, record in exclusions.items():
-            if (
-                not isinstance(sample_id, str)
-                or not sample_id.strip()
-                or not isinstance(record, dict)
+        exclusions = value.get("reviewed_exclusions")
+        policy = value.get("reviewed_exclusions_policy")
+        if exclusions is not None:
+            if not isinstance(exclusions, dict) or not exclusions:
+                raise ValueError("reviewed_exclusions must be a non-empty mapping.")
+            required = {"review_status", "category", "expected_failure_fragment", "reason"}
+            for sample_id, record in exclusions.items():
+                if (
+                    not isinstance(sample_id, str)
+                    or not sample_id.strip()
+                    or not isinstance(record, dict)
+                ):
+                    raise ValueError(
+                        "Each reviewed exclusion needs a non-empty sample ID and mapping."
+                    )
+                if set(record) != required:
+                    raise ValueError(
+                        f"Reviewed exclusion {sample_id!r} has missing or unknown fields."
+                    )
+                if record["review_status"] != "reviewed" or record["category"] not in {"clipping"}:
+                    raise ValueError(
+                        f"Reviewed exclusion {sample_id!r} is not an accepted reviewed category."
+                    )
+                if any(
+                    not isinstance(record[key], str) or not record[key].strip()
+                    for key in ("expected_failure_fragment", "reason")
+                ):
+                    raise ValueError(
+                        f"Reviewed exclusion {sample_id!r} needs a failure fragment and reason."
+                    )
+        if policy is not None:
+            if not isinstance(policy, dict):
+                raise ValueError("reviewed_exclusions_policy must be a mapping.")
+            for req in (
+                "review_status",
+                "total_excluded",
+                "categories",
+                "expected_failure_fragment",
+                "reasons",
             ):
-                raise ValueError("Each reviewed exclusion needs a non-empty sample ID and mapping.")
-            if set(record) != required:
-                raise ValueError(f"Reviewed exclusion {sample_id!r} has missing or unknown fields.")
-            if record["review_status"] != "reviewed" or record["category"] not in {"clipping"}:
-                raise ValueError(
-                    f"Reviewed exclusion {sample_id!r} is not an accepted reviewed category."
-                )
-            if any(
-                not isinstance(record[key], str) or not record[key].strip()
-                for key in ("expected_failure_fragment", "reason")
-            ):
-                raise ValueError(
-                    f"Reviewed exclusion {sample_id!r} needs a failure fragment and reason."
-                )
+                if req not in policy:
+                    raise ValueError(f"reviewed_exclusions_policy missing required key {req!r}")
+            if policy["review_status"] != "reviewed":
+                raise ValueError("reviewed_exclusions_policy review_status must be 'reviewed'.")
 
 
 def load_config(name: str) -> dict[str, Any]:

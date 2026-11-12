@@ -66,6 +66,11 @@ def is_trusted_domain_validation_report(sha256: object) -> bool:
 def _validated_domains(report: object) -> list[str]:
     if not isinstance(report, dict):
         raise ValueError("Domain-validation evidence must be a JSON object.")
+    if report.get("schema_version") == "voxneuro.domain_assessment.v1":
+        raise ValueError(
+            "Candidate domain assessment dossiers (voxneuro.domain_assessment.v1) "
+            "cannot be loaded as approved prediction compatibility reports."
+        )
     required = {
         "report_version",
         "validated_utc",

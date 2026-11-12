@@ -6,7 +6,9 @@ import hashlib
 import html
 import json
 import logging
+import uuid
 from numbers import Real
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -16,6 +18,7 @@ from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
 
 from voxneuro.audio.io import decode_audio
 from voxneuro.audio.preprocessing import preprocess_audio
+from voxneuro.audio.task_preprocessing import preprocess_task_audio
 from voxneuro.audio.validation import AudioQuality, AudioValidationConfig, validate_audio
 from voxneuro.config import PROJECT_ROOT, load_config
 from voxneuro.dataset.validation import (
@@ -40,12 +43,95 @@ from voxneuro.features.schema import (
     feature_config_fingerprint,
     schema_fingerprint,
 )
+from voxneuro.features.tasks.connected_speech import extract_connected_speech_features
+from voxneuro.features.tasks.ddk import extract_ddk_features
+from voxneuro.features.tasks.pipeline import (
+    MultiTaskSessionResult,
+    analyze_multitask_session,
+)
+from voxneuro.features.tasks.vowel_space import extract_vowel_space_features
 from voxneuro.logging_config import configure_logging
 from voxneuro.provenance import project_code_fingerprint
 from voxneuro.reporting.html_report import render_voice_report_html
+from voxneuro.reporting.multitask_report import render_multitask_report_html
 from voxneuro.reporting.report import DISCLAIMER, build_report
+from voxneuro.study.audit import list_audit_events
+from voxneuro.study.auth import resolve_session_user
+from voxneuro.study.consent import (
+    list_dataset_access,
+    record_consent,
+    register_dataset_access,
+)
+from voxneuro.study.database import (
+    DEFAULT_DB_PATH,
+    get_connection,
+    run_migrations,
+)
+from voxneuro.study.longitudinal import calculate_longitudinal_feature_changes
+from voxneuro.study.participant import list_participants, register_participant
+from voxneuro.study.qc import (
+    calculate_cohort_attrition,
+    calculate_cohort_qc_metrics,
+)
+from voxneuro.study.registry import (
+    create_protocol,
+    create_study,
+    list_protocols,
+    list_studies,
+)
+from voxneuro.study.reporting import (
+    RESEARCH_DISCLAIMER,
+    export_report_to_csv,
+    generate_cohort_attrition_report,
+    generate_longitudinal_descriptive_report,
+    generate_session_completion_report,
+    generate_study_overview_report,
+)
+from voxneuro.study.schema import (
+    ConsentRecord,
+    DatasetAccessRecord,
+    Participant,
+    ProtocolDefinition,
+    ResearchSession,
+    Study,
+    generate_pseudonymous_id,
+    utc_now_iso,
+)
+from voxneuro.study.session import (
+    create_session,
+    ingest_session_multitask_audio,
+    list_sessions,
+    preflight_session_ingestion,
+)
+from voxneuro.study.withdrawal import withdraw_participant
+from voxneuro.ui.admin_portals import (
+    show_ml_admin_portal,
+    show_researcher_portal,
+    show_system_admin_portal,
+)
+from voxneuro.ui.consumer_pages import (
+    WIZARD_STEPS,
+    build_session_prediction,
+    show_about_page,
+    show_account_portal,
+    show_consumer_home,
+    show_guided_consent_step,
+    show_help_faq,
+    show_how_it_works,
+    show_plain_results_page,
+    show_privacy_and_safety,
+    show_user_dashboard,
+    show_user_history_page,
+)
+from voxneuro.ui.theme import (
+    M6_RESPONSIVE_CSS,
+    render_brand_bar,
+    render_medical_disclaimer,
+    render_plain_quality_summary,
+    render_prediction_outcome_card,
+    render_stepper,
+)
 from voxneuro.visualization.acoustic_3d import (
-    decorative_hero_payload,
     render_acoustic_view,
     spectrogram_payload,
     waveform_payload,
@@ -67,7 +153,7 @@ st.set_page_config(
     page_title="VoxNeuro · Voice Acoustic Analysis",
     page_icon="∿",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 _STYLE = """
@@ -715,6 +801,48 @@ audio {
 </style>
 """
 st.markdown(_STYLE, unsafe_allow_html=True)
+st.markdown(M6_RESPONSIVE_CSS, unsafe_allow_html=True)
+
+
+def _current_db_path():
+    import os
+    from pathlib import Path
+
+    import voxneuro.study.database as _db_mod
+
+    env_path = os.environ.get("VOXNEURO_DB_PATH")
+    return Path(env_path) if env_path else _db_mod.DEFAULT_DB_PATH
+
+
+def _runtime_db_connection():
+    """Return a migrated SQLite connection ONLY if runtime DB already exists."""
+    db_path = _current_db_path()
+    if not db_path.is_file():
+        return None
+    run_migrations(db_path)
+    return get_connection(db_path)
+
+
+def _ensure_initialized_db_connection():
+    """Initialize workspace SQLite DB if needed and return migrated connection."""
+    db_path = _current_db_path()
+    run_migrations(db_path)
+    return get_connection(db_path)
+
+
+def _active_authenticated_user(conn):
+    """Resolve current user strictly from server-side session token."""
+    token = st.session_state.get("voxneuro_auth_token")
+    if conn is None or not token:
+        st.session_state.pop("voxneuro_current_user", None)
+        return None
+    user = resolve_session_user(conn, token)
+    if user is None:
+        st.session_state.pop("voxneuro_auth_token", None)
+        st.session_state.pop("voxneuro_current_user", None)
+    else:
+        st.session_state["voxneuro_current_user"] = user
+    return user
 
 
 def _analysis_config() -> tuple[AudioValidationConfig, dict, dict]:
@@ -734,6 +862,7 @@ def _clear_assessment() -> None:
         "voxneuro_features",
         "voxneuro_report",
         "voxneuro_html_report",
+        "voxneuro_prediction",
         "voxneuro_analysis_status",
         "voxneuro_analysis_error",
     ):
@@ -753,26 +882,52 @@ def _analyze(payload: bytes) -> None:
     st.session_state["voxneuro_record"] = record
     st.session_state["voxneuro_payload"] = payload
     st.session_state["voxneuro_quality"] = quality
-    if not quality.valid:
-        st.session_state["voxneuro_analysis_status"] = "quality_failed"
-        return
+    src_mode = st.session_state.get("voxneuro_audio_source", "Record with microphone")
+    cap_origin = "live_browser_mic" if src_mode == "Record with microphone" else "user_upload"
+    in_domain = "laptop_microphone" if cap_origin == "live_browser_mic" else "user_upload"
+    conn = _runtime_db_connection()
+    try:
+        active_user = _active_authenticated_user(conn)
+        if not quality.valid:
+            st.session_state["voxneuro_prediction"] = build_session_prediction(
+                features=None,
+                quality_valid=False,
+                capture_origin=cap_origin,
+                input_domain=in_domain,
+                conn=conn,
+                user=active_user,
+            )
+            st.session_state["voxneuro_analysis_status"] = "quality_failed"
+            return
 
-    processed = preprocess_audio(
-        record,
-        target_sample_rate=int(audio_config["target_sample_rate"]),
-        silence_relative_db=float(audio_config["silence_relative_db"]),
-        mono_policy=str(audio_config["mono_policy"]),
-        validation_config=validation_config,
-    )
-    st.session_state["voxneuro_processed"] = processed
-    features = extract_features(
-        processed.samples,
-        processed.sample_rate,
-        original_sample_rate=record.sample_rate,
-        preprocessing_config_fingerprint=configuration_fingerprint(audio_config),
-        **feature_config,
-    )
-    st.session_state["voxneuro_features"] = features
+        processed = preprocess_audio(
+            record,
+            target_sample_rate=int(audio_config["target_sample_rate"]),
+            silence_relative_db=float(audio_config["silence_relative_db"]),
+            mono_policy=str(audio_config["mono_policy"]),
+            validation_config=validation_config,
+        )
+        st.session_state["voxneuro_processed"] = processed
+        features = extract_features(
+            processed.samples,
+            processed.sample_rate,
+            original_sample_rate=record.sample_rate,
+            preprocessing_config_fingerprint=configuration_fingerprint(audio_config),
+            **feature_config,
+        )
+        st.session_state["voxneuro_features"] = features
+        pred = build_session_prediction(
+            features=features,
+            quality_valid=True,
+            capture_origin=cap_origin,
+            input_domain=in_domain,
+            conn=conn,
+            user=active_user,
+        )
+        st.session_state["voxneuro_prediction"] = pred
+    finally:
+        if conn is not None:
+            conn.close()
     st.session_state["voxneuro_report"] = build_report(
         {
             "valid": quality.valid,
@@ -821,104 +976,65 @@ def _page_heading(
     st.markdown(f'<p class="vox-lede">{html.escape(description)}</p>', unsafe_allow_html=True)
 
 
+def _start_guided_assessment() -> None:
+    st.session_state["voxneuro_nav"] = "Voice assessment"
+    st.session_state["_prev_voxneuro_nav"] = "Voice assessment"
+    st.session_state["voxneuro_m6_view"] = None
+
+
+def _nav_to_how_it_works() -> None:
+    st.session_state["voxneuro_m6_view"] = "How It Works"
+
+
 def _show_overview() -> None:
-    _page_heading(
-        "VoxNeuro",
-        "A careful research workspace for recording or reviewing a sustained vowel, "
-        "checking signal quality, and exploring acoustic measurements in Parkinson’s research.",
-        kicker="VOICE SIGNAL ANALYSIS · RESEARCH INSTRUMENTATION",
-    )
-    st.markdown(
-        '<div class="vox-editorial-hero">'
-        '<div class="vox-kicker">EDITORIAL RESEARCH PROTOTYPE</div>'
-        '<h3 style="margin: 0.2rem 0 0.5rem 0; font-size: 1.4rem;">'
-        "Understanding neurological signals through the human voice.</h3>"
-        '<p class="vox-lede" style="margin-top:0.4rem; margin-bottom: 0;">'
-        "Inspect sustained-vowel audio quality, extract 39 versioned acoustic parameters, "
-        "render interactive 3D signal scenes, and generate auditable research reports."
-        "</p></div>",
-        unsafe_allow_html=True,
-    )
-    st.button(
-        "Start a voice assessment",
-        type="primary",
-        on_click=lambda: st.session_state.__setitem__("voxneuro_nav", "Voice assessment"),
-        key="start_assessment",
-    )
-    render_acoustic_view(decorative_hero_payload(), height=340)
-    st.caption(
-        "Decorative acoustic field · no participant recording is represented in this illustration."
-    )
-    st.markdown(
-        """
-        <hr class="vox-rule">
-        <div class="vox-status">Local session · no recording saved by default</div>
-        <p class="vox-note">VoxNeuro analyzes voice signals. It does not diagnose or rule out
-        Parkinson’s disease, and it does not classify new microphone recordings.</p>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.subheader("A clear, three-step workflow")
-    steps = st.columns(3)
-    for column, number, label, explanation in zip(
-        steps,
-        ("01", "02", "03"),
-        ("Record", "Check", "Measure"),
-        (
-            "Capture or upload a short sustained vowel.",
-            "Review duration, level, clipping, and voiced frames.",
-            "Explore signal plots and versioned acoustic features.",
-        ),
-        strict=True,
-    ):
-        with column:
-            st.markdown(
-                f'<div class="vox-editorial-card" style="height:100%;">'
-                f'<div class="vox-step-num">{number}</div>'
-                '<div style="font-weight:700; font-size:1.05rem; '
-                f'color:#20232B; margin-bottom:0.35rem;">{label}</div>'
-                f'<p style="margin:0; color:#676970; font-size:0.88rem; '
-                f'line-height:1.55;">{explanation}</p>'
-                "</div>",
-                unsafe_allow_html=True,
-            )
-    st.subheader("What the current prototype can support")
-    left, right = st.columns([1.2, 1])
-    with left:
-        st.markdown(
-            '<div class="vox-editorial-card">'
-            '<p style="margin:0; line-height:1.65; color:#20232B; font-size:0.92rem;">'
-            "The application checks a WAV recording, trims leading and trailing silence, "
-            "resamples the usable segment, and extracts Praat/Parselmouth and Librosa measures. "
-            "Reports remain in the current session unless the user downloads them."
-            "</p></div>",
-            unsafe_allow_html=True,
-        )
-    with right:
-        st.markdown(
-            '<div class="vox-editorial-card">'
-            '<p class="vox-note" style="margin:0;">'
-            "Technical quality passing means the signal can be analyzed. "
-            "It says nothing about a person’s health."
-            "</p></div>",
-            unsafe_allow_html=True,
-        )
+    show_consumer_home(_start_guided_assessment, _nav_to_how_it_works)
 
 
 def _show_assessment() -> None:
     _page_heading(
         "Voice assessment",
-        "Record or upload one sustained vowel. Review technical quality before "
-        "exploring measurements.",
+        "Hold a relaxed 'ah' sound for 3 to 5 seconds. We check sound quality first and "
+        "explain every measurement clearly.",
     )
-    st.info(
-        "Task: hold “ah” (/a/) steadily for about 3–5 seconds. Sit comfortably in a quiet room "
-        "and keep the microphone at a steady distance. This duration is guidance, not a diagnostic "
-        "threshold."
+    status_cur = st.session_state.get("voxneuro_analysis_status")
+    quality = st.session_state.get("voxneuro_quality")
+    active_step = (
+        4
+        if status_cur == "complete"
+        else (3 if status_cur == "quality_failed" else (2 if quality else 1))
     )
-    st.caption(
-        "The workflow returns signal quality and acoustic measurements only. No disease "
-        "classification is available for this recording."
+    render_stepper(WIZARD_STEPS, active_step)
+    render_medical_disclaimer()
+
+    conn_consent = _runtime_db_connection()
+    try:
+        active_user = _active_authenticated_user(conn_consent)
+        with st.expander("Step 1 · Introduction & Informed Consent", expanded=False):
+            show_guided_consent_step(conn_consent, active_user)
+    finally:
+        if conn_consent is not None:
+            conn_consent.close()
+
+    st.markdown(
+        '<div class="vx-card" style="margin-bottom:1rem; '
+        'background:var(--vx-teal-light); border-color:rgba(13,122,112,0.25);">'
+        '<div style="display:flex; align-items:center; gap:0.5rem; '
+        'color:var(--vx-teal-dark); font-weight:700; font-size:0.95rem;">'
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" '
+        'stroke="currentColor" stroke-width="2.5">'
+        '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>'
+        '<path d="M19 10v2a7 7 0 0 1-14 0v-2"/>'
+        '<line x1="12" y1="19" x2="12" y2="23"/>'
+        '<line x1="8" y1="23" x2="16" y2="23"/>'
+        "</svg>"
+        "Step 2 · Device &amp; Microphone Check: Ready"
+        "</div>"
+        '<p style="color:#1E3A34; font-size:0.90rem; margin:0.35rem 0 0 0;">'
+        "Your microphone is ready. Find a quiet room, hold the microphone about 15–20 cm away, "
+        'take an easy breath, and sustain an even "ah" sound for 3 to 5 seconds.'
+        "</p>"
+        "</div>",
+        unsafe_allow_html=True,
     )
     source = st.radio(
         "Audio source",
@@ -957,8 +1073,15 @@ def _show_assessment() -> None:
         st.audio(payload, format="audio/wav")
         if st.button("Analyze this recording", type="primary", key="analyze_recording"):
             try:
-                with st.spinner("Checking signal quality and extracting measurements…"):
+                with st.status("Processing your voice assessment…", expanded=True) as stat:
+                    st.write("1. Preparing your recording & verifying format…")
+                    st.write("2. Analysing your voice & extracting acoustic features…")
+                    st.write("3. Reviewing the assessment & screening audio quality…")
                     _analyze(payload)
+                    st.write("4. Preparing your result & plain-language summary…")
+                    stat.update(
+                        label="Voice assessment complete!", state="complete", expanded=False
+                    )
             except (
                 AudioReadError,
                 AudioValidationError,
@@ -1010,6 +1133,10 @@ def _show_assessment() -> None:
             st.error("Recording not analyzed because it did not pass technical quality checks.")
             for error in quality.errors:
                 st.write(f"- {error}")
+        pred_state = st.session_state.get("voxneuro_prediction")
+        if pred_state is not None:
+            render_plain_quality_summary(quality, record)
+            render_prediction_outcome_card(pred_state)
     elif status == "failed":
         st.error(
             st.session_state.get("voxneuro_analysis_error", "The recording could not be analyzed.")
@@ -1038,6 +1165,487 @@ def _show_assessment() -> None:
             key="assessment_report_download",
         )
         st.button("Clear analysis results", on_click=_clear_assessment, key="clear_analysis")
+
+
+def _clear_multitask_session() -> None:
+    for key in (
+        "voxneuro_mt_ddk_runs",
+        "voxneuro_mt_cs_run",
+        "voxneuro_mt_vs_result",
+        "voxneuro_mt_vs_trials",
+        "voxneuro_mt_session_envelope",
+    ):
+        st.session_state.pop(key, None)
+
+
+def _render_task_status_pill(status: str) -> str:
+    s = str(status).strip().lower()
+    if s == "complete":
+        return '<span class="vox-badge-ok">COMPLETE</span>'
+    elif s == "insufficient_signal":
+        return '<span class="vox-badge-na">INSUFFICIENT SIGNAL</span>'
+    elif s in ("quality_failed", "processing_failed"):
+        return '<span class="vox-badge-err">FAILED</span>'
+    return f'<span class="vox-code-pill">{html.escape(s.upper())}</span>'
+
+
+def _vowel_triangle_figure(
+    f1_a: float,
+    f2_a: float,
+    f1_i: float,
+    f2_i: float,
+    f1_u: float,
+    f2_u: float,
+    vsa_val: float | None = None,
+) -> Figure:
+    fig = Figure(figsize=(5.5, 4.0))
+    ax = fig.subplots()
+    fig.patch.set_facecolor("#FBFAF6")
+    ax.set_facecolor("#FFFFFF")
+    xs = [f2_i, f2_u, f2_a, f2_i]
+    ys = [f1_i, f1_u, f1_a, f1_i]
+    ax.plot(xs, ys, "o-", color="#B95E46", linewidth=2.0, markersize=8)
+    ax.fill(xs, ys, color="#B95E46", alpha=0.15)
+    labels = ["/i/", "/u/", "/a/"]
+    coords = [(f2_i, f1_i), (f2_u, f1_u), (f2_a, f1_a)]
+    for lbl, (x, y) in zip(labels, coords, strict=True):
+        ax.text(x, y - 25, lbl, fontsize=11, fontweight="bold", color="#51445D", ha="center")
+    ax.invert_xaxis()
+    ax.invert_yaxis()
+    ax.set_xlabel("F2 frequency (Hz)", fontsize=9, color="#20232B")
+    ax.set_ylabel("F1 frequency (Hz)", fontsize=9, color="#20232B")
+    title = (
+        f"Acoustic Vowel Triangle (VSA = {vsa_val:,.1f} Hz²)"
+        if vsa_val is not None
+        else "Acoustic Vowel Triangle"
+    )
+    ax.set_title(title, fontsize=10, fontweight="bold", color="#20232B")
+    ax.grid(True, linestyle="--", alpha=0.4)
+    fig.tight_layout()
+    return fig
+
+
+def _show_multitask_assessment() -> None:
+    _page_heading(
+        "Multi-task speech assessment",
+        "Record or upload speech across multiple independent paradigms: "
+        "sustained vowels, diadochokinetic syllable repetition, connected speech, "
+        "and multi-vowel formant area. Engineered for reproducible acoustic extraction.",
+        kicker="VOXNEURO · MULTI-TASK BATTERY (SCHEMA V4)",
+    )
+
+    st.warning(DISCLAIMER)
+
+    top_col1, top_col2 = st.columns([3, 1])
+    with top_col1:
+        st.caption(
+            "Multi-task speech analysis extracts objective acoustic descriptors across motor, "
+            "prosodic, and articulatory subsystems. Audio remains in ephemeral session memory only."
+        )
+    with top_col2:
+        st.button("Clear multi-task session", on_click=_clear_multitask_session, key="mt_clear_btn")
+
+    if "voxneuro_mt_ddk_runs" not in st.session_state:
+        st.session_state["voxneuro_mt_ddk_runs"] = {}
+    if "voxneuro_mt_vs_trials" not in st.session_state:
+        st.session_state["voxneuro_mt_vs_trials"] = {}
+
+    tab_ddk, tab_cs, tab_vs, tab_summary = st.tabs(
+        [
+            "1. Diadochokinetic (DDK)",
+            "2. Connected speech",
+            "3. Vowel space area (VSA)",
+            "4. Unified session & export",
+        ]
+    )
+
+    with tab_ddk:
+        st.subheader("Diadochokinetic (DDK) Syllable Repetition")
+        st.info(
+            "Protocol: Take a deep breath and repeat the syllable as rapidly, clearly, "
+            "and steadily as possible on a single expiration for 3 to 10 seconds. "
+            "Sit comfortably with the microphone at a steady distance."
+        )
+        ddk_col1, ddk_col2 = st.columns([1, 1])
+        with ddk_col1:
+            stimulus_label = st.radio(
+                "DDK Stimulus",
+                ["/pa/ (AMR_PA)", "/ta/ (AMR_TA)", "/ka/ (AMR_KA)", "/pa-ta-ka/ (SMR_PATAKA)"],
+                key="mt_ddk_stimulus_radio",
+            )
+            stim_map = {
+                "/pa/ (AMR_PA)": ("pa", "AMR_PA"),
+                "/ta/ (AMR_TA)": ("ta", "AMR_TA"),
+                "/ka/ (AMR_KA)": ("ka", "AMR_KA"),
+                "/pa-ta-ka/ (SMR_PATAKA)": ("pataka", "SMR_PATAKA"),
+            }
+            stim_key, stim_code = stim_map[stimulus_label]
+
+            ddk_file = st.file_uploader(
+                f"Upload WAV recording for {stimulus_label}",
+                type=["wav"],
+                key=f"mt_ddk_file_{stim_key}",
+            )
+            if ddk_file is not None:
+                if st.button(f"Analyze {stim_code}", key=f"mt_ddk_btn_{stim_key}"):
+                    try:
+                        record = decode_audio(ddk_file.getvalue())
+                        prep = preprocess_task_audio(record, task_type="ddk")
+                        ddk_res = extract_ddk_features(
+                            prep, task_id=f"ddk_{stim_key}", stimulus=stim_code
+                        )
+                        st.session_state["voxneuro_mt_ddk_runs"][stim_key] = {
+                            "record": record,
+                            "prep": prep,
+                            "result": ddk_res,
+                            "filename": ddk_file.name,
+                        }
+                        st.success(f"Analysis complete for {stim_code}")
+                    except AudioValidationError as ave:
+                        st.error(f"Acoustic quality validation failed: {ave}")
+                    except Exception as exc:
+                        st.error(f"Processing error: {exc}")
+
+        with ddk_col2:
+            st.markdown("#### Analysis Results")
+            ddk_entry = st.session_state["voxneuro_mt_ddk_runs"].get(stim_key)
+            if ddk_entry:
+                res = ddk_entry["result"]
+                st.markdown(
+                    f"**Task ID:** `{res.task_id}` &nbsp;|&nbsp; "
+                    f"**Status:** {_render_task_status_pill(res.task_status)}",
+                    unsafe_allow_html=True,
+                )
+                feats = res.features
+                v_count = int(feats.get("estimated_event_count") or 0)
+                v_rate = (
+                    f"{feats['estimated_event_rate_per_s']:.2f}"
+                    if feats.get("estimated_event_rate_per_s") is not None
+                    else "—"
+                )
+                v_iei = (
+                    f"{feats['mean_inter_event_interval_s']:.3f}"
+                    if feats.get("mean_inter_event_interval_s") is not None
+                    else "—"
+                )
+                v_cv = (
+                    f"{feats['cv_inter_event_interval']:.3f}"
+                    if feats.get("cv_inter_event_interval") is not None
+                    else "—"
+                )
+                st.markdown(
+                    f'<div class="vox-grid-2">'
+                    f'<div class="vox-card"><div class="vox-qc-label">Syllable Event Count</div>'
+                    f'<div class="vox-qc-value">{v_count}</div>'
+                    f'<div class="vox-qc-sub">Events detected</div></div>'
+                    f'<div class="vox-card"><div class="vox-qc-label">Syllable Rate</div>'
+                    f'<div class="vox-qc-value">{v_rate}</div>'
+                    f'<div class="vox-qc-sub">Syllables / s</div></div>'
+                    f'<div class="vox-card">'
+                    f'<div class="vox-qc-label">Mean Inter-Event Interval</div>'
+                    f'<div class="vox-qc-value">{v_iei}</div>'
+                    f'<div class="vox-qc-sub">Seconds</div></div>'
+                    f'<div class="vox-card"><div class="vox-qc-label">Variability (CV IEI)</div>'
+                    f'<div class="vox-qc-value">{v_cv}</div>'
+                    f'<div class="vox-qc-sub">Unitless ratio</div></div>'
+                    f"</div>",
+                    unsafe_allow_html=True,
+                )
+                if feats.get("inter_event_interval_slope_s_per_event") is not None:
+                    drift_val = feats["inter_event_interval_slope_s_per_event"]
+                    st.caption(f"IEI drift slope: {drift_val:+.4f} s/event")
+            else:
+                st.info(
+                    f"No recording analyzed yet for {stim_code}. "
+                    "Upload a WAV file and click Analyze."
+                )
+
+    with tab_cs:
+        st.subheader("Connected Speech Analysis")
+        st.info(
+            "Protocol: Read the standardized phonetically balanced passage aloud at a natural, "
+            "comfortable speaking pace and volume. Do not rush or pause artificially."
+        )
+        with st.expander("Standard Reading Stimulus (Bamboo Passage)"):
+            st.markdown(
+                "> *Cheaply made bamboo boats can be useful for light travel. "
+                "They carry few people and float easily upon the smooth surface. "
+                "Strong reeds and tall stalks bend in the quiet wind.*"
+            )
+        cs_col1, cs_col2 = st.columns([1, 1])
+        with cs_col1:
+            cs_file = st.file_uploader(
+                "Upload Connected Speech recording (WAV)",
+                type=["wav"],
+                key="mt_cs_file_uploader",
+            )
+            if cs_file is not None:
+                if st.button("Analyze Connected Speech", key="mt_cs_btn"):
+                    try:
+                        record = decode_audio(cs_file.getvalue())
+                        prep = preprocess_task_audio(record, task_type="connected_speech")
+                        cs_res = extract_connected_speech_features(prep)
+                        st.session_state["voxneuro_mt_cs_run"] = {
+                            "record": record,
+                            "prep": prep,
+                            "result": cs_res,
+                            "filename": cs_file.name,
+                        }
+                        st.success("Analysis complete for connected speech")
+                    except AudioValidationError as ave:
+                        st.error(f"Acoustic quality validation failed: {ave}")
+                    except Exception as exc:
+                        st.error(f"Processing error: {exc}")
+
+        with cs_col2:
+            st.markdown("#### Analysis Results")
+            cs_entry = st.session_state.get("voxneuro_mt_cs_run")
+            if cs_entry:
+                res = cs_entry["result"]
+                st.markdown(
+                    f"**Task ID:** `{res.task_id}` &nbsp;|&nbsp; "
+                    f"**Status:** {_render_task_status_pill(res.task_status)}",
+                    unsafe_allow_html=True,
+                )
+                feats = res.features
+                v_dur = f"{feats.get('total_recording_duration_s', 0.0):.2f} s"
+                v_pause = (
+                    f"{feats.get('pause_fraction', 0.0) * 100:.1f}%"
+                    if feats.get("pause_fraction") is not None
+                    else "—"
+                )
+                v_act = (
+                    f"{feats.get('speech_activity_fraction', 0.0) * 100:.1f}%"
+                    if feats.get("speech_activity_fraction") is not None
+                    else "—"
+                )
+                v_f0 = (
+                    f"{feats.get('f0_median_hz'):.1f} Hz"
+                    if feats.get("f0_median_hz") is not None
+                    else "—"
+                )
+                v_f0_sd = (
+                    f"Pitch SD: {feats.get('f0_sd_hz'):.1f} Hz"
+                    if feats.get("f0_sd_hz") is not None
+                    else "—"
+                )
+                v_range = (
+                    f"{feats.get('f0_range_semitones'):.1f} st"
+                    if feats.get("f0_range_semitones") is not None
+                    else "—"
+                )
+                st.markdown(
+                    f'<div class="vox-grid-2">'
+                    f'<div class="vox-card"><div class="vox-qc-label">Total Duration</div>'
+                    f'<div class="vox-qc-value">{v_dur}</div>'
+                    f'<div class="vox-qc-sub">Recording length</div></div>'
+                    f'<div class="vox-card"><div class="vox-qc-label">Pause Fraction</div>'
+                    f'<div class="vox-qc-value">{v_pause}</div>'
+                    f'<div class="vox-qc-sub">Pause ratio</div></div>'
+                    f'<div class="vox-card"><div class="vox-qc-label">Speech Activity</div>'
+                    f'<div class="vox-qc-value">{v_act}</div>'
+                    f'<div class="vox-qc-sub">Active speech ratio</div></div>'
+                    f'<div class="vox-card"><div class="vox-qc-label">Median Pitch (F0)</div>'
+                    f'<div class="vox-qc-value">{v_f0}</div>'
+                    f'<div class="vox-qc-sub">{v_f0_sd}</div></div>'
+                    f'<div class="vox-card"><div class="vox-qc-label">Pitch Range (Semitones)</div>'
+                    f'<div class="vox-qc-value">{v_range}</div>'
+                    f'<div class="vox-qc-sub">Prosodic dynamic range</div></div>'
+                    f"</div>",
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.info(
+                    "No connected speech recording analyzed yet. "
+                    "Upload a WAV file and click Analyze."
+                )
+
+    with tab_vs:
+        st.subheader("Vowel Space Area (VSA) & Formant Analysis")
+        st.info(
+            "Protocol: Phonate the corner vowels clearly, comfortably, and steadily: "
+            "/a/ (open back/central, as in 'father'), /i/ (high front, as in 'beet'), "
+            "and /u/ (high back, as in 'boot') for 2–4 seconds each. "
+            "VSA evaluates articulatory range of motion in the oral cavity."
+        )
+        vs_col1, vs_col2, vs_col3 = st.columns(3)
+        vowel_files: dict[str, Any] = {}
+        with vs_col1:
+            st.markdown("##### Corner Vowel /a/")
+            f_a = st.file_uploader("Upload /a/ WAV", type=["wav"], key="mt_vs_file_a")
+            if f_a:
+                vowel_files["a"] = f_a
+        with vs_col2:
+            st.markdown("##### Corner Vowel /i/")
+            f_i = st.file_uploader("Upload /i/ WAV", type=["wav"], key="mt_vs_file_i")
+            if f_i:
+                vowel_files["i"] = f_i
+        with vs_col3:
+            st.markdown("##### Corner Vowel /u/")
+            f_u = st.file_uploader("Upload /u/ WAV", type=["wav"], key="mt_vs_file_u")
+            if f_u:
+                vowel_files["u"] = f_u
+
+        if st.button("Compute Vowel Space Area", key="mt_vs_compute_btn"):
+            if not ("a" in vowel_files and "i" in vowel_files and "u" in vowel_files):
+                st.warning(
+                    "Please upload WAV recordings for all three corner vowels (/a/, /i/, and /u/)."
+                )
+            else:
+                try:
+                    trials_map: dict[str, list[Any]] = {}
+                    for v_key in ("a", "i", "u"):
+                        rec = decode_audio(vowel_files[v_key].getvalue())
+                        prep = preprocess_task_audio(rec, task_type="vowel_space")
+                        trials_map[v_key] = [prep]
+                    vs_res = extract_vowel_space_features(trials_map)
+                    st.session_state["voxneuro_mt_vs_result"] = vs_res
+                    st.session_state["voxneuro_mt_vs_trials"] = trials_map
+                    st.success("Vowel Space Area successfully computed")
+                except AudioValidationError as ave:
+                    st.error(f"Vowel acoustic validation error: {ave}")
+                except Exception as exc:
+                    st.error(f"VSA computation error: {exc}")
+
+        vs_res = st.session_state.get("voxneuro_mt_vs_result")
+        if vs_res:
+            st.markdown("---")
+            v_list_str = ", ".join(f"/{v}/" for v in sorted(vs_res.per_vowel_results.keys()))
+            st.markdown(
+                f"**Task Status:** {_render_task_status_pill(vs_res.task_status)} &nbsp;|&nbsp; "
+                f"**Corner Vowels Provided:** {v_list_str}",
+                unsafe_allow_html=True,
+            )
+            vsa_m1, vsa_m2 = st.columns(2)
+            feats = vs_res.features
+            vsa_val = feats.get("vowel_space_area_hz2")
+            vsa_str = f"{vsa_val:,.1f}" if vsa_val is not None else "—"
+
+            with vsa_m1:
+                st.markdown(
+                    f'<div class="vox-card"><div class="vox-qc-label">Triangular VSA</div>'
+                    f'<div class="vox-qc-value">{vsa_str}</div>'
+                    f'<div class="vox-qc-sub">Hz² (F1-F2 triangular area)</div></div>',
+                    unsafe_allow_html=True,
+                )
+            with vsa_m2:
+                vsa_status_text = "Estimable" if vs_res.vsa_estimable else "Incomplete"
+                st.markdown(
+                    f'<div class="vox-card"><div class="vox-qc-label">VSA Status</div>'
+                    f'<div class="vox-qc-value">{vsa_status_text}</div>'
+                    f'<div class="vox-qc-sub">Corner vowels available</div></div>',
+                    unsafe_allow_html=True,
+                )
+
+            st.markdown("##### Extracted Formants & Acoustic Triangle")
+            f_col1, f_col2 = st.columns([1, 1])
+            with f_col1:
+                formant_rows = []
+                for v in ("a", "i", "u"):
+                    f1 = feats.get(f"f1_{v}_median_hz")
+                    f2 = feats.get(f"f2_{v}_median_hz")
+                    formant_rows.append(
+                        {
+                            "Vowel": f"/{v}/",
+                            "F1 Median (Hz)": f"{f1:.1f}" if f1 is not None else "—",
+                            "F2 Median (Hz)": f"{f2:.1f}" if f2 is not None else "—",
+                        }
+                    )
+                st.table(pd.DataFrame(formant_rows))
+
+            with f_col2:
+                f1_a = feats.get("f1_a_median_hz")
+                f2_a = feats.get("f2_a_median_hz")
+                f1_i = feats.get("f1_i_median_hz")
+                f2_i = feats.get("f2_i_median_hz")
+                f1_u = feats.get("f1_u_median_hz")
+                f2_u = feats.get("f2_u_median_hz")
+                if all(val is not None for val in (f1_a, f2_a, f1_i, f2_i, f1_u, f2_u)):
+                    fig = _vowel_triangle_figure(f1_a, f2_a, f1_i, f2_i, f1_u, f2_u, vsa_val)
+                    st.pyplot(fig, clear_figure=True)
+
+    with tab_summary:
+        st.subheader("Multi-Task Session Envelope (Schema v4)")
+        st.caption(
+            "Synthesizes acoustic results across all completed tasks into a versioned "
+            "voxneuro.voice.v4 session receipt and standalone HTML dashboard."
+        )
+
+        if st.button("Assemble Multi-Task Session", key="mt_assemble_btn"):
+            ddk_recs = {}
+            for sk, run in st.session_state.get("voxneuro_mt_ddk_runs", {}).items():
+                ddk_recs[sk] = run["record"]
+
+            cs_run = st.session_state.get("voxneuro_mt_cs_run")
+            cs_rec = cs_run["record"] if cs_run else None
+
+            vs_trials = st.session_state.get("voxneuro_mt_vs_trials")
+            v_a = st.session_state.get("voxneuro_record")
+
+            if not (ddk_recs or cs_rec or vs_trials or v_a):
+                st.warning(
+                    "No task recordings have been analyzed yet. Please complete at least one task."
+                )
+            else:
+                sess_result = analyze_multitask_session(
+                    sustained_vowel=v_a,
+                    ddk_recordings=ddk_recs if ddk_recs else None,
+                    connected_speech=cs_rec,
+                    vowel_space_recordings=vs_trials,
+                )
+                st.session_state["voxneuro_mt_session_envelope"] = sess_result
+                st.success("Multi-task session successfully assembled")
+
+        envelope: MultiTaskSessionResult | None = st.session_state.get(
+            "voxneuro_mt_session_envelope"
+        )
+        if envelope:
+            overall_pill = _render_task_status_pill(envelope.overall_processing_status)
+            st.markdown(
+                f'<div class="vox-grid-2">'
+                f'<div class="vox-card"><div class="vox-qc-label">Session ID</div>'
+                f'<div class="vox-qc-value" style="font-size:0.95rem;">{envelope.session_id}</div>'
+                f'<div class="vox-qc-sub">UUIDv4 Session Identifier</div></div>'
+                f'<div class="vox-card"><div class="vox-qc-label">Overall Status</div>'
+                f'<div class="vox-qc-value">{overall_pill}</div>'
+                f'<div class="vox-qc-sub">Envelope Schema: {envelope.schema_version}</div></div>'
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown("##### Task Inventory")
+            inv_rows = []
+            for t_name, t_data in envelope.tasks.items():
+                inv_rows.append(
+                    {
+                        "Task Identifier": t_name,
+                        "Task Type": t_data.get("task_type", "—"),
+                        "Schema Version": t_data.get("task_schema_version", "—"),
+                        "Status": t_data.get("task_status", "—"),
+                        "Feature Count": len(t_data.get("features", {})),
+                    }
+                )
+            st.table(pd.DataFrame(inv_rows))
+
+            st.markdown("##### Export Artifacts")
+            down_col1, down_col2 = st.columns(2)
+            with down_col1:
+                json_str = envelope.to_json()
+                st.download_button(
+                    "Download Session JSON (v4)",
+                    data=json_str,
+                    file_name=f"voxneuro_session_v4_{envelope.session_id[:8]}.json",
+                    mime="application/json",
+                    key="mt_download_json_btn",
+                )
+            with down_col2:
+                html_str = render_multitask_report_html(envelope)
+                st.download_button(
+                    "Download Standalone HTML Report",
+                    data=html_str,
+                    file_name=f"voxneuro_report_v4_{envelope.session_id[:8]}.html",
+                    mime="text/html",
+                    key="mt_download_html_btn",
+                )
 
 
 def _show_signal_analysis() -> None:
@@ -2211,6 +2819,713 @@ def _show_model_assessment() -> None:
     st.warning(DISCLAIMER)
 
 
+def _show_research_operations() -> None:
+    _page_heading(
+        "Research operations",
+        "Milestone 5 · Privacy-preserving study management, longitudinal tracking, "
+        "and operational audit.",
+    )
+    st.warning(RESEARCH_DISCLAIMER)
+
+    # Server-side RBAC gate: only authenticated researchers or admins may access study operations
+    conn_auth = _runtime_db_connection()
+    try:
+        auth_user = _active_authenticated_user(conn_auth)
+    finally:
+        if conn_auth is not None:
+            conn_auth.close()
+    if auth_user is None or auth_user.role not in {"researcher", "admin"}:
+        st.warning(
+            "Researcher or Administrator authentication required to access study operations "
+            "and participant records. Open the Account tab to sign in."
+        )
+        return
+
+    # Database initialization check
+    if not DEFAULT_DB_PATH.is_file():
+        st.info(
+            "The SQLite research study database has not been initialized yet at "
+            "`workspace/voxneuro_research.db`."
+        )
+        col1, _ = st.columns([1, 2])
+        with col1:
+            if st.button("Initialize research database", key="m5_init_db"):
+                try:
+                    applied = run_migrations(DEFAULT_DB_PATH)
+                    st.success(f"Initialized database with {len(applied)} migration(s).")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Migration error: {e}")
+        return
+
+    conn = get_connection(DEFAULT_DB_PATH)
+    try:
+        tab_studies, tab_participants, tab_sessions, tab_longitudinal, tab_audit = st.tabs(
+            [
+                "Studies & Protocols",
+                "DUA & Participants",
+                "Sessions & Ingestion",
+                "QC & Longitudinal Tracking",
+                "Audit Trail & Reports",
+            ]
+        )
+
+        with tab_studies:
+            st.subheader("Registered Studies")
+            studies = list_studies(conn)
+            if not studies:
+                st.info("No studies registered yet.")
+            else:
+                s_data = [
+                    {
+                        "Study ID": s.study_id,
+                        "Name": s.study_name,
+                        "Protocol": f"{s.protocol_id} (v{s.protocol_version})",
+                        "Status": s.study_status,
+                        "Dataset": f"{s.dataset_id} ({s.dataset_version})",
+                        "Created": s.created_at[:10],
+                    }
+                    for s in studies
+                ]
+                st.dataframe(pd.DataFrame(s_data), use_container_width=True)
+
+            with st.expander("Register New Study", expanded=False):
+                with st.form("form_create_study"):
+                    col_s1, col_s2 = st.columns(2)
+                    with col_s1:
+                        f_study_id = st.text_input(
+                            "Study ID", placeholder="STUDY-002", key="f_s_id"
+                        )
+                        f_study_name = st.text_input(
+                            "Study Name",
+                            placeholder="Cross-Domain Longitudinal Voice",
+                            key="f_s_name",
+                        )
+                        f_study_desc = st.text_input(
+                            "Study Description", value="Longitudinal voice study", key="f_s_desc"
+                        )
+                    with col_s2:
+                        protocols = list_protocols(conn)
+                        proto_choices = [
+                            f"{p.protocol_id} (v{p.protocol_version})" for p in protocols
+                        ]
+                        if proto_choices:
+                            f_proto_sel = st.selectbox("Protocol", proto_choices, key="f_s_proto")
+                            f_proto_id = f_proto_sel.split(" (v")[0]
+                            f_proto_ver = f_proto_sel.split(" (v")[1].rstrip(")")
+                        else:
+                            f_proto_id = st.text_input(
+                                "Protocol ID", value="PROTO-001", key="f_s_proto_id"
+                            )
+                            f_proto_ver = st.text_input(
+                                "Protocol Version", value="1.0.0", key="f_s_proto_ver"
+                            )
+                        f_ds_id = st.text_input("Dataset ID", value="DATASET-001", key="f_s_ds_id")
+                        f_ds_ver = st.text_input("Dataset Version", value="1.0", key="f_s_ds_ver")
+
+                    submit_study = st.form_submit_button("Register Study")
+                    if submit_study:
+                        if not f_study_id.strip() or not f_study_name.strip():
+                            st.error("Study ID and Study Name are required.")
+                        else:
+                            try:
+                                new_study = Study(
+                                    study_id=f_study_id.strip(),
+                                    study_name=f_study_name.strip(),
+                                    study_description=f_study_desc.strip(),
+                                    protocol_id=f_proto_id.strip(),
+                                    protocol_version=f_proto_ver.strip(),
+                                    dataset_id=f_ds_id.strip(),
+                                    dataset_version=f_ds_ver.strip(),
+                                    study_status="active",
+                                )
+                                create_study(conn, new_study)
+                                st.success(f"Study '{f_study_id.strip()}' registered successfully.")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed to register study: {e}")
+
+            st.subheader("Protocol Definitions")
+            protocols = list_protocols(conn)
+            if not protocols:
+                st.info("No protocols registered yet.")
+            else:
+                p_data = [
+                    {
+                        "Protocol ID": p.protocol_id,
+                        "Version": p.protocol_version,
+                        "Tasks": ", ".join(p.tasks),
+                        "Expected Visits": p.visits_expected,
+                        "Min Interval (days)": p.minimum_interval_days,
+                    }
+                    for p in protocols
+                ]
+                st.dataframe(pd.DataFrame(p_data), use_container_width=True)
+
+            with st.expander("Create Protocol Definition", expanded=False):
+                with st.form("form_create_protocol"):
+                    col_p1, col_p2 = st.columns(2)
+                    with col_p1:
+                        f_p_id = st.text_input("Protocol ID", placeholder="PROTO-002", key="f_p_id")
+                        f_p_ver = st.text_input("Protocol Version", value="1.0.0", key="f_p_ver")
+                        f_p_tasks = st.multiselect(
+                            "Tasks",
+                            ["sustained_vowel", "ddk", "connected_speech", "vowel_space"],
+                            default=["sustained_vowel", "ddk", "connected_speech", "vowel_space"],
+                            key="f_p_tasks",
+                        )
+                    with col_p2:
+                        f_p_visits = st.number_input(
+                            "Expected Visits", min_value=1, value=3, key="f_p_visits"
+                        )
+                        f_p_interval = st.number_input(
+                            "Min Interval (Days)", min_value=0, value=7, key="f_p_interval"
+                        )
+                        f_p_instructions = st.text_area(
+                            "Instructions",
+                            value="Standard research protocol instructions.",
+                            key="f_p_inst",
+                        )
+
+                    submit_proto = st.form_submit_button("Create Protocol")
+                    if submit_proto:
+                        if not f_p_id.strip() or not f_p_ver.strip() or not f_p_tasks:
+                            st.error("Protocol ID, Version, and at least one task are required.")
+                        else:
+                            try:
+                                new_proto = ProtocolDefinition(
+                                    protocol_id=f_p_id.strip(),
+                                    protocol_version=f_p_ver.strip(),
+                                    tasks=list(f_p_tasks),
+                                    visits_expected=int(f_p_visits),
+                                    minimum_interval_days=int(f_p_interval),
+                                    instructions=f_p_instructions.strip(),
+                                )
+                                create_protocol(conn, new_proto)
+                                st.success(
+                                    f"Protocol '{f_p_id.strip()} (v{f_p_ver.strip()})' "
+                                    "created successfully."
+                                )
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed to create protocol: {e}")
+
+        with tab_participants:
+            st.subheader("Data Use Agreements (DUA)")
+            duas = list_dataset_access(conn)
+            if duas:
+                d_table = [
+                    {
+                        "Dataset ID": d.dataset_id,
+                        "Version": d.dataset_version,
+                        "Approval": d.access_approval_state,
+                        "DUA State": d.dua_state,
+                        "Permitted Tasks": ", ".join(d.permitted_tasks),
+                        "Restrictions": d.storage_restrictions,
+                        "Expires": d.expiration_date or "No Expiry",
+                    }
+                    for d in duas
+                ]
+                st.dataframe(pd.DataFrame(d_table), use_container_width=True)
+            else:
+                st.info("No Data Use Agreements registered yet.")
+
+            with st.expander("Register / Authorize Data Use Agreement (DUA)", expanded=False):
+                with st.form("form_register_dua"):
+                    col_d1, col_d2 = st.columns(2)
+                    with col_d1:
+                        f_dua_ds_id = st.text_input(
+                            "Dataset ID", value="DATASET-001", key="f_d_ds_id"
+                        )
+                        f_dua_ds_ver = st.text_input(
+                            "Dataset Version", value="1.0", key="f_d_ds_ver"
+                        )
+                        f_dua_owner = st.text_input(
+                            "Dataset Owner", value="Research Consortium", key="f_d_owner"
+                        )
+                        f_dua_lic = st.text_input(
+                            "License Type", value="Research Only", key="f_d_lic"
+                        )
+                    with col_d2:
+                        f_dua_app_state = st.selectbox(
+                            "Approval State",
+                            ["APPROVED", "PENDING", "DENIED", "EXPIRED"],
+                            key="f_d_app",
+                        )
+                        f_dua_state = st.selectbox(
+                            "DUA State",
+                            [
+                                "ACTIVE",
+                                "PENDING",
+                                "NOT_REQUIRED",
+                                "RESTRICTED",
+                                "DENIED",
+                                "EXPIRED",
+                            ],
+                            key="f_d_state",
+                        )
+                        f_dua_tasks = st.multiselect(
+                            "Permitted Tasks",
+                            ["sustained_vowel", "ddk", "connected_speech", "vowel_space"],
+                            default=["sustained_vowel", "ddk", "connected_speech", "vowel_space"],
+                            key="f_d_tasks",
+                        )
+                        f_dua_exp = st.text_input(
+                            "Expiration Date (YYYY-MM-DD)", value="2030-12-31", key="f_d_exp"
+                        )
+
+                    submit_dua = st.form_submit_button("Register DUA")
+                    if submit_dua:
+                        try:
+                            dua_rec = DatasetAccessRecord(
+                                dataset_id=f_dua_ds_id.strip(),
+                                dataset_version=f_dua_ds_ver.strip(),
+                                dataset_owner=f_dua_owner.strip(),
+                                license_type=f_dua_lic.strip(),
+                                access_approval_state=f_dua_app_state,
+                                dua_state=f_dua_state,
+                                permitted_tasks=list(f_dua_tasks),
+                                permitted_data_processing_operations=[
+                                    "research_audio_ingestion",
+                                    "feature_extraction",
+                                    "longitudinal_analysis",
+                                ],
+                                storage_restrictions="local_ephemeral_processing_only",
+                                expiration_date=f_dua_exp.strip() or None,
+                            )
+                            register_dataset_access(conn, dua_rec)
+                            st.success(
+                                f"DUA for dataset '{f_dua_ds_id.strip()}' registered successfully."
+                            )
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Failed to register DUA: {e}")
+
+            st.subheader("Enrolled Pseudonymous Cohort")
+            parts = list_participants(conn)
+            if not parts:
+                st.info("No participants enrolled yet.")
+            else:
+                p_table = [
+                    {
+                        "Participant ID": p.participant_id,
+                        "Study ID": p.study_id,
+                        "Enrollment Status": p.enrollment_status,
+                        "Consent Status": p.consent_status,
+                        "Consent Version": p.consent_version,
+                        "Site ID": p.site_id,
+                        "Metadata Safety": p.participant_metadata_status,
+                    }
+                    for p in parts
+                ]
+                st.dataframe(pd.DataFrame(p_table), use_container_width=True)
+
+            with st.expander("Enroll New Participant", expanded=False):
+                with st.form("form_register_participant"):
+                    studies = list_studies(conn)
+                    study_ids = [s.study_id for s in studies]
+                    if study_ids:
+                        f_p_study = st.selectbox("Study ID", study_ids, key="f_part_study")
+                    else:
+                        f_p_study = st.text_input(
+                            "Study ID", value="STUDY-001", key="f_part_study_txt"
+                        )
+                    f_part_id = st.text_input(
+                        "Participant ID (leave blank to auto-generate pseudonymous ID)",
+                        placeholder="PT-XXXXXXXXXXXX",
+                        key="f_part_id",
+                    )
+                    f_site_id = st.text_input("Site ID", value="SITE-01", key="f_part_site")
+                    st.caption(
+                        "Enrollment rule: New participants default to "
+                        "consent_status='pending' and consent_version='none'."
+                    )
+                    submit_part = st.form_submit_button("Enroll Participant")
+                    if submit_part:
+                        try:
+                            assigned_id = (
+                                f_part_id.strip()
+                                if f_part_id.strip()
+                                else generate_pseudonymous_id()
+                            )
+                            new_part = Participant(
+                                participant_id=assigned_id,
+                                study_id=f_p_study.strip(),
+                                site_id=f_site_id.strip(),
+                                enrollment_status="enrolled",
+                                consent_status="pending",
+                                consent_version="none",
+                            )
+                            register_participant(conn, new_part)
+                            st.success(
+                                f"Enrolled participant '{assigned_id}' with pending consent."
+                            )
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Failed to enroll participant: {e}")
+
+            st.subheader("Record Informed Consent")
+            with st.expander("Record Informed Consent for Participant", expanded=False):
+                with st.form("form_record_consent"):
+                    col_c1, col_c2 = st.columns(2)
+                    with col_c1:
+                        c_part_id = st.text_input(
+                            "Participant ID", placeholder="PT-XXXXXXXXXXXX", key="f_c_part_id"
+                        )
+                        c_study_id = st.text_input(
+                            "Study ID", placeholder="STUDY-001", key="f_c_study_id"
+                        )
+                        c_ver = st.text_input("Consent Form Version", value="1.0", key="f_c_ver")
+                    with col_c2:
+                        c_tasks = st.multiselect(
+                            "Permitted Recording Tasks",
+                            ["sustained_vowel", "ddk", "connected_speech", "vowel_space"],
+                            default=["sustained_vowel", "ddk", "connected_speech", "vowel_space"],
+                            key="f_c_tasks",
+                        )
+                        c_retain = st.checkbox(
+                            "Permission to retain derived features", value=True, key="f_c_retain"
+                        )
+                        c_long = st.checkbox(
+                            "Permission for longitudinal tracking", value=True, key="f_c_long"
+                        )
+
+                    submit_consent = st.form_submit_button("Record Consent")
+                    if submit_consent:
+                        if not c_part_id.strip() or not c_study_id.strip():
+                            st.error("Participant ID and Study ID are required.")
+                        else:
+                            try:
+                                c_rec_id = f"CONSENT-{uuid.uuid4().hex[:8].upper()}"
+                                uses = ["biomarker_research"]
+                                if c_long:
+                                    uses.append("longitudinal_analysis")
+                                consent_rec = ConsentRecord(
+                                    consent_record_id=c_rec_id,
+                                    participant_id=c_part_id.strip(),
+                                    study_id=c_study_id.strip(),
+                                    consent_form_version=c_ver.strip(),
+                                    consent_date=utc_now_iso()[:10],
+                                    scope_of_permission=["voice_recording", "feature_retention"],
+                                    permitted_recording_tasks=list(c_tasks),
+                                    permitted_research_uses=uses,
+                                    permission_to_retain_derived_features=c_retain,
+                                    permission_to_retain_audio=False,
+                                )
+                                record_consent(conn, consent_rec)
+                                st.success(f"Recorded active consent for {c_part_id.strip()}.")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed to record consent: {e}")
+
+            st.subheader("Participant Withdrawal & Data Deletion")
+            st.caption(
+                "Withdrawal blocks future processing, marks participant as withdrawn, "
+                "deletes derived acoustic features, restricts sessions, and logs an "
+                "irreversible cryptographic tombstone."
+            )
+            w_col1, w_col2 = st.columns([2, 1])
+            with w_col1:
+                withdraw_id = st.text_input(
+                    "Participant ID to withdraw",
+                    placeholder="PT-XXXXXXXXXXXX",
+                    key="m5_withdraw_id",
+                )
+            with w_col2:
+                st.write("")
+                st.write("")
+                if st.button("Execute withdrawal", key="m5_withdraw_btn"):
+                    if withdraw_id.strip():
+                        try:
+                            res = withdraw_participant(conn, withdraw_id.strip())
+                            n_del = res.get("derived_features_deleted", 0)
+                            n_rest = res.get("sessions_restricted", 0)
+                            st.success(
+                                f"Status: {res['status']} · Deleted {n_del} feature record(s) · "
+                                f"Restricted {n_rest} session(s)."
+                            )
+                            if "tombstone_id" in res:
+                                st.code(f"Tombstone ID: {res['tombstone_id']}")
+                        except Exception as e:
+                            st.error(f"Withdrawal failed: {e}")
+                    else:
+                        st.warning("Please enter a valid participant ID.")
+
+        with tab_sessions:
+            st.subheader("Research Sessions")
+            sessions = list_sessions(conn)
+            if not sessions:
+                st.info("No research sessions created yet.")
+            else:
+                sess_table = [
+                    {
+                        "Session ID": s.session_id,
+                        "Study ID": s.study_id,
+                        "Participant ID": s.participant_id,
+                        "Visit": f"{s.visit_label} (#{s.visit_index})",
+                        "Status": s.overall_session_status,
+                        "Domain": s.acquisition_domain_id,
+                        "Consent Ref": s.consent_reference,
+                        "Recorded": s.recording_timestamp[:16],
+                    }
+                    for s in sessions
+                ]
+                st.dataframe(pd.DataFrame(sess_table), use_container_width=True)
+
+            with st.expander("Schedule Research Session", expanded=False):
+                with st.form("form_create_session"):
+                    col_sess1, col_sess2 = st.columns(2)
+                    with col_sess1:
+                        studies = list_studies(conn)
+                        st_ids = [s.study_id for s in studies]
+                        if st_ids:
+                            f_sess_study = st.selectbox("Study ID", st_ids, key="f_sess_study")
+                        else:
+                            f_sess_study = st.text_input(
+                                "Study ID", value="STUDY-001", key="f_sess_study_txt"
+                            )
+                        f_sess_part = st.text_input(
+                            "Participant ID", placeholder="PT-XXXXXXXXXXXX", key="f_sess_part"
+                        )
+                        f_sess_id = st.text_input(
+                            "Session ID (leave blank to auto-generate)",
+                            placeholder="SESS-XXXXXXXX",
+                            key="f_sess_id",
+                        )
+                    with col_sess2:
+                        f_sess_visit = st.number_input(
+                            "Visit Index", min_value=1, value=1, key="f_sess_visit"
+                        )
+                        f_sess_proto = st.text_input(
+                            "Protocol Version", value="1.0.0", key="f_sess_proto"
+                        )
+                        f_sess_label = st.text_input(
+                            "Visit Label",
+                            value="Baseline" if f_sess_visit == 1 else f"Visit {f_sess_visit}",
+                            key="f_sess_label",
+                        )
+                        f_sess_domain = st.selectbox(
+                            "Recording Domain",
+                            [
+                                "uams_telephone",
+                                "neurovoz_clinic",
+                                "pcgita_booth",
+                                "italian_parkinsons_phone",
+                            ],
+                            key="f_sess_domain",
+                        )
+
+                    submit_sess = st.form_submit_button("Schedule Session")
+                    if submit_sess:
+                        if not f_sess_part.strip():
+                            st.error("Participant ID is required.")
+                        else:
+                            try:
+                                sess_gen_id = (
+                                    f_sess_id.strip()
+                                    if f_sess_id.strip()
+                                    else f"SESS-{uuid.uuid4().hex[:8].upper()}"
+                                )
+                                new_session = ResearchSession(
+                                    session_id=sess_gen_id,
+                                    study_id=f_sess_study.strip(),
+                                    protocol_version=f_sess_proto.strip(),
+                                    participant_id=f_sess_part.strip(),
+                                    visit_index=int(f_sess_visit),
+                                    visit_label=f_sess_label.strip(),
+                                    acquisition_domain_id=f_sess_domain,
+                                )
+                                create_session(conn, new_session)
+                                st.success(f"Session '{sess_gen_id}' created successfully.")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed to create session: {e}")
+
+            st.subheader("Preflight Validation & Multi-Task Audio Ingestion")
+            st.caption(
+                "Preflight validation inspects all 15 operational, consent, DUA, domain, "
+                "and participant authorization checks before audio is processed."
+            )
+            col_pre1, col_pre2 = st.columns([1, 1])
+            with col_pre1:
+                target_sess_id = st.text_input(
+                    "Target Session ID", placeholder="SESS-XXXXXXXX", key="f_target_sess"
+                )
+                if st.button("Run Preflight Validation", key="btn_run_preflight"):
+                    if not target_sess_id.strip():
+                        st.warning("Please enter a Session ID to evaluate.")
+                    else:
+                        try:
+                            is_auth, reason, meta = preflight_session_ingestion(
+                                conn, target_sess_id.strip()
+                            )
+                            if is_auth:
+                                st.success(f"Preflight AUTHORIZED: {reason}")
+                            else:
+                                st.error(f"Preflight REJECTED: {reason}")
+                            with st.expander("Preflight Evaluation Details", expanded=True):
+                                st.json(meta)
+                        except Exception as e:
+                            st.error(f"Preflight check error: {e}")
+
+            with col_pre2:
+                st.markdown("**Upload Multi-Task Audio Files (WAV)**")
+                up_vowel = st.file_uploader(
+                    "1. Sustained Vowel (/a/)", type=["wav"], key="m5_up_vowel"
+                )
+                up_ddk = st.file_uploader(
+                    "2. Diadochokinetic (/pa-ta-ka/)", type=["wav"], key="m5_up_ddk"
+                )
+                up_conn = st.file_uploader("3. Connected Speech", type=["wav"], key="m5_up_conn")
+                up_vs = st.file_uploader("4. Vowel Space (/i/, /u/)", type=["wav"], key="m5_up_vs")
+
+                if st.button("Execute Ingestion Pipeline", key="btn_execute_ingest"):
+                    if not target_sess_id.strip():
+                        st.warning("Please specify a Target Session ID.")
+                    elif not any([up_vowel, up_ddk, up_conn, up_vs]):
+                        st.warning("Please upload at least one audio file to ingest.")
+                    else:
+                        try:
+                            sv_rec = decode_audio(up_vowel.getvalue()) if up_vowel else None
+                            cs_rec = decode_audio(up_conn.getvalue()) if up_conn else None
+                            ddk_dict = (
+                                {"pataka": decode_audio(up_ddk.getvalue())} if up_ddk else None
+                            )
+                            vs_dict = {"i": decode_audio(up_vs.getvalue())} if up_vs else None
+
+                            ingest_res = ingest_session_multitask_audio(
+                                conn,
+                                session_id=target_sess_id.strip(),
+                                sustained_vowel=sv_rec,
+                                ddk_recordings=ddk_dict,
+                                connected_speech=cs_rec,
+                                vowel_space_recordings=vs_dict,
+                            )
+                            st.success(
+                                f"Ingestion {ingest_res.overall_processing_status} · "
+                                f"Tasks: {len(ingest_res.tasks)} · "
+                                f"Schema: {ingest_res.schema_version}"
+                            )
+                            with st.expander("Ingestion Receipt Details", expanded=True):
+                                st.json(ingest_res.to_dict())
+                        except Exception as e:
+                            st.error(f"Ingestion failed: {e}")
+
+        with tab_longitudinal:
+            st.subheader("Operational QC & Attrition")
+            qc = calculate_cohort_qc_metrics(conn, suppress_small_cells=True)
+            c_m = qc["cohort_metrics"]
+            m_col1, m_col2, m_col3 = st.columns(3)
+            with m_col1:
+                st.metric("Total Enrolled", str(c_m["total_enrolled"]))
+            with m_col2:
+                st.metric("Active Consented", str(c_m["active_consented"]))
+            with m_col3:
+                st.metric("Withdrawn", str(c_m["withdrawn"]))
+
+            st.subheader("Visit Retention & Cohort Attrition")
+            attrition = calculate_cohort_attrition(conn, suppress_small_cells=True)
+            if attrition["visits"]:
+                att_table = [
+                    {
+                        "Visit Index": v["visit_index"],
+                        "Participants Present": v["participants_present"],
+                        "Retention Rate": f"{v['retention_rate'] * 100:.1f}%",
+                        "Attrition Rate": f"{v['attrition_rate'] * 100:.1f}%",
+                    }
+                    for v in attrition["visits"]
+                ]
+                st.dataframe(pd.DataFrame(att_table), use_container_width=True)
+            else:
+                st.info("No visit sessions recorded yet.")
+
+            st.subheader("Descriptive Longitudinal Acoustic Changes")
+            st.caption(
+                "STRICT SCIENTIFIC NOTICE: Observations are purely descriptive acoustic "
+                "deltas (Visit_k - Visit_1) and do not represent disease progression "
+                "or clinical status."
+            )
+            long_res = calculate_longitudinal_feature_changes(
+                conn, task_type="sustained_vowel", suppress_small_cells=True
+            )
+            mean_days = long_res["visit_interval_summary"].get("mean_days", "N/A")
+            st.write(
+                f"Evaluated Participants: **{long_res['participants_evaluated']}** · "
+                f"Mean Interval: **{mean_days} days**"
+            )
+            summaries = long_res.get("feature_change_summaries", {})
+            if summaries:
+                summary_rows = [
+                    {
+                        "Feature": fn,
+                        "Mean Delta": f"{data.get('mean_change', 'N/A')}",
+                        "Median Delta": f"{data.get('median_change', 'N/A')}",
+                        "IQR Delta": f"{data.get('iqr_change', 'N/A')}",
+                        "Observations": data.get("n_observations", "N/A"),
+                    }
+                    for fn, data in summaries.items()
+                    if isinstance(data, dict)
+                ]
+                st.dataframe(pd.DataFrame(summary_rows), use_container_width=True)
+
+        with tab_audit:
+            st.subheader("Recent Privacy-Safe Audit Events")
+            events = list_audit_events(conn, limit=15)
+            if events:
+                ev_data = [
+                    {
+                        "Timestamp (UTC)": e["timestamp_utc"],
+                        "Operation": e["operation_type"],
+                        "Entity Type": e["entity_type"],
+                        "Entity ID": e["entity_id"],
+                        "Actor Role": e["actor_role"],
+                    }
+                    for e in events
+                ]
+                st.dataframe(pd.DataFrame(ev_data), use_container_width=True)
+            else:
+                st.info("No audit events recorded.")
+
+            st.subheader("M5 Research Report Exports")
+            r_col1, r_col2 = st.columns(2)
+            with r_col1:
+                overview_rep = generate_study_overview_report(conn)
+                st.download_button(
+                    "Download Study Overview (JSON)",
+                    json.dumps(overview_rep, indent=2),
+                    "study_overview_report.json",
+                    "application/json",
+                    key="m5_rep_overview",
+                )
+                attr_rep = generate_cohort_attrition_report(conn)
+                st.download_button(
+                    "Download Attrition Report (CSV)",
+                    export_report_to_csv(attr_rep, "visits"),
+                    "cohort_attrition_report.csv",
+                    "text/csv",
+                    key="m5_rep_attrition_csv",
+                )
+            with r_col2:
+                sess_rep = generate_session_completion_report(conn)
+                st.download_button(
+                    "Download Session Completion (CSV)",
+                    export_report_to_csv(sess_rep, "session_breakdown"),
+                    "session_completion_report.csv",
+                    "text/csv",
+                    key="m5_rep_session_csv",
+                )
+                long_rep = generate_longitudinal_descriptive_report(conn)
+                st.download_button(
+                    "Download Longitudinal Report (JSON)",
+                    json.dumps(long_rep, indent=2),
+                    "longitudinal_descriptive_report.json",
+                    "application/json",
+                    key="m5_rep_long_json",
+                )
+    finally:
+        conn.close()
+
+
 def _show_reports() -> None:
     _page_heading(
         "Reports",
@@ -2403,54 +3718,176 @@ def _show_method_privacy() -> None:
     )
 
 
+def _on_m6_pill_change() -> None:
+    picked = st.session_state.get("voxneuro_m6_pill")
+    if picked == "Home":
+        st.session_state["voxneuro_m6_view"] = None
+        st.session_state["voxneuro_nav"] = "Overview"
+        st.session_state["_prev_voxneuro_nav"] = "Overview"
+    elif picked in ("Voice Assessment", "Voice Check"):
+        st.session_state["voxneuro_m6_view"] = None
+        st.session_state["voxneuro_nav"] = "Voice assessment"
+        st.session_state["_prev_voxneuro_nav"] = "Voice assessment"
+    elif picked in ("Results", "My Results"):
+        st.session_state["voxneuro_m6_view"] = "Results"
+    elif picked in ("Account", "My Account"):
+        st.session_state["voxneuro_m6_view"] = "Account"
+    elif picked:
+        st.session_state["voxneuro_m6_view"] = picked
+
+
 def main() -> None:
-    with st.sidebar:
+    conn = _runtime_db_connection()
+    active_user = _active_authenticated_user(conn)
+    token = st.session_state.get("voxneuro_auth_token")
+
+    try:
+        with st.sidebar:
+            st.markdown(
+                '<div class="vox-wordmark"><span class="vox-wave" aria-hidden="true">'
+                "<i></i><i></i><i></i><i></i><i></i><i></i><i></i>"
+                "</span>VoxNeuro</div>",
+                unsafe_allow_html=True,
+            )
+            st.caption("VOICE SIGNAL RESEARCH")
+            pages = [
+                "Overview",
+                "Voice assessment",
+                "Multi-task assessment",
+                "Signal analysis",
+                "Feature analysis",
+                "Research model",
+                "Research operations",
+                "Reports",
+                "Method & privacy",
+            ]
+            page = st.radio("Workspace", pages, key="voxneuro_nav", label_visibility="collapsed")
+            st.markdown('<hr class="vox-rule">', unsafe_allow_html=True)
+            st.markdown('<div class="vox-status">Local session</div>', unsafe_allow_html=True)
+            st.caption("Parkinson’s research prototype · No diagnosis")
+            st.caption("Audio is not saved by default.")
+
+        # Detect direct sidebar or programmatic AppTest voxneuro_nav changes cleanly
+        if "_prev_voxneuro_nav" not in st.session_state:
+            st.session_state["_prev_voxneuro_nav"] = page
+        elif st.session_state["_prev_voxneuro_nav"] != page:
+            st.session_state["_prev_voxneuro_nav"] = page
+            st.session_state["voxneuro_m6_view"] = None
+
+        render_brand_bar(
+            user_display=active_user.display_name if active_user else None,
+            role=active_user.role if active_user else None,
+        )
+        if active_user is None:
+            nav_options = [
+                "Home",
+                "How It Works",
+                "Voice Assessment",
+                "My Results",
+                "About VoxNeuro",
+                "My Account",
+            ]
+        else:
+            nav_options = [
+                "Home",
+                "Dashboard",
+                "Voice Assessment",
+                "My Results",
+                "How It Works",
+                "About VoxNeuro",
+                "My History",
+                "My Account",
+            ]
+            if active_user.role in {"researcher", "admin"}:
+                nav_options.append("Researcher")
+            if active_user.role in {"ml_admin", "admin"}:
+                nav_options.append("Model Admin")
+            if active_user.role == "admin":
+                nav_options.append("System Admin")
+
+        st.pills(
+            "Navigation",
+            nav_options,
+            key="voxneuro_m6_pill",
+            label_visibility="collapsed",
+            on_change=_on_m6_pill_change,
+        )
+
+        m6_view = st.session_state.get("voxneuro_m6_view")
+        if m6_view in ("Results", "My Results"):
+            show_plain_results_page(
+                st.session_state.get("voxneuro_prediction"),
+                st.session_state.get("voxneuro_features"),
+                st.session_state.get("voxneuro_quality"),
+                st.session_state.get("voxneuro_record"),
+                html_report=st.session_state.get("voxneuro_html_report"),
+                report_dict=st.session_state.get("voxneuro_report"),
+            )
+        elif m6_view == "How It Works":
+            show_how_it_works()
+        elif m6_view in ("About VoxNeuro", "About"):
+            show_about_page()
+        elif m6_view == "Privacy & Safety":
+            show_privacy_and_safety()
+        elif m6_view in ("Help", "Help & FAQ"):
+            show_help_faq()
+        elif m6_view in ("Account", "My Account"):
+            acc_conn = conn or _ensure_initialized_db_connection()
+            try:
+                show_account_portal(acc_conn)
+            finally:
+                if conn is None:
+                    acc_conn.close()
+        elif m6_view == "Dashboard":
+            if active_user is not None:
+                show_user_dashboard(conn, active_user, _start_guided_assessment)
+            else:
+                acc_conn = conn or _ensure_initialized_db_connection()
+                try:
+                    show_account_portal(acc_conn)
+                finally:
+                    if conn is None:
+                        acc_conn.close()
+        elif m6_view == "My History":
+            show_user_history_page(conn, active_user)
+        elif m6_view == "Researcher":
+            show_researcher_portal(conn, token)
+        elif m6_view == "Model Admin":
+            show_ml_admin_portal(conn, token)
+        elif m6_view == "System Admin":
+            show_system_admin_portal(conn, token, _current_db_path())
+        elif page == "Overview":
+            _show_overview()
+        elif page == "Voice assessment":
+            _show_assessment()
+        elif page == "Multi-task assessment":
+            _show_multitask_assessment()
+        elif page == "Signal analysis":
+            _show_signal_analysis()
+        elif page == "Feature analysis":
+            _show_features()
+        elif page == "Research model":
+            _show_model_assessment()
+        elif page == "Research operations":
+            _show_research_operations()
+        elif page == "Reports":
+            _show_reports()
+        else:
+            _show_method_privacy()
+
         st.markdown(
-            '<div class="vox-wordmark"><span class="vox-wave" aria-hidden="true">'
-            "<i></i><i></i><i></i><i></i><i></i><i></i><i></i>"
-            "</span>VoxNeuro</div>",
+            '<div style="margin-top:3.5rem; padding-top:1.25rem; '
+            "border-top:1px solid #D8D3C8; "
+            'color:#898982; font-size:0.76rem; text-align:center; line-height:1.6;">'
+            "VoxNeuro Research Prototype is an independent academic research project "
+            "and is not affiliated with, sponsored by, or related to VoxNeuro Inc. "
+            "(makers of EEG cognitive assessments). · Non-diagnostic research software."
+            "</div>",
             unsafe_allow_html=True,
         )
-        st.caption("VOICE SIGNAL RESEARCH")
-        pages = [
-            "Overview",
-            "Voice assessment",
-            "Signal analysis",
-            "Feature analysis",
-            "Research model",
-            "Reports",
-            "Method & privacy",
-        ]
-        page = st.radio("Workspace", pages, key="voxneuro_nav", label_visibility="collapsed")
-        st.markdown('<hr class="vox-rule">', unsafe_allow_html=True)
-        st.markdown('<div class="vox-status">Local session</div>', unsafe_allow_html=True)
-        st.caption("Parkinson’s research prototype · No diagnosis")
-        st.caption("Audio is not saved by default.")
-    if page == "Overview":
-        _show_overview()
-    elif page == "Voice assessment":
-        _show_assessment()
-    elif page == "Signal analysis":
-        _show_signal_analysis()
-    elif page == "Feature analysis":
-        _show_features()
-    elif page == "Research model":
-        _show_model_assessment()
-    elif page == "Reports":
-        _show_reports()
-    else:
-        _show_method_privacy()
-
-    st.markdown(
-        '<div style="margin-top:3.5rem; padding-top:1.25rem; '
-        "border-top:1px solid #D8D3C8; "
-        'color:#898982; font-size:0.76rem; text-align:center; line-height:1.6;">'
-        "VoxNeuro Research Prototype is an independent academic research project "
-        "and is not affiliated with, sponsored by, or related to VoxNeuro Inc. "
-        "(makers of EEG cognitive assessments). · Non-diagnostic research software."
-        "</div>",
-        unsafe_allow_html=True,
-    )
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 main()

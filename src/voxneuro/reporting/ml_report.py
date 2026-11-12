@@ -35,6 +35,13 @@ MODEL_LABELS = {
     "hist_gradient_boosting": "Histogram gradient boosting",
     "age_only_logistic": "Age-only logistic comparator",
     "age_plus_voice_logistic": "Age + voice logistic comparator",
+    "majority_classifier": "Majority class baseline",
+    "voice_only_svm": "Voice-only linear SVM",
+    "voice_only_logistic": "Voice-only logistic regression (L2)",
+    "sex_only_logistic": "Sex-only logistic comparator",
+    "age_plus_sex_logistic": "Age + sex logistic comparator",
+    "age_plus_sex_plus_voice_logistic": "Age + sex + voice logistic comparator",
+    "matched_voice_svm": "Matched cohort voice SVM (NOT ESTIMABLE)",
 }
 
 

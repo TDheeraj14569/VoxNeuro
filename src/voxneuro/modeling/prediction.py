@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import math
+from dataclasses import asdict, dataclass
 from numbers import Real
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -23,14 +25,94 @@ from voxneuro.modeling.domains import (
     validate_domain_validation_payload,
 )
 
+VALID_CAPTURE_ORIGINS = frozenset(
+    {
+        "pre_recorded_research",
+        "controlled_research_session",
+        "user_upload",
+        "live_browser_mic",
+        "live_app_mic",
+        "unknown",
+    }
+)
+
+ELIGIBLE_CAPTURE_ORIGINS = frozenset({"pre_recorded_research", "controlled_research_session"})
+
+
+@dataclass(frozen=True)
+class InputCaptureContext:
+    """Explicit acquisition context and provenance for incoming acoustic records."""
+
+    capture_origin: str
+    task_type: str = "sustained_vowel"
+    verified_origin: bool = True
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
 
 def predict_research(
     bundle: dict,
     features: dict[str, float | str],
     *,
     input_domain: str,
+    capture_origin: str = "pre_recorded_research",
+    capture_context: InputCaptureContext | dict[str, Any] | None = None,
 ) -> dict[str, object]:
-    """Predict only when safety metadata, domain, schema, and feature values all match."""
+    """Predict only when safety metadata, domain, origin, schema, and features all match."""
+    effective_origin = capture_origin
+    if capture_context is not None:
+        if isinstance(capture_context, InputCaptureContext):
+            effective_origin = capture_context.capture_origin
+            if capture_context.task_type != "sustained_vowel":
+                raise ModelCompatibilityError(
+                    f"Task type {capture_context.task_type!r} is not compatible "
+                    "with sustained-vowel model."
+                )
+            if not capture_context.verified_origin:
+                raise ModelCompatibilityError("Input capture origin could not be verified.")
+        elif isinstance(capture_context, dict):
+            effective_origin = capture_context.get("capture_origin", "unknown")
+            task_type = capture_context.get("task_type", "sustained_vowel")
+            if task_type != "sustained_vowel":
+                raise ModelCompatibilityError(
+                    f"Task type {task_type!r} is not compatible with sustained-vowel model."
+                )
+            if capture_context.get("verified_origin") is False:
+                raise ModelCompatibilityError("Input capture origin could not be verified.")
+        else:
+            raise ModelCompatibilityError("Invalid capture_context type.")
+
+    if (
+        effective_origin is None
+        or not isinstance(effective_origin, str)
+        or not effective_origin.strip()
+        or effective_origin.casefold() in {"unknown", "none", "null"}
+    ):
+        raise ModelCompatibilityError(
+            "Acquisition origin is missing or unknown; inference must fail closed."
+        )
+
+    try:
+        norm_origin = canonicalize_domain(effective_origin)
+    except ValueError as exc:
+        raise ModelCompatibilityError(f"Invalid capture origin: {exc}") from exc
+
+    if is_microphone_domain(norm_origin) or any(
+        token
+        in {"upload", "user_upload", "live", "browser", "mic", "microphone", "smartphone", "laptop"}
+        for token in norm_origin.split("_")
+    ):
+        raise ModelCompatibilityError(
+            f"Capture origin {effective_origin!r} is a microphone or user-upload source "
+            "and is ineligible for inference."
+        )
+
+    if norm_origin not in ELIGIBLE_CAPTURE_ORIGINS:
+        raise ModelCompatibilityError(
+            f"Capture origin {effective_origin!r} is not eligible for inference."
+        )
+
     try:
         normalized_domain = canonicalize_domain(input_domain)
     except ValueError as exc:

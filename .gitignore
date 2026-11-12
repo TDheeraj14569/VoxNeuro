@@ -57,3 +57,6 @@ node_modules/
 VoxNeuro_source_audit.zip
 VoxNeuro_AI_review_bundle.zip
 
+workspace/
+*.db
+*.sqlite3
