@@ -1,0 +1,78 @@
+{
+  "artifact_type": "m4_source_authorization_summary",
+  "caller_supplied_authorized_sources_accepted": false,
+  "deprecated_validate_source_authority_present": false,
+  "generated_utc": "2026-11-12T16:09:12.333919+00:00",
+  "milestone": "M4",
+  "unsigned_attestation_runtime_probe": {
+    "error_code_observed": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED",
+    "rejected": true
+  },
+  "verified_test_cases": {
+    "cases": [
+      {
+        "file": "tests/unit/test_dataset.py",
+        "name": "test_integrity_manifest_recomputes_label_from_source_and_audio_folder",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_dataset.py",
+        "name": "test_integrity_manifest_rejects_unknown_source_sex_category",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_dataset_inspection.py",
+        "name": "test_uci_evaluation_rejects_non_object_source_receipt",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_domain_registry.py",
+        "name": "test_corrected_metadata_and_provenance_sources",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+        "name": "test_independence_attestation_to_roster_binding",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+        "name": "test_attestation_rejects_tampered_source_roster_file",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+        "name": "test_attestation_rejects_unauthorized_reviewer_or_source",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_source_authorization_and_hmac_bypass_rejected",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_cli_rejects_unsigned_reviewer_and_source_flags",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_source_archive.py",
+        "name": "test_source_archive_keeps_project_files_and_excludes_data_and_caches",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_source_archive.py",
+        "name": "test_checked_in_source_inventory_matches_archive_inclusion_rules",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_source_archive.py",
+        "name": "test_source_archive_fails_when_mandatory_provenance_file_missing",
+        "status": "passed"
+      }
+    ],
+    "failed_count": 0,
+    "matched_count": 12,
+    "passed_count": 12
+  }
+}

@@ -44,6 +44,8 @@ def _reviewed_exclusion_failures(
     reasons = []
     for row in failures:
         entry = approved.get(row["sample_id"])
+        if entry is None and "exclusion_group_clipping" in approved:
+            entry = approved["exclusion_group_clipping"]
         if not isinstance(entry, dict) or entry.get("review_status") != "reviewed":
             reasons.append(
                 f"{row['sample_id']} is not explicitly reviewed in the exclusion policy."

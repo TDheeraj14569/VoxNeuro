@@ -1,5 +1,6 @@
 Included file counts by top-level path (same source-archive rules):
 
+.env.example: 1
 .gitattributes: 1
 .github: 1
 .gitignore: 1
@@ -7,18 +8,19 @@ Included file counts by top-level path (same source-archive rules):
 AI_PROJECT_CONTEXT.txt: 1
 app.py: 1
 artifacts: 2
-configs: 6
+configs: 8
 data: 4
-docs: 63
+docs: 121
 frontend: 7
 LICENSE: 1
 pyproject.toml: 1
 README.md: 1
+RELEASE_MANIFEST.json: 1
 requirements-lock.txt: 1
-scripts: 12
-src: 40
-tests: 36
+scripts: 23
+src: 85
+tests: 84
 uv.lock: 1
 WORK_LOG.md: 1
 
-Total: 182
+Total: 348

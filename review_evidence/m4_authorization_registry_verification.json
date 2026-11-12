@@ -1,0 +1,65 @@
+{
+  "artifact_type": "m4_authorization_registry_verification",
+  "default_authority_key_id": "voxneuro-m4-authority-ed25519-v1",
+  "generated_utc": "2026-11-12T16:09:08.265302+00:00",
+  "milestone": "M4",
+  "pinned_public_keys_hex": {
+    "voxneuro-m4-authority-ed25519-v1": "f0161e1dcd64c2b464d5c1344de1554886780a1fbd3c6efeecff2046aaed44db"
+  },
+  "pinned_trust_anchors_config": "configs/m4_trust_anchors.yaml",
+  "pinned_trust_anchors_sha256": "303d290e894c30dca34b73f3af77d9de212049cd2cd1d12b7526b6378ddaa907",
+  "release_private_signing_keys_bundled": false,
+  "signature_algorithm": "Ed25519 (RFC 8032 pure-Python verifier, pinned trust anchors)",
+  "unsigned_registry_runtime_probe": {
+    "detail": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED: signed authorization registry is required.",
+    "status_code": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED",
+    "verified": false
+  },
+  "verified_test_cases": {
+    "cases": [
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_ed25519_rfc8032_vectors",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_registry_signature_and_trust_anchor_failures",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_reviewer_authorization_failures",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_source_authorization_and_hmac_bypass_rejected",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_tampered_trust_anchor_yaml_fails_closed",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_dataset_access_database_authenticity_required",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_cli_rejects_unsigned_reviewer_and_source_flags",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_dua_to_signed_registry_cross_binding_enforcement",
+        "status": "passed"
+      }
+    ],
+    "failed_count": 0,
+    "matched_count": 8,
+    "passed_count": 8
+  }
+}

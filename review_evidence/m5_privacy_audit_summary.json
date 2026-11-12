@@ -1,0 +1,40 @@
+{
+  "audit_logging": {
+    "automatic_pii_redaction": true,
+    "redacted_terms": [
+      "name",
+      "email",
+      "phone",
+      "address",
+      "mrn",
+      "password",
+      "token"
+    ],
+    "redaction_replacement": "[REDACTED_PII]",
+    "relational_audit_table": "audit_log"
+  },
+  "immutable_processing_receipts": {
+    "cryptographic_provenance_bound": [
+      "project_code_fingerprint",
+      "task_schema_fingerprints",
+      "audio_config_fingerprint",
+      "feature_config_fingerprint",
+      "domain_metadata_fingerprint",
+      "feature_table_checksum"
+    ],
+    "receipt_entity": "ProcessingRunReceipt",
+    "receipt_hash_algorithm": "SHA-256"
+  },
+  "milestone": "M5",
+  "pseudonymity_protections": {
+    "direct_pii_rejected": true,
+    "participant_id_format": "PT-XXXXXXXXXXXX (12-char cryptographically random hex)",
+    "pii_detection_regex_rules": [
+      "Email address patterns",
+      "Phone number / SSN 3-3-4 patterns",
+      "Explicit PII label prefixes (mrn=, ssn=, dob=, patient=, name=)"
+    ]
+  },
+  "schema_version": "voxneuro.privacy_audit.v1",
+  "timestamp_utc": "2026-11-12T16:09:13.982850+00:00"
+}

@@ -1,0 +1,33 @@
+{
+  "artifact_type": "m4_dataset_access_authentication_summary",
+  "authoritative_storage": "SQLite dataset_access (migrated through 005) + 12-point signed AuthorizationTrustRegistry cross-binding + on-disk DUA artifact SHA-256 verification",
+  "caller_supplied_dataset_access_record_bypass_rejected": true,
+  "generated_utc": "2026-11-12T16:09:12.342923+00:00",
+  "milestone": "M4",
+  "runtime_probe_without_study_conn": {
+    "error_code_observed": "DATASET_AUTHORIZATION_NOT_VERIFIED",
+    "rejected": true
+  },
+  "verified_test_cases": {
+    "cases": [
+      {
+        "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+        "name": "test_receipt_rejects_forged_approval_against_pending_or_expired_db_dua",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_dataset_access_database_authenticity_required",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_dua_to_signed_registry_cross_binding_enforcement",
+        "status": "passed"
+      }
+    ],
+    "failed_count": 0,
+    "matched_count": 3,
+    "passed_count": 3
+  }
+}

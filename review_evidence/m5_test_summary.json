@@ -1,0 +1,4661 @@
+{
+  "all_passed": true,
+  "categories": {
+    "m0_m3_tests": {
+      "failed": 0,
+      "passed": 427,
+      "total": 427
+    },
+    "m4_domain_validation_tests": {
+      "failed": 0,
+      "passed": 75,
+      "total": 75
+    },
+    "m5_integration_tests": {
+      "failed": 0,
+      "passed": 18,
+      "total": 18
+    },
+    "m5_study_operations_unit_tests": {
+      "failed": 0,
+      "passed": 49,
+      "total": 49
+    },
+    "ui_streamlit_tests": {
+      "failed": 0,
+      "passed": 8,
+      "total": 8
+    }
+  },
+  "error_tests": 0,
+  "execution_command": "uv run pytest -q --junitxml=<temporary-report-path>",
+  "execution_time_seconds": 84.64,
+  "exit_code": 0,
+  "failed_tests": 0,
+  "generated_utc": "2026-11-12T16:10:41.066075+00:00",
+  "milestone": "M5",
+  "passed_tests": 577,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python_version": "3.12.16",
+  "skipped_tests": 0,
+  "test_cases": [
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_home_renders_and_start_button_opens_recording_page",
+      "status": "passed",
+      "time_seconds": 0.629
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_wav_upload_runs_analysis_features_and_report",
+      "status": "passed",
+      "time_seconds": 4.156
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_all_navigation_sections_render_without_exceptions",
+      "status": "passed",
+      "time_seconds": 1.187
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_invalid_wav_shows_actionable_error_without_crashing",
+      "status": "passed",
+      "time_seconds": 0.516
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_shows_safe_empty_state_when_research_receipts_and_report_are_absent",
+      "status": "passed",
+      "time_seconds": 0.331
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_stereo_upload_displays_stereo_channel_text",
+      "status": "passed",
+      "time_seconds": 0.686
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_nonzero_permitted_clipping_displays_measured_percentage",
+      "status": "passed",
+      "time_seconds": 0.594
+    },
+    {
+      "category": "ui_streamlit_tests",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "name": "test_app_acoustic_benchmark_cards_render_em_dash_for_missing_values",
+      "status": "passed",
+      "time_seconds": 0.012
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_audio_pipeline",
+      "file": "tests/integration/test_audio_pipeline.py",
+      "name": "test_valid_wav_runs_end_to_end_to_features",
+      "status": "passed",
+      "time_seconds": 0.043
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_inference_pipeline",
+      "file": "tests/integration/test_inference_pipeline.py",
+      "name": "test_research_bundle_prediction_contract",
+      "status": "passed",
+      "time_seconds": 0.024
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_m2_bias_pipeline",
+      "file": "tests/integration/test_m2_bias_pipeline.py",
+      "name": "test_m2_bias_analysis_pipeline_execution",
+      "status": "passed",
+      "time_seconds": 1.081
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_m2_bias_pipeline",
+      "file": "tests/integration/test_m2_bias_pipeline.py",
+      "name": "test_m2_demographic_evaluation_outputs_validation",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_m2_bias_pipeline",
+      "file": "tests/integration/test_m2_bias_pipeline.py",
+      "name": "test_m2_report_data_consistency",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.integration.test_m4_domain_pipeline",
+      "file": "tests/integration/test_m4_domain_pipeline.py",
+      "name": "test_domain_pipeline_end_to_end",
+      "status": "passed",
+      "time_seconds": 0.056
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "name": "test_safety_gate_trusted_allowlist_is_strictly_empty",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "name": "test_safety_gate_microphone_inference_is_strictly_disabled",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "name": "test_safety_gate_registry_approved_domains_is_strictly_empty",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "name": "test_safety_gate_reference_model_bundle_safety_flags",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.integration.test_m5_operations_pipeline",
+      "file": "tests/integration/test_m5_operations_pipeline.py",
+      "name": "test_m5_operations_pipeline_end_to_end",
+      "status": "passed",
+      "time_seconds": 2.286
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "name": "test_multitask_page_renders_without_exception",
+      "status": "passed",
+      "time_seconds": 0.222
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "name": "test_research_operations_page_renders_without_exception",
+      "status": "passed",
+      "time_seconds": 0.221
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "name": "test_multitask_ddk_upload_and_analysis",
+      "status": "passed",
+      "time_seconds": 0.44
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "name": "test_multitask_connected_speech_upload_and_analysis",
+      "status": "passed",
+      "time_seconds": 0.464
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "name": "test_multitask_vowel_space_upload_and_computation",
+      "status": "passed",
+      "time_seconds": 0.566
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "name": "test_multitask_unified_session_assembly_and_clear",
+      "status": "passed",
+      "time_seconds": 0.638
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.integration.test_training_pipeline",
+      "file": "tests/integration/test_training_pipeline.py",
+      "name": "test_grouped_evaluation_and_fixed_fit_are_usable",
+      "status": "passed",
+      "time_seconds": 1.401
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_is_mono_finite_and_render_bounded",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_supports_start_seconds_offset",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_downsampling_preserves_short_transients",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples0]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples1]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples2]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples3]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples4]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples5]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples6]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples7]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_waveform_payload_rejects_invalid_samples[samples8]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_spectrogram_payload_is_bounded_and_uses_fixed_db_scale",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_spectrogram_payload_rejects_nyquist_and_stereo_input",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_local_viewer_embeds_the_built_bundle_and_has_a_fallback",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_home_visualization_identifies_its_decorative_status",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "name": "test_spectrogram_payload_validates_types",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ai_review_bundle",
+      "file": "tests/unit/test_ai_review_bundle.py",
+      "name": "test_ai_review_bundle_builds_and_verifies_integrity",
+      "status": "passed",
+      "time_seconds": 0.706
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ai_review_bundle",
+      "file": "tests/unit/test_ai_review_bundle.py",
+      "name": "test_ai_review_bundle_blocks_sample_ids_and_forbidden_binaries",
+      "status": "passed",
+      "time_seconds": 0.635
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ai_review_bundle",
+      "file": "tests/unit/test_ai_review_bundle.py",
+      "name": "test_ai_review_bundle_readme_hashes_match_entries",
+      "status": "passed",
+      "time_seconds": 0.649
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_reports_actual_metadata",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_accepts_bytesio_directly",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_corrupt_wav_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_empty_wav_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_non_wav_container_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_wave_extensible_container_is_accepted",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_unsupported_sample_rate_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.036
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_invalid_sample_rate[16000.5-TypeError-sample_rate must be an integer]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_invalid_sample_rate[8000.0-TypeError-sample_rate must be an integer]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_invalid_sample_rate[True-TypeError-sample_rate must be an integer]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_invalid_sample_rate[4000-ValueError-sample_rate must be an integer between 8000 and 48000 Hz]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_invalid_sample_rate[96000-ValueError-sample_rate must be an integer between 8000 and 48000 Hz]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_complex_samples",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_rejects_non_numeric_samples",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_three_channel_wav_is_rejected_with_audio_read_error",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_audio_record_converts_list_samples_to_numpy_array",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_audio_exceeding_duration_limit",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[nan]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[inf]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[-inf]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[-1.0]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[0.0]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[True]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[False]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[300]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "name": "test_frame_rms_returns_seconds_and_nonnegative_levels",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "name": "test_frame_rms_rejects_invalid_configuration[0-20]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "name": "test_frame_rms_rejects_invalid_configuration[16000-0]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "name": "test_frame_rms_rejects_invalid_configuration[16000--1]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "name": "test_frame_rms_rejects_stereo_instead_of_flattening_channels",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "name": "test_frame_rms_rejects_non_finite_samples",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_valid_sustained_vowel_passes",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_silence_and_short_input_are_rejected_with_reasons",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_clipping_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_zero_clipping_limit_accepts_a_clean_recording",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_clipping_limit_accepts_equality_and_rejects_only_above_it",
+      "status": "passed",
+      "time_seconds": 0.016
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_invalid_audio_dimensions_return_structured_validation_errors[samples0-2-Audio must have one or two channels]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_invalid_audio_dimensions_return_structured_validation_errors[samples1-2-Audio must have one or two channels]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_invalid_audio_dimensions_return_structured_validation_errors[samples2-1-channel metadata does not match the sample-array shape]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_nonfinite_samples_are_rejected",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_empty_audio_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_quiet_nonzero_audio_is_rejected_as_low_level",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_long_audio_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.062
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_unvoiced_noise_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_stereo_phase_cancellation_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_stereo_phase_cancellation_is_invalid_before_processing",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_unknown_mono_policy_fails_closed",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_audio_validation_config_enforces_numeric_ranges",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_audio_validation_with_dc_offset_does_not_artificially_fail_harmonics",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_pure_sine_tone_is_rejected_as_non_vocal",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_square_wave_is_rejected_as_synthetic",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_praat_pitch_failure_with_zero_min_voiced_fraction_returns_clean_result",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_validate_audio_rejects_invalid_sample_rate",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_validate_audio_rejects_complex_samples",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_validate_audio_rejects_non_numeric_object_samples",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_validate_audio_rejects_boolean_samples",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_audio_validation_config_from_dict_and_thresholds",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_audio_validation_config_from_dict_rejects_type_coercion",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_audio_validation_config_from_yaml_loader",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "name": "test_validate_audio_early_exit_on_invalid_duration",
+      "status": "passed",
+      "time_seconds": 0.059
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "name": "test_demographic_summary_handles_malformed_missing_boolean_and_out_of_range_ages",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "name": "test_duplicate_hash_summary_ignores_missing_and_malformed_values",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "name": "test_dataset_audit_returns_nonzero_for_label_mismatch",
+      "status": "passed",
+      "time_seconds": 0.035
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "name": "test_dataset_audit_handles_missing_match_column_without_traceback",
+      "status": "passed",
+      "time_seconds": 0.031
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "name": "test_dataset_audit_reports_malformed_and_missing_ages_as_json",
+      "status": "passed",
+      "time_seconds": 0.015
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "name": "test_dataset_audit_fails_for_boolean_age_values",
+      "status": "passed",
+      "time_seconds": 0.017
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_sanitize_for_json_precision_and_types",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_clopper_pearson_bounds",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_pooled_sd_calculation",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_age_distribution",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_rank_biserial_sign_convention",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_age_student_t_confidence_intervals",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_cramers_v_without_yates",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_age_distribution_missing_columns",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_age_distribution_missing_class",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_sex_distribution",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_sex_distribution_missing_values",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_joint_distribution",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_joint_distribution_no_support",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_validate_demographic_integrity",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_age_strata_small_cell_suppression",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_feature_level_associations",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "name": "test_audit_quality_attrition",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[PwPD-PD]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[PD-PD]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[HC-HC]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[healthy control-HC]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[None]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[nan]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[unknown]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[unclassified]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_folder_mapping_requires_an_exact_known_class_folder",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "name": "test_duplicate_normalized_sample_ids_must_have_consistent_metadata",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_calibration_and_cards",
+      "file": "tests/unit/test_calibration_and_cards.py",
+      "name": "test_calibration_summary_requires_binary_oof_labels_and_probabilities",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_calibration_and_cards",
+      "file": "tests/unit/test_calibration_and_cards.py",
+      "name": "test_model_card_template_keeps_research_only_boundary",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_all_checked_in_configurations_pass_typed_validation[application_config.yaml]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_all_checked_in_configurations_pass_typed_validation[audio_config.yaml]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_all_checked_in_configurations_pass_typed_validation[feature_config.yaml]",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_all_checked_in_configurations_pass_typed_validation[model_config.yaml]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_all_checked_in_configurations_pass_typed_validation[reviewed_exclusions.yaml]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[application_config.yaml-updates0-store_recordings]",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[application_config.yaml-updates1-unknown keys]",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[audio_config.yaml-updates2-finite number]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[audio_config.yaml-updates3-less than]",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[feature_config.yaml-updates4-less than]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[feature_config.yaml-updates5-cannot exceed]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates6-cv_splits]",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates7-inner_cv_splits]",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates8-cv_repeats]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates9-bootstrap_iterations]",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates10-not supported]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_feature_configuration_requires_the_schema_mfcc_count[12]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_feature_configuration_requires_the_schema_mfcc_count[14]",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_feature_configuration_rejects_cutoff_at_target_nyquist",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_configuration_loader_rejects_missing_keys_and_unknown_config_names",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "name": "test_reviewed_exclusion_config_rejects_unreviewed_entries",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "name": "test_connected_speech_schema_fingerprint_and_features",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "name": "test_segmentation_detects_known_bouts_and_pauses",
+      "status": "passed",
+      "time_seconds": 0.014
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "name": "test_prosodic_pitch_metrics_accuracy",
+      "status": "passed",
+      "time_seconds": 0.013
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "name": "test_intensity_metrics_extracted",
+      "status": "passed",
+      "time_seconds": 0.013
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_manifest_flags_duplicate_ids_and_missing_paths",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_feature_validator_rejects_identity_predictor",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_nested_evaluation_receipt_checks_code_data_and_artifact_hashes",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_feature_validator_preserves_missing_measures_but_rejects_malformed_text",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_feature_validator_rejects_boolean_measurements[True]",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_feature_validator_rejects_boolean_measurements[False]",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_feature_validator_rejects_boolean_measurements[boolean_value2]",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_feature_validator_rejects_boolean_measurements[boolean_value3]",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_manifest_rejects_empty_rows_and_malformed_waveform_hashes",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_manifest_verifies_sha256_against_existing_audio",
+      "status": "passed",
+      "time_seconds": 0.022
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_recomputes_label_from_source_and_audio_folder",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_label_metadata_hash_and_duplicate_issues",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_requires_match_and_hash_columns",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[True]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[False]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[age2]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[age3]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_unknown_source_sex_category",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_conflicting_repeated_participant_demographics[ages0-sex_codes0-age]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_integrity_manifest_rejects_conflicting_repeated_participant_demographics[ages1-sex_codes1-sex]",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_extraction_receipt_must_match_current_manifest_and_feature_files",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_evaluation_receipt_must_match_current_grouped_evaluation_outputs",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[[]]",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[\"text\"]",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[7]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[true]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[null]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_extract_zip_refreshes_partial_existing_output",
+      "status": "passed",
+      "time_seconds": 0.047
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_extract_zip_rejects_checksum_mismatch_without_touching_output",
+      "status": "passed",
+      "time_seconds": 0.023
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_extract_zip_rejects_path_traversal",
+      "status": "passed",
+      "time_seconds": 0.028
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_extract_zip_rejects_windows_absolute_member_paths",
+      "status": "passed",
+      "time_seconds": 0.031
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_extract_zip_rejects_alternate_stream_member_paths",
+      "status": "passed",
+      "time_seconds": 0.032
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_archive_listing_rejects_unsafe_or_unexpected_members[members0--rw-r--r-- 0 0 10 Feb 1 ../outside.csv]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_archive_listing_rejects_unsafe_or_unexpected_members[members1-lrwxrwxrwx 0 0 20 Feb 1 pd_speech_features.csv]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_archive_listing_rejects_unsafe_or_unexpected_members[members2--rw-r--r-- 0 0 10 Feb 1 pd_speech_features.csv]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_accepts_the_documented_repeated_participant_structure",
+      "status": "passed",
+      "time_seconds": 0.235
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[id-755-0-exactly three recordings]",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[gender-0-None-missing values]",
+      "status": "passed",
+      "time_seconds": 0.011
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[gender-0-2-0/1 encoding]",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[class-0-0-class counts]",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[PPE-0-corrupt-nonnumeric]",
+      "status": "passed",
+      "time_seconds": 0.109
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[PPE-0-inf-non-finite]",
+      "status": "passed",
+      "time_seconds": 0.14
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[PPE-0-True-Boolean]",
+      "status": "passed",
+      "time_seconds": 0.106
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_table_rejects_header_name_or_order_drift",
+      "status": "passed",
+      "time_seconds": 0.016
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_inspection_reextracts_csv_without_a_matching_archive_receipt",
+      "status": "passed",
+      "time_seconds": 0.019
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_uci_evaluation_rejects_non_object_source_receipt",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "name": "test_inspector_supports_uci_only_without_calling_uams",
+      "status": "passed",
+      "time_seconds": 0.013
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_io",
+      "file": "tests/unit/test_dataset_io.py",
+      "name": "test_load_feature_table_requires_path_and_identity_columns",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_dataset_io",
+      "file": "tests/unit/test_dataset_io.py",
+      "name": "test_generic_audio_manifest_never_guesses_class_and_uses_content_hash",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "name": "test_ddk_schema_fingerprint_and_feature_names",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "name": "test_event_detection_accuracy_on_known_rate",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "name": "test_variability_metrics_on_uniform_vs_jittered_trains",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "name": "test_rate_drift_slope_detects_acceleration",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "name": "test_insufficient_signal_returns_null_features",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "name": "test_four_stimuli_types_supported",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "name": "test_build_demographic_comparator_pipelines",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "name": "test_paired_bootstrap_ci_identical",
+      "status": "passed",
+      "time_seconds": 0.977
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "name": "test_paired_bootstrap_ci_reproducibility",
+      "status": "passed",
+      "time_seconds": 4.057
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "name": "test_evaluate_demographic_models_synthetic_and_decision_rules",
+      "status": "passed",
+      "time_seconds": 6.303
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_create_and_validate_pending_dossier",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_premature_approval_claim",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_zero_participants_with_independent_validation_true",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_zero_participants_with_numeric_overlap_count",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_zero_participants_with_overlap_checked_true",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_overlap_checked_without_receipt",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_zero_recordings_with_frozen_model_applied_true",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_dossier_rejects_null_metric_labelled_estimated",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_candidate_dossier_strictly_rejected_by_compatibility_report_loader",
+      "status": "passed",
+      "time_seconds": 0.025
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_candidate_dossier_cannot_approve_bundle",
+      "status": "passed",
+      "time_seconds": 0.026
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_pending_dossier_acquisition_differences_are_domain_specific",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "name": "test_documentation_does_not_claim_verified_independence_while_not_assessed",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_load_default_registry",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_registry_normalization",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_registry_rejects_duplicate_domain_declarations",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_registry_rejects_invalid_device_category",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_corrected_metadata_and_provenance_sources",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_registry_safety_enforces_approved_domain_consistency",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "name": "test_ipvs_metadata_and_register_scientific_consistency",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_compare_acquisition_metadata",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_standardized_mean_difference_calculation",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_benjamini_hochberg_fdr_monotonicity",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_feature_shift_and_summary_generation",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_compute_feature_shift_rejects_identical_self_comparison",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_generate_domain_shift_evidence_pending_when_no_external_data",
+      "status": "passed",
+      "time_seconds": 0.017
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "name": "test_generate_domain_shift_evidence_with_external_data",
+      "status": "passed",
+      "time_seconds": 0.093
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_test_summary_not_hardcoded",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_generator_captures_simulated_failure",
+      "status": "passed",
+      "time_seconds": 0.817
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_portable_command_excludes_absolute_paths_and_identifies_targets",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_evidence_excludes_unix_home_and_usernames",
+      "status": "passed",
+      "time_seconds": 1.96
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_temporary_report_paths_replaced_with_placeholder",
+      "status": "passed",
+      "time_seconds": 0.728
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_test_counts_derived_from_actual_junit_xml",
+      "status": "passed",
+      "time_seconds": 0.706
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_sanitized_target_path_normalization",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "name": "test_m4_evidence_generator_handles_pending_state",
+      "status": "passed",
+      "time_seconds": 0.87
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "name": "test_load_frozen_reference_model",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "name": "test_evaluate_frozen_model_bootstrap",
+      "status": "passed",
+      "time_seconds": 0.639
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "name": "test_small_cell_suppression_on_small_cohort",
+      "status": "passed",
+      "time_seconds": 0.018
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "name": "test_build_quality_attrition_summary",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "name": "test_participant_independence_verification",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "name": "test_evaluation_provenance_receipt_verification",
+      "status": "passed",
+      "time_seconds": 0.287
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "name": "test_partial_extraction_requires_explicit_reviewed_policy",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "name": "test_reviewed_exclusion_does_not_allow_different_failure_modes",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "name": "test_extraction_script_validates_manifest_before_processing",
+      "status": "passed",
+      "time_seconds": 0.054
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "name": "test_partial_failure_cannot_write_successful_feature_table",
+      "status": "passed",
+      "time_seconds": 0.067
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_features_follow_versioned_schema_and_are_finite_when_defined",
+      "status": "passed",
+      "time_seconds": 0.091
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_feature_schema_has_no_identity_or_label_columns",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_mfcc_names_are_zero_based_and_feature_band_is_versioned",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_feature_configuration_fingerprint_changes_with_extraction_settings",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_feature_configuration_schema_version_must_match_implementation",
+      "status": "passed",
+      "time_seconds": 0.011
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_feature_extractor_rejects_multichannel_input_instead_of_interleaving",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_standalone_spectral_extractor_rejects_stereo_instead_of_flattening",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_spectral_extractor_rejects_cutoff_at_effective_nyquist",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_f0_summaries_require_at_least_three_voiced_frames[0.04]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_f0_summaries_require_at_least_three_voiced_frames[0.06]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[12]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[14]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[13.0]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[True]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_mfcc_units_and_standard_deviation_validity_are_explicit",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_hnr_calculation_excludes_praat_undefined_unvoiced_frames",
+      "status": "passed",
+      "time_seconds": 0.014
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples0]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples1]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples2]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples3]",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[16000.5]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[True]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[False]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[4000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[96000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[16000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_sample_rates[-16000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[16000.5]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[True]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[False]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[0]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[4000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[96000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[16000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[-16000]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_lower_level_extractors_reject_non_numeric_and_complex_arrays",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs0-pitch_floor_hz]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs1-pitch_floor_hz]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs2-pitch_ceiling_hz]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs3-pitch_floor_hz must be strictly less]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs4-pitch_step_seconds]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs5-mel_bands]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs6-fft_window_samples]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs7-hop_samples]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs8-mel_min_hz]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs9-common_max_hz]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs10-common_max_hz]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs11-spectral_rolloff_fraction]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_unnormalized_amplitude[1.000001]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_unnormalized_amplitude[-1.000001]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_unnormalized_amplitude[2.5]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "name": "test_extract_features_rejects_unnormalized_amplitude[-3.0]",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_html_report",
+      "file": "tests/unit/test_html_report.py",
+      "name": "test_individual_html_report_contains_actual_features_and_embedded_plots",
+      "status": "passed",
+      "time_seconds": 0.012
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_missing_domain",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_unknown_domain",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_unapproved_domain",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_candidate_dossier_as_report",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_modified_payload",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_wrong_hash",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_when_allowlist_is_empty",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_live_microphone",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_smartphone_alias",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_browser_microphone",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_laptop_microphone",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_neutral_domain_with_microphone_capture_origin",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_unknown_capture_origin",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_incompatible_feature_schema",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_incompatible_preprocessing",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_rejects_missing_model_metadata",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "name": "test_safety_accepts_verified_research_capture_context",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "name": "test_core_docs_exist",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "name": "test_no_forbidden_overstatements_in_docs",
+      "status": "passed",
+      "time_seconds": 0.012
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "name": "test_primary_paired_delta_ba_values",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "name": "test_primary_paired_confidence_intervals",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "name": "test_mcnemar_qualified_as_supplementary",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "name": "test_scientific_uncertainty_acknowledged",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_age_subgroup_csv_agrees_with_json",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_markdown_report_age_table_matches_csv_and_json",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_feature_fdr_csv_schema_and_integrity",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_markdown_report_top5_fdr_features_match_csv",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_no_obsolete_feature_names_in_m2_reports",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_scientific_wording_conformance",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_external_protocol_scientific_rigor",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_negative_age_table_mutation_fails",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_negative_obsolete_feature_name_injection_fails",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "name": "test_negative_corrupted_fdr_q_value_fails",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_m3_docs_exist",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_no_unsupported_healthy_vsa_ranges",
+      "status": "passed",
+      "time_seconds": 0.013
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_no_deterministic_parkinsons_claims_from_vsa",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_ddk_does_not_claim_direct_motor_planning",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_connected_speech_does_not_claim_direct_breathing_measurement",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_vowel_space_does_not_claim_physical_articulatory_movement",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_sustained_vowel_does_not_claim_mucosal_wave_measurement",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "name": "test_synthetic_fixtures_strictly_software_verification",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_independence_verification_requires_common_identity_basis",
+      "status": "passed",
+      "time_seconds": 0.097
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_independence_attestation_to_roster_binding",
+      "status": "passed",
+      "time_seconds": 0.092
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_attestation_rejects_missing_provenance_defaults",
+      "status": "passed",
+      "time_seconds": 0.1
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_attestation_rejects_tampered_source_roster_file",
+      "status": "passed",
+      "time_seconds": 0.103
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_attestation_rejects_unauthorized_reviewer_or_source",
+      "status": "passed",
+      "time_seconds": 0.106
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_receipt_rejects_forged_approval_against_pending_or_expired_db_dua",
+      "status": "passed",
+      "time_seconds": 0.136
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_receipt_rejects_unregistered_key_id",
+      "status": "passed",
+      "time_seconds": 0.095
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_receipt_rejects_dataset_id_mismatch",
+      "status": "passed",
+      "time_seconds": 0.106
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_receipt_rejects_model_sha_mismatch",
+      "status": "passed",
+      "time_seconds": 0.122
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_receipt_rejects_feature_config_fingerprint_mismatch",
+      "status": "passed",
+      "time_seconds": 0.111
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_receipt_rejects_candidate_table_with_non_numeric_features",
+      "status": "passed",
+      "time_seconds": 0.17
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_evaluate_external_domain_cli_fails_closed_without_governance_flags",
+      "status": "passed",
+      "time_seconds": 1.919
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "name": "test_italian_ipvs_acquisition_fields_allow_unknown",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_ed25519_rfc8032_vectors",
+      "status": "passed",
+      "time_seconds": 0.026
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_registry_signature_and_trust_anchor_failures",
+      "status": "passed",
+      "time_seconds": 0.135
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_reviewer_authorization_failures",
+      "status": "passed",
+      "time_seconds": 0.101
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_source_authorization_and_hmac_bypass_rejected",
+      "status": "passed",
+      "time_seconds": 0.108
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_tampered_trust_anchor_yaml_fails_closed",
+      "status": "passed",
+      "time_seconds": 0.098
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_dataset_access_database_authenticity_required",
+      "status": "passed",
+      "time_seconds": 0.273
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_cli_rejects_unsigned_reviewer_and_source_flags",
+      "status": "passed",
+      "time_seconds": 1.982
+    },
+    {
+      "category": "m4_domain_validation_tests",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "name": "test_dua_to_signed_registry_cross_binding_enforcement",
+      "status": "passed",
+      "time_seconds": 1.571
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_new_participant_defaults_to_pending_consent",
+      "status": "passed",
+      "time_seconds": 0.052
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_missing_or_empty_consent_reference_blocks_session_creation",
+      "status": "passed",
+      "time_seconds": 0.05
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_invalid_or_nonexistent_consent_reference_blocks_session_creation",
+      "status": "passed",
+      "time_seconds": 0.091
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_newer_more_permissive_consent_cannot_authorize_pinned_old_session",
+      "status": "passed",
+      "time_seconds": 0.077
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_withdrawn_pinned_consent_blocks_processing_even_if_participant_re_enrolled",
+      "status": "passed",
+      "time_seconds": 0.11
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_derived_feature_retention_defaults_to_false_and_prevents_storage",
+      "status": "passed",
+      "time_seconds": 0.193
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_incorrect_passed_consent_object_rejected",
+      "status": "passed",
+      "time_seconds": 0.083
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "name": "test_operation_authorization_map_enforces_scope_and_research_uses",
+      "status": "passed",
+      "time_seconds": 0.081
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_cross_study_safety",
+      "file": "tests/unit/test_m5_cross_study_safety.py",
+      "name": "test_cross_study_session_assignment_rejected",
+      "status": "passed",
+      "time_seconds": 0.046
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_cross_study_safety",
+      "file": "tests/unit/test_m5_cross_study_safety.py",
+      "name": "test_consent_from_study_a_cannot_authorize_study_b",
+      "status": "passed",
+      "time_seconds": 0.053
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_cross_study_safety",
+      "file": "tests/unit/test_m5_cross_study_safety.py",
+      "name": "test_dataset_version_mismatch_blocks_study",
+      "status": "passed",
+      "time_seconds": 0.059
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "name": "test_reviewed_exclusions_contains_no_participant_ids",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "name": "test_no_hardcoded_fallback_hmac_secret_in_evidence_scripts",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "name": "test_safety_invariants_in_model_config",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "name": "test_consent_retention_default_evidence_matches_schema_and_is_false",
+      "status": "passed",
+      "time_seconds": 0.075
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "name": "test_dataset_access_summary_has_no_fabricated_release_approvals",
+      "status": "passed",
+      "time_seconds": 0.022
+    },
+    {
+      "category": "m5_integration_tests",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "name": "test_review_evidence_contains_no_workstation_paths",
+      "status": "passed",
+      "time_seconds": 0.258
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "name": "test_perform_optimal_matching_exact_sex",
+      "status": "passed",
+      "time_seconds": 0.039
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "name": "test_caliper_enforcement_filters_distant_pairs",
+      "status": "passed",
+      "time_seconds": 0.04
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "name": "test_matching_reduces_smd",
+      "status": "passed",
+      "time_seconds": 0.034
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "name": "test_matching_input_validation",
+      "status": "passed",
+      "time_seconds": 0.014
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "name": "test_evaluate_matching_sensitivities_monotonicity",
+      "status": "passed",
+      "time_seconds": 0.076
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ml_report",
+      "file": "tests/unit/test_ml_report.py",
+      "name": "test_nested_summary_and_standalone_html_report_escape_user_text",
+      "status": "passed",
+      "time_seconds": 0.019
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_ml_report",
+      "file": "tests/unit/test_ml_report.py",
+      "name": "test_nested_report_displays_outer_fold_metrics",
+      "status": "passed",
+      "time_seconds": 0.02
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_saves_reloads_with_full_safety_and_provenance",
+      "status": "passed",
+      "time_seconds": 0.072
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_refuses_microphone_inference_configuration",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_does_not_infer_validation_from_domain_names",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_requires_and_checks_validation_report",
+      "status": "passed",
+      "time_seconds": 0.076
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_rejects_microphone_domain_even_with_evidence",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_requires_timezone_aware_utc_evidence",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_detects_modified_domain_evidence_even_with_fresh_bundle_checksum",
+      "status": "passed",
+      "time_seconds": 0.058
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_checksum_detects_changed_artifact_before_loading",
+      "status": "passed",
+      "time_seconds": 0.063
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_missing_trusted_model_artifact_is_rejected",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "name": "test_model_bundle_requires_dataset_evaluation_and_code_fingerprints",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_pr_auc_and_average_precision_are_distinct_and_brier_needs_probabilities",
+      "status": "passed",
+      "time_seconds": 0.037
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_grouped_baselines_produce_fold_metrics_and_oof_rows",
+      "status": "passed",
+      "time_seconds": 3.071
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_demographic_and_combined_baselines_share_grouped_folds",
+      "status": "passed",
+      "time_seconds": 3.53
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_search_candidates_are_fold_safe_and_bounded",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_evaluation_keeps_each_participant_in_one_outer_fold",
+      "status": "passed",
+      "time_seconds": 4.774
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_evaluate_grouped_rejects_invalid_labels_and_dimensions",
+      "status": "passed",
+      "time_seconds": 1.739
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_evaluate_grouped_and_nested_reject_misaligned_additional_predictors",
+      "status": "passed",
+      "time_seconds": 2.052
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_elastic_net_candidate_configures_l1_ratio_correctly",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_evaluation_rejects_identifier_only_predictor_tables",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[1.5]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[True]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[False]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[-1]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[100]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_additional_predictors_strict_sample_id_contract",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_additional_predictors_strict_participant_id_contract",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_evaluate_grouped_accepts_groups_as_list_and_series",
+      "status": "passed",
+      "time_seconds": 3.9
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_validate_additional_predictors_rejects_duplicate_sample_ids",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_validate_additional_predictors_rejects_range_index_without_identifiers",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "name": "test_evaluate_grouped_tie_breaking_for_svm_and_probability",
+      "status": "passed",
+      "time_seconds": 1.408
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_invalid_ddk_recording_retains_schema_identity",
+      "status": "passed",
+      "time_seconds": 0.071
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_invalid_connected_speech_recording_retains_schema_identity",
+      "status": "passed",
+      "time_seconds": 0.078
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_missing_corner_vowel_a_marks_vsa_not_estimable",
+      "status": "passed",
+      "time_seconds": 0.113
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_missing_corner_vowel_i_marks_vsa_not_estimable",
+      "status": "passed",
+      "time_seconds": 0.09
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_missing_corner_vowel_u_marks_vsa_not_estimable",
+      "status": "passed",
+      "time_seconds": 0.137
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_invalid_audio_input_type_handles_safely",
+      "status": "passed",
+      "time_seconds": 0.078
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_unexpected_extraction_exception_isolation",
+      "status": "passed",
+      "time_seconds": 0.053
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_partial_successful_session_failure_isolation",
+      "status": "passed",
+      "time_seconds": 0.276
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_all_tasks_failed_overall_status",
+      "status": "passed",
+      "time_seconds": 0.082
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "name": "test_schema_fingerprints_remain_correct_after_all_failures",
+      "status": "passed",
+      "time_seconds": 0.068
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "name": "test_v4_envelope_fingerprint_and_registry",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "name": "test_complete_multitask_session",
+      "status": "passed",
+      "time_seconds": 0.316
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "name": "test_error_isolation_between_tasks",
+      "status": "passed",
+      "time_seconds": 0.243
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "name": "test_partial_session_with_only_ddk",
+      "status": "passed",
+      "time_seconds": 0.057
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "name": "test_render_multitask_report_html",
+      "status": "passed",
+      "time_seconds": 0.17
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_returns_experimental_status_for_explicit_validated_domain",
+      "status": "passed",
+      "time_seconds": 0.03
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_model_without_explicit_domain_compatibility",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_domain_list_alone_cannot_claim_compatibility",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_microphone_aliases_after_canonicalization",
+      "status": "passed",
+      "time_seconds": 0.013
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_non_string_domain_as_compatibility_error",
+      "status": "passed",
+      "time_seconds": 0.006
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_missing_features_nonfinite_values_and_wrong_order",
+      "status": "passed",
+      "time_seconds": 0.009
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_all_features_missing_but_allows_named_undefined_measures",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_missing_or_false_safety_metadata",
+      "status": "passed",
+      "time_seconds": 0.007
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_incompatible_feature_schema",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_bundle_without_fitted_estimator",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_microphone_flag_even_for_non_microphone_domain",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_boolean_feature_values[True]",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_boolean_feature_values[value1]",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "name": "test_prediction_rejects_feature_or_preprocessing_fingerprint_mismatch",
+      "status": "passed",
+      "time_seconds": 0.004
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_removes_dc_and_resamples_deterministically",
+      "status": "passed",
+      "time_seconds": 0.069
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_fails_closed_on_invalid_quality",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_revalidates_original_stereo_before_downmixing",
+      "status": "passed",
+      "time_seconds": 0.012
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_signal_that_is_too_short_after_trimming",
+      "status": "passed",
+      "time_seconds": 0.023
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[16000.5]",
+      "status": "passed",
+      "time_seconds": 0.011
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[True]",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[False]",
+      "status": "passed",
+      "time_seconds": 0.012
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[4000]",
+      "status": "passed",
+      "time_seconds": 0.013
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[96000]",
+      "status": "passed",
+      "time_seconds": 0.023
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[16000]",
+      "status": "passed",
+      "time_seconds": 0.02
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[-8000]",
+      "status": "passed",
+      "time_seconds": 0.022
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_uses_configured_frame_size_for_silence_trimming",
+      "status": "passed",
+      "time_seconds": 0.059
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_resampling_filter_overshoot_is_bounded[22050]",
+      "status": "passed",
+      "time_seconds": 0.094
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_resampling_filter_overshoot_is_bounded[44100]",
+      "status": "passed",
+      "time_seconds": 0.095
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "name": "test_preprocessing_resampling_filter_overshoot_is_bounded[48000]",
+      "status": "passed",
+      "time_seconds": 0.132
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_provenance",
+      "file": "tests/unit/test_provenance.py",
+      "name": "test_combined_file_sha256_hashes_ordered_contents",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_provenance",
+      "file": "tests/unit/test_provenance.py",
+      "name": "test_combined_file_sha256_requires_files",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_provenance",
+      "file": "tests/unit/test_provenance.py",
+      "name": "test_release_provenance_contract_and_determinism",
+      "status": "passed",
+      "time_seconds": 0.106
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_reporting",
+      "file": "tests/unit/test_reporting.py",
+      "name": "test_report_preserves_schema_version_and_sanitizes_measurements",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "name": "test_v3_canonical_fingerprint_immutable",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "name": "test_runtime_task_schema_fingerprints_match_authoritative_values",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "name": "test_schema_feature_counts",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "name": "test_v4_envelope_contains_all_registered_tasks",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "name": "test_persisted_review_evidence_matches_runtime_registry",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "name": "test_modifying_feature_definition_changes_schema_fingerprint",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "name": "test_source_archive_keeps_project_files_and_excludes_data_and_caches",
+      "status": "passed",
+      "time_seconds": 0.105
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "name": "test_checked_in_source_inventory_matches_archive_inclusion_rules",
+      "status": "passed",
+      "time_seconds": 0.505
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "name": "test_source_archive_fails_when_mandatory_provenance_file_missing",
+      "status": "passed",
+      "time_seconds": 0.056
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "name": "test_clean_extraction_contains_all_provenance_inputs_and_computes_fingerprint",
+      "status": "passed",
+      "time_seconds": 4.041
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_have_no_participant_overlap_and_cover_rows_once",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_require_ids",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_reject_conflicting_participant_diagnoses",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_reject_non_binary_labels[0.5]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_reject_non_binary_labels[nan]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_reject_non_binary_labels[2]",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "name": "test_grouped_splits_require_both_classes_in_each_fold",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_consent",
+      "file": "tests/unit/test_study_consent.py",
+      "name": "test_record_and_get_consent",
+      "status": "passed",
+      "time_seconds": 0.069
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_consent",
+      "file": "tests/unit/test_study_consent.py",
+      "name": "test_verify_participant_consent_for_task",
+      "status": "passed",
+      "time_seconds": 0.079
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_consent",
+      "file": "tests/unit/test_study_consent.py",
+      "name": "test_dataset_access_and_dua_verification",
+      "status": "passed",
+      "time_seconds": 0.085
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "name": "test_database_fresh_creation_and_migration",
+      "status": "passed",
+      "time_seconds": 0.073
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "name": "test_database_migrations_idempotency",
+      "status": "passed",
+      "time_seconds": 0.058
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "name": "test_database_foreign_key_enforcement",
+      "status": "passed",
+      "time_seconds": 0.05
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "name": "test_database_transaction_rollback_on_error",
+      "status": "passed",
+      "time_seconds": 0.061
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "name": "test_db_rejects_cross_study_consent_insert",
+      "status": "passed",
+      "time_seconds": 0.1
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "name": "test_db_rejects_cross_study_session_insert",
+      "status": "passed",
+      "time_seconds": 0.069
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "name": "test_db_rejects_session_referencing_different_participant_consent",
+      "status": "passed",
+      "time_seconds": 0.091
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "name": "test_db_rejects_session_referencing_nonexistent_consent",
+      "status": "passed",
+      "time_seconds": 0.093
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "name": "test_db_accepts_valid_composite_session",
+      "status": "passed",
+      "time_seconds": 0.075
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "name": "test_migration_atomic_rollback_on_syntax_error",
+      "status": "passed",
+      "time_seconds": 0.034
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "name": "test_pseudonym_safety_validation",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "name": "test_register_and_get_participant",
+      "status": "passed",
+      "time_seconds": 0.1
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "name": "test_register_participant_unknown_study",
+      "status": "passed",
+      "time_seconds": 0.071
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "name": "test_list_participants_filtering",
+      "status": "passed",
+      "time_seconds": 0.049
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "name": "test_update_participant_consent_status",
+      "status": "passed",
+      "time_seconds": 0.068
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "name": "test_preflight_blocks_when_participant_withdrawn",
+      "status": "passed",
+      "time_seconds": 0.061
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "name": "test_preflight_blocks_when_study_paused_or_archived",
+      "status": "passed",
+      "time_seconds": 0.093
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "name": "test_preflight_blocks_when_dua_expired",
+      "status": "passed",
+      "time_seconds": 0.078
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "name": "test_preflight_blocks_when_task_not_consented",
+      "status": "passed",
+      "time_seconds": 0.081
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "name": "test_ephemeral_processing_when_retention_consent_false",
+      "status": "passed",
+      "time_seconds": 0.25
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "name": "test_small_cell_suppression_logic",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "name": "test_cohort_qc_metrics",
+      "status": "passed",
+      "time_seconds": 0.429
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "name": "test_cohort_attrition",
+      "status": "passed",
+      "time_seconds": 0.508
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "name": "test_longitudinal_feature_changes",
+      "status": "passed",
+      "time_seconds": 0.468
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_registry",
+      "file": "tests/unit/test_study_registry.py",
+      "name": "test_protocol_lifecycle",
+      "status": "passed",
+      "time_seconds": 0.077
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_registry",
+      "file": "tests/unit/test_study_registry.py",
+      "name": "test_study_lifecycle",
+      "status": "passed",
+      "time_seconds": 0.055
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_registry",
+      "file": "tests/unit/test_study_registry.py",
+      "name": "test_protocol_version_immutability_enforced",
+      "status": "passed",
+      "time_seconds": 0.096
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_reporting",
+      "file": "tests/unit/test_study_reporting.py",
+      "name": "test_all_seven_reports_generated",
+      "status": "passed",
+      "time_seconds": 0.403
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_reporting",
+      "file": "tests/unit/test_study_reporting.py",
+      "name": "test_csv_export",
+      "status": "passed",
+      "time_seconds": 0.458
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "name": "test_generate_pseudonymous_id",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "name": "test_study_schema_validation",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "name": "test_participant_schema_validation",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "name": "test_dataset_access_record_authorization",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "name": "test_processing_run_receipt_cryptographic_checksum",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "name": "test_create_session_unconsented_rejected",
+      "status": "passed",
+      "time_seconds": 0.063
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "name": "test_create_and_get_session",
+      "status": "passed",
+      "time_seconds": 0.112
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "name": "test_list_sessions_filters",
+      "status": "passed",
+      "time_seconds": 0.058
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "name": "test_record_task_and_features",
+      "status": "passed",
+      "time_seconds": 0.066
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "name": "test_ingest_multitask_audio",
+      "status": "passed",
+      "time_seconds": 0.274
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "name": "test_sanitize_audit_details_pii",
+      "status": "passed",
+      "time_seconds": 0.0
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "name": "test_audit_event_logging",
+      "status": "passed",
+      "time_seconds": 0.095
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "name": "test_processing_run_receipt",
+      "status": "passed",
+      "time_seconds": 0.197
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "name": "test_withdraw_participant_workflow",
+      "status": "passed",
+      "time_seconds": 0.131
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_hmac",
+      "file": "tests/unit/test_study_withdrawal_hmac.py",
+      "name": "test_withdrawal_fails_closed_without_hmac_key",
+      "status": "passed",
+      "time_seconds": 0.089
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_hmac",
+      "file": "tests/unit/test_study_withdrawal_hmac.py",
+      "name": "test_withdrawal_succeeds_and_creates_hmac_tombstone",
+      "status": "passed",
+      "time_seconds": 0.087
+    },
+    {
+      "category": "m5_study_operations_unit_tests",
+      "classname": "tests.unit.test_study_withdrawal_hmac",
+      "file": "tests/unit/test_study_withdrawal_hmac.py",
+      "name": "test_withdrawal_transactional_rollback_on_error",
+      "status": "passed",
+      "time_seconds": 0.074
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_ddk_audio_validation_succeeds_on_valid_train",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_connected_speech_validation_succeeds_with_pauses",
+      "status": "passed",
+      "time_seconds": 0.01
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_vowel_space_validation_succeeds_on_corner_vowels",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_validation_fails_on_too_short_recording",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_validation_fails_on_nan_and_infinite_values",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_validation_fails_on_excessive_clipping",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_validation_detects_destructive_stereo_phase",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_ddk_preprocessing_preserves_full_duration_and_removes_dc",
+      "status": "passed",
+      "time_seconds": 0.002
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_connected_speech_preprocessing_preserves_pauses",
+      "status": "passed",
+      "time_seconds": 0.033
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_vowel_space_preprocessing_trims_silent_margins",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_preprocessing_resamples_cleanly",
+      "status": "passed",
+      "time_seconds": 0.005
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "name": "test_preprocessing_raises_on_invalid_audio",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_verify_model",
+      "file": "tests/unit/test_verify_model.py",
+      "name": "test_model_verifier_reports_missing_local_artifacts",
+      "status": "passed",
+      "time_seconds": 0.003
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "name": "test_waveform_and_spectrogram_figures_render_for_valid_signal",
+      "status": "passed",
+      "time_seconds": 0.171
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "name": "test_grouped_metric_plot_has_research_baseline_labels",
+      "status": "passed",
+      "time_seconds": 0.069
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "name": "test_waveform_and_spectrogram_handle_multichannel_downmix_safely",
+      "status": "passed",
+      "time_seconds": 0.135
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "name": "test_waveform_and_spectrogram_validate_arguments",
+      "status": "passed",
+      "time_seconds": 0.008
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_vowel_space_schema_fingerprint_and_features",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_calculate_vsa_triangle_known_coordinates",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_calculate_vsa_triangle_returns_none_if_coordinate_missing",
+      "status": "passed",
+      "time_seconds": 0.001
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_formant_extraction_on_synthetic_vowels",
+      "status": "passed",
+      "time_seconds": 0.085
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_extract_vowel_space_complete_session",
+      "status": "passed",
+      "time_seconds": 0.062
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_missing_corner_vowel_results_in_not_estimable",
+      "status": "passed",
+      "time_seconds": 0.064
+    },
+    {
+      "category": "m0_m3_tests",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "name": "test_multi_trial_aggregation_computes_median",
+      "status": "passed",
+      "time_seconds": 0.095
+    }
+  ],
+  "test_report_status": "PARSED_COMPLETE",
+  "total_tests": 577
+}

@@ -1,0 +1,55 @@
+{
+  "default_protocol_structure": {
+    "expected_visits_range": [
+      1,
+      10
+    ],
+    "minimum_interval_days_enforced": true,
+    "tasks": [
+      "sustained_vowel",
+      "ddk",
+      "connected_speech",
+      "vowel_space"
+    ]
+  },
+  "description": "Milestone 5 research study registry and protocol definition metadata",
+  "governance_rules": {
+    "immutability_rule": "Protocols are immutable once research sessions have been recorded. Updating study protocol version is blocked if sessions exist under that version.",
+    "protocol_immutability_enforced": true,
+    "valid_enrollment_statuses": [
+      "active",
+      "completed",
+      "enrolled",
+      "withdrawn"
+    ],
+    "valid_session_statuses": [
+      "COMPLETED",
+      "IN_PROGRESS",
+      "QUALITY_FAILED",
+      "RESTRICTED_WITHDRAWN",
+      "SCHEDULED"
+    ],
+    "valid_study_statuses": [
+      "active",
+      "archived",
+      "completed",
+      "draft",
+      "paused"
+    ],
+    "valid_task_statuses": [
+      "ACCEPTED",
+      "ACCEPTED_TRANSIENT_PROCESSED",
+      "FEATURES_EXTRACTED",
+      "NOT_STARTED",
+      "PROCESSING_FAILED",
+      "QUALITY_CHECKED",
+      "RECEIVED",
+      "REJECTED",
+      "REQUIRES_REVIEW"
+    ]
+  },
+  "milestone": "M5",
+  "schema_version": "voxneuro.study_registry.v1",
+  "scientific_disclaimer": "RESEARCH PROTOTYPE NOTICE: VoxNeuro is an investigational software platform for speech acoustics research. It does NOT provide clinical diagnostic decisions, rule-out determinations, or diagnostic disease probabilities. All metrics are descriptive and exploratory.",
+  "timestamp_utc": "2026-11-12T16:09:13.881441+00:00"
+}

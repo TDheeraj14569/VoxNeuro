@@ -1,0 +1,48 @@
+schema_version,feature_name,data_type,unit,range_min,range_max,null_condition,description
+voxneuro.task.ddk.v1,estimated_event_count,float,count,0,Infinity,never,Count of acoustic syllable peaks identified by prominence
+voxneuro.task.ddk.v1,estimated_event_rate_per_s,float,events/s,0.5,15.0,events < 3,Syllable repetition rate per second over active duration
+voxneuro.task.ddk.v1,mean_inter_event_interval_s,float,seconds,0.05,2.0,events < 2,Mean interval between consecutive syllable events
+voxneuro.task.ddk.v1,median_inter_event_interval_s,float,seconds,0.05,2.0,events < 2,Median interval between consecutive syllable events
+voxneuro.task.ddk.v1,sd_inter_event_interval_s,float,seconds,0.0,1.0,events < 3,Standard deviation of inter-event intervals
+voxneuro.task.ddk.v1,cv_inter_event_interval,float,ratio,0.0,2.0,events < 3 or mean <= 0,Coefficient of variation of inter-event intervals
+voxneuro.task.ddk.v1,rmssd_inter_event_interval_s,float,seconds,0.0,1.0,events < 3,Root mean square of successive differences of intervals
+voxneuro.task.ddk.v1,inter_event_interval_slope_s_per_event,float,s/event,-0.5,0.5,events < 4,Linear regression slope of interval versus event index
+voxneuro.task.ddk.v1,valid_intervals_count,float,count,0,Infinity,never,Number of completed inter-event intervals
+voxneuro.task.ddk.v1,active_speech_duration_s,float,seconds,0.0,Infinity,events < 2,Time span between first and last detected syllable events
+voxneuro.task.ddk.v1,task_duration_s,float,seconds,2.0,20.0,never,Total retained recording duration after preprocessing
+voxneuro.task.connected_speech.v1,total_recording_duration_s,float,seconds,5.0,180.0,never,Total recording duration analyzed
+voxneuro.task.connected_speech.v1,estimated_active_speech_duration_s,float,seconds,0.0,Infinity,never,Total duration of detected speech bouts
+voxneuro.task.connected_speech.v1,estimated_silence_duration_s,float,seconds,0.0,Infinity,never,Total duration of detected pause intervals
+voxneuro.task.connected_speech.v1,pause_count,float,count,0,Infinity,never,Number of silent pauses exceeding 150 ms
+voxneuro.task.connected_speech.v1,mean_pause_duration_s,float,seconds,0.15,Infinity,pause_count == 0,Mean duration of detected pause intervals
+voxneuro.task.connected_speech.v1,median_pause_duration_s,float,seconds,0.15,Infinity,pause_count == 0,Median duration of detected pause intervals
+voxneuro.task.connected_speech.v1,max_pause_duration_s,float,seconds,0.15,Infinity,pause_count == 0,Maximum duration among detected pause intervals
+voxneuro.task.connected_speech.v1,pause_duration_sd_s,float,seconds,0.0,Infinity,pause_count < 2,Standard deviation of pause durations
+voxneuro.task.connected_speech.v1,pause_fraction,float,ratio,0.0,1.0,never,Fraction of total duration classified as pause
+voxneuro.task.connected_speech.v1,speech_activity_fraction,float,ratio,0.0,1.0,never,Fraction of total duration classified as active speech
+voxneuro.task.connected_speech.v1,speech_bout_count,float,count,0,Infinity,never,Number of continuous speech bouts separated by pauses
+voxneuro.task.connected_speech.v1,mean_speech_bout_duration_s,float,seconds,0.0,Infinity,speech_bout_count == 0,Mean duration of continuous speech bouts
+voxneuro.task.connected_speech.v1,median_speech_bout_duration_s,float,seconds,0.0,Infinity,speech_bout_count == 0,Median duration of continuous speech bouts
+voxneuro.task.connected_speech.v1,f0_median_hz,float,Hz,75.0,500.0,no voiced frames,Median pitch across voiced connected speech frames
+voxneuro.task.connected_speech.v1,f0_sd_hz,float,Hz,0.0,150.0,f0 frames < 2,Standard deviation of pitch across voiced frames
+voxneuro.task.connected_speech.v1,f0_q10_hz,float,Hz,75.0,500.0,no voiced frames,10th percentile of pitch in connected speech
+voxneuro.task.connected_speech.v1,f0_q90_hz,float,Hz,75.0,500.0,no voiced frames,90th percentile of pitch in connected speech
+voxneuro.task.connected_speech.v1,f0_range_semitones,float,semitones,0.0,36.0,f0 frames < 2,Prosodic pitch dynamic range in semitones
+voxneuro.task.connected_speech.v1,intensity_median_dbfs,float,dBFS,-90.0,0.0,no speech frames,Median vocal intensity of speech frames
+voxneuro.task.connected_speech.v1,intensity_iqr_db,float,dB,0.0,50.0,no speech frames,Interquartile range of vocal intensity across speech frames
+voxneuro.task.vowel_space.v1,f1_a_median_hz,float,Hz,200.0,1200.0,vowel /a/ missing or unvoiced,Median first formant for corner vowel /a/
+voxneuro.task.vowel_space.v1,f2_a_median_hz,float,Hz,600.0,3200.0,vowel /a/ missing or unvoiced,Median second formant for corner vowel /a/
+voxneuro.task.vowel_space.v1,f1_a_sd_hz,float,Hz,0.0,300.0,frames < 2,Standard deviation of first formant for vowel /a/
+voxneuro.task.vowel_space.v1,f2_a_sd_hz,float,Hz,0.0,500.0,frames < 2,Standard deviation of second formant for vowel /a/
+voxneuro.task.vowel_space.v1,valid_frames_a_count,float,count,0,Infinity,never,Number of valid formant analysis frames for /a/
+voxneuro.task.vowel_space.v1,f1_i_median_hz,float,Hz,200.0,1200.0,vowel /i/ missing or unvoiced,Median first formant for corner vowel /i/
+voxneuro.task.vowel_space.v1,f2_i_median_hz,float,Hz,600.0,3200.0,vowel /i/ missing or unvoiced,Median second formant for corner vowel /i/
+voxneuro.task.vowel_space.v1,f1_i_sd_hz,float,Hz,0.0,300.0,frames < 2,Standard deviation of first formant for vowel /i/
+voxneuro.task.vowel_space.v1,f2_i_sd_hz,float,Hz,0.0,500.0,frames < 2,Standard deviation of second formant for vowel /i/
+voxneuro.task.vowel_space.v1,valid_frames_i_count,float,count,0,Infinity,never,Number of valid formant analysis frames for /i/
+voxneuro.task.vowel_space.v1,f1_u_median_hz,float,Hz,200.0,1200.0,vowel /u/ missing or unvoiced,Median first formant for corner vowel /u/
+voxneuro.task.vowel_space.v1,f2_u_median_hz,float,Hz,600.0,3200.0,vowel /u/ missing or unvoiced,Median second formant for corner vowel /u/
+voxneuro.task.vowel_space.v1,f1_u_sd_hz,float,Hz,0.0,300.0,frames < 2,Standard deviation of first formant for vowel /u/
+voxneuro.task.vowel_space.v1,f2_u_sd_hz,float,Hz,0.0,500.0,frames < 2,Standard deviation of second formant for vowel /u/
+voxneuro.task.vowel_space.v1,valid_frames_u_count,float,count,0,Infinity,never,Number of valid formant analysis frames for /u/
+voxneuro.task.vowel_space.v1,vowel_space_area_hz2,float,Hz^2,0.0,1000000.0,any corner vowel missing,Triangular vowel space area calculated via Shoelace formula

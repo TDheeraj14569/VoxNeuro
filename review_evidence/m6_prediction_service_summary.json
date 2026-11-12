@@ -1,0 +1,19 @@
+{
+  "allow_user_microphone_inference": false,
+  "fail_closed_probe": {
+    "abstained": true,
+    "abstention_events_recorded": 1,
+    "abstention_reasons": [
+      "QUALITY_GATE_FAILED",
+      "DISALLOWED_CAPTURE_ORIGIN",
+      "NO_APPROVED_MODEL_REGISTERED"
+    ],
+    "disclaimer_present": true,
+    "retention_persisted": false,
+    "status": "ABSTAINED_FAIL_CLOSED"
+  },
+  "generated_utc": "2026-11-12T17:18:12.244508+00:00",
+  "medical_disclaimer": "VoxNeuro is an experimental research tool. It is NOT a medical device and does NOT diagnose, rule out, treat, or monitor Parkinson's disease or any medical condition. Consult a qualified clinician for any health or voice concerns.",
+  "milestone": "M6",
+  "trusted_domain_validation_report_hashes_count": 0
+}

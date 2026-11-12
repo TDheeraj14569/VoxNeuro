@@ -26,3 +26,18 @@ The report is parsed and structurally checked, its bytes are SHA-256 hashed into
 The hash protects report integrity; it is not a digital signature and cannot prove that the report's claims are true. Human review must verify the cohort, protocol, results, and relevance to the intended input domain before adding any hash. Such a software gate does not establish clinical validity, authorization, or safe use.
 
 Domain names are stripped, case-folded, and normalized before matching. Live-device aliases are blocked when a domain contains any of these tokens: `mic`, `microphone`, `smartphone`, `mobile`, `cellphone`, `phone`, `browser`, `web`, `laptop`, `computer`, `desktop`, `device`, `iphone`, `ipad`, `android`, `webcam`, `headset`, `streamlit`, `getusermedia`, or `live`. This also rejects names such as `phone_recording` and `web_audio`. The token `telephone` is intentionally distinct: a telephone-collected research corpus such as `uams_telephone` is not considered a live microphone domain. Model compatibility checks also require exact feature-schema and preprocessing fingerprints, complete ordered features, and the model's explicit missing-value policy.
+
+## Milestone 4 Architecture and Candidate Dossiers
+
+Milestone 4 introduces the candidate domain assessment schema (`voxneuro.domain_assessment.v1`) and the authoritative domain registry (`configs/recording_domain_registry.yaml`):
+
+1. **Candidate Dossier vs. Approved Compatibility Report:** Candidate dossiers evaluate prospective external cohorts, recording quality attrition, and feature-level domain shift (SMD, KS tests, FDR/Bonferroni). Crucially, candidate dossiers are structurally and cryptographically rejected by `load_domain_validation_report()` and cannot be used by `make_bundle()` to mark a model compatible.
+2. **Explicit Input Capture Context:** In addition to domain identifiers, `predict_research()` enforces an explicit acquisition context (`InputCaptureContext`). User uploads, live browser streams, and unknown origins fail closed, preventing neutral domain names from masking live microphone inputs.
+3. **Current Evaluation Status:** In Milestone 4, candidate external domains (`neurovoz_studio`, `pc_gita_condenser`, `italian_parkinsons_headset`) are awaiting licensed raw audio access under institutional DUAs. The official status is `FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING`. The trusted allowlist remains strictly empty (`TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256 = frozenset()`), and prediction compatibility remains disabled.
+
+For comprehensive architectural and safety specifications, see:
+- [`docs/M4_DOMAIN_ARCHITECTURE.md`](M4_DOMAIN_ARCHITECTURE.md)
+- [`docs/M4_INDEPENDENT_DOMAIN_VALIDATION_PROTOCOL.md`](M4_INDEPENDENT_DOMAIN_VALIDATION_PROTOCOL.md)
+- [`docs/M4_DOMAIN_COMPATIBILITY_DECISION_FRAMEWORK.md`](M4_DOMAIN_COMPATIBILITY_DECISION_FRAMEWORK.md)
+- [`docs/M4_INFERENCE_SAFETY.md`](M4_INFERENCE_SAFETY.md)
+

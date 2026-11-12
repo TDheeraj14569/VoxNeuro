@@ -1,0 +1,53 @@
+{
+  "release_name": "VoxNeuro Production Release",
+  "release_version": "1.0.0-production",
+  "release_date": "2026-11-12",
+  "status": "PRODUCTION_VERIFIED",
+  "archive": {
+    "filename": "VoxNeuro_PRODUCTION_RELEASE.zip",
+    "sha256": "301adf055286e8d49d868a3c0d5acf898e252ab4903c82ebe929fddf0b5274f8",
+    "bytes": 2378843,
+    "file_count": 348
+  },
+  "provenance": {
+    "project_code_fingerprint": "4249e46ba010dc29d5161f40ed06c5f3e68395a02e438a12962f4c392b44327d",
+    "feature_schema_version": "voxneuro.voice.v3",
+    "database_schema_version": "006_study_operations",
+    "python_version": "3.12.16",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "verification": {
+    "total_tests": 590,
+    "passed_tests": 590,
+    "failed_tests": 0,
+    "ruff_lint_status": "PASS",
+    "ruff_format_status": "PASS",
+    "verify_project_status": "PASS",
+    "verify_model_status": "PASS"
+  },
+  "clinical_safety_gates": {
+    "allow_user_microphone_inference": false,
+    "domain_compatibility_verified": false,
+    "clinical_diagnostic_claims": false,
+    "four_case_decision_engine_enforced": true
+  },
+  "screenshots": [
+    "docs/screenshots/01_landing_hero.png",
+    "docs/screenshots/02_how_it_works.png",
+    "docs/screenshots/03_voice_assessment_intro.png",
+    "docs/screenshots/04_results_page.png",
+    "docs/screenshots/05_about_page.png",
+    "docs/screenshots/06_account_portal.png",
+    "docs/screenshots/07_researcher_model_portal.png",
+    "docs/screenshots/08_signal_analysis.png",
+    "docs/screenshots/09_reports_portal.png"
+  ],
+  "reports": [
+    "docs/reports/MODEL_CARD.md",
+    "docs/reports/MODEL_EVALUATION_REPORT.md",
+    "docs/reports/PROBABILITY_CALIBRATION_REPORT.md",
+    "docs/API_DOCUMENTATION.md",
+    "docs/USER_GUIDE.md",
+    "docs/audit/PRODUCTION_RELEASE_COMPLETION_REPORT.md"
+  ]
+}

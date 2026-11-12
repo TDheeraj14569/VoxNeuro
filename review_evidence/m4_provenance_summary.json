@@ -1,0 +1,27 @@
+{
+  "approved_domains": [],
+  "authorization_trust_root_detail": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED: signed authorization registry is required.",
+  "authorization_trust_root_status": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED",
+  "authorization_trust_root_verified": false,
+  "canonical_v3_schema_fingerprint": "a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f",
+  "connected_speech_v1_schema_fingerprint": "7a5763d4cdbda4b1034113a47dd197bf9942621df73312134cece35b8ae419b1",
+  "ddk_v1_schema_fingerprint": "b26bf914d14af54d85e98b40238c653d4134c5b72af3f7140ccf95f606ab4e5b",
+  "domain_assessment_dossier_fingerprint": "079ec7de2ca633db679c01ed8a0d570571f71aeb7c915e5d4527bce0dc024009",
+  "domain_compatibility_status": "FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING",
+  "domain_registry_fingerprint": "82dfd06e97e493aded40b9eccb62d81c3ae64880b52beb365c7416c3a9c6438a",
+  "generated_utc": "2026-11-12T16:09:08.243766+00:00",
+  "microphone_inference_policy": "allow_user_microphone_inference: false (locked)",
+  "milestone": "M4",
+  "pinned_authority_key_ids": [
+    "voxneuro-m4-authority-ed25519-v1"
+  ],
+  "pinned_trust_anchors_config": "configs/m4_trust_anchors.yaml",
+  "pinned_trust_anchors_sha256": "303d290e894c30dca34b73f3af77d9de212049cd2cd1d12b7526b6378ddaa907",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "project_code_fingerprint": "c112d43bcb519790c25934c0b2e56216013a0999c7004f293d5d52f3ea546416",
+  "python_version": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "reference_model_artifact_sha256": "eaa271934410f72d6e4130c66aba086d24055f532b360a02425e4a4bf8ef9333",
+  "trusted_domain_allowlist_count": 0,
+  "v4_envelope_schema_fingerprint": "cc1d53b907cdf6f86e882a980d98015c3e04e2e10cccf59670c87bc6a54c0429",
+  "vowel_space_v1_schema_fingerprint": "e20bbc3ba00eb1f80d864823fc7e27537dcb0665693baf04ea149054c5b53993"
+}

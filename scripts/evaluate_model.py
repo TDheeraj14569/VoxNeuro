@@ -320,11 +320,11 @@ def main() -> int:
     if age_present >= 10:
         additional_models = {
             "age_only_logistic": (
-                frame[["age"]],
+                frame[["participant_id", "age"]],
                 age_only_pipeline(int(cfg["random_seed"])),
             ),
             "age_plus_voice_logistic": (
-                frame[["age", *FEATURE_NAMES]],
+                frame[["participant_id", "age", *FEATURE_NAMES]],
                 age_only_pipeline(int(cfg["random_seed"])),
             ),
         }

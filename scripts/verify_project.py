@@ -13,8 +13,10 @@ if str(ROOT / "src") not in sys.path:
 REQUIRED = [
     "app.py",
     "pyproject.toml",
+    "requirements-lock.txt",
     "uv.lock",
     "README.md",
+    ".streamlit/config.toml",
     "src/voxneuro/audio/io.py",
     "src/voxneuro/features/extractor.py",
     "src/voxneuro/dataset/uci.py",
@@ -30,6 +32,12 @@ MODULES = [
     "voxneuro.modeling.evaluation",
     "voxneuro.modeling.model_bundle",
     "voxneuro.modeling.prediction",
+    "voxneuro.modeling.dataset_readiness",
+    "voxneuro.modeling.m6_experiment",
+    "voxneuro.modeling.model_registry",
+    "voxneuro.modeling.prediction_service",
+    "voxneuro.study.auth",
+    "voxneuro.ui.theme",
     "voxneuro.provenance",
     "voxneuro.reporting.report",
 ]

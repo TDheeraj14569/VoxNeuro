@@ -1,0 +1,25 @@
+{
+  "milestone": "M5",
+  "pipeline_architecture": {
+    "audio_retention_policy": "Zero raw audio persisted to database; ephemeral memory only",
+    "derived_feature_storage": "Relational derived_features table keyed by task_id and session_id",
+    "fail_closed_handling": "Unconsented or unauthorized tasks fail closed with PermissionError before audio ingestion.",
+    "ingestion_framework": "M3 MultiTaskSessionResult pipeline integration",
+    "session_status_values": [
+      "COMPLETED",
+      "IN_PROGRESS",
+      "QUALITY_FAILED",
+      "RESTRICTED_WITHDRAWN",
+      "SCHEDULED"
+    ],
+    "task_extractors": [
+      "voxneuro.voice.v3 (Core39 sustained vowel)",
+      "voxneuro.task.ddk.v1 (AMR /pa/, /ta/, /ka/ & SMR /pataka/)",
+      "voxneuro.task.connected_speech.v1 (Read text speech cadence & pauses)",
+      "voxneuro.task.vowel_space.v1 (Corner vowel formant quadrilateral VSA)"
+    ]
+  },
+  "schema_version": "voxneuro.session_pipeline.v1",
+  "scientific_disclaimer": "RESEARCH PROTOTYPE NOTICE: VoxNeuro is an investigational software platform for speech acoustics research. It does NOT provide clinical diagnostic decisions, rule-out determinations, or diagnostic disease probabilities. All metrics are descriptive and exploratory.",
+  "timestamp_utc": "2026-11-12T16:09:13.981849+00:00"
+}

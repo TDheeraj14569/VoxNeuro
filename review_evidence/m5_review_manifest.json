@@ -1,0 +1,48 @@
+{
+  "description": "Milestone 5 cryptographic review evidence manifest",
+  "files": {
+    "m5_consent_governance_summary.json": {
+      "bytes": 1273,
+      "sha256": "a13cebe9c2aac6bd41232494081497aed37a2261446800ee393caacd6248f2d0"
+    },
+    "m5_database_schema_summary.json": {
+      "bytes": 1827,
+      "sha256": "6678c26a0f13eb0c58d4078ea87a0a04845d8d174626d2cf7d3378aac4f44323"
+    },
+    "m5_dataset_access_summary.json": {
+      "bytes": 1057,
+      "sha256": "4e14375b4659117afe8efbd3be6cebfe43cbb3caaf826da4fa0576f50b9de4cd"
+    },
+    "m5_longitudinal_analysis_summary.json": {
+      "bytes": 1105,
+      "sha256": "5d94215546b12d7eebf1e3d09712041580f913a1aaa28a9c7a3a9036bd04284a"
+    },
+    "m5_privacy_audit_summary.json": {
+      "bytes": 1183,
+      "sha256": "3412e1a2a80d2f06be609733a71eeb5b30b2eef690ec6d8857d5dbfdc0fd09dc"
+    },
+    "m5_provenance_summary.json": {
+      "bytes": 1069,
+      "sha256": "0cad662e35c7228abcabd2328bda5713fa315c631784c7dc1d3e213c89270685"
+    },
+    "m5_quality_control_summary.json": {
+      "bytes": 1181,
+      "sha256": "8d3d0891dc8410366644768a80485e47ea2f052b662a6edccb45b536f92f1df7"
+    },
+    "m5_session_pipeline_summary.json": {
+      "bytes": 1335,
+      "sha256": "a44775760190a45b732aee518c09fa3a526d003ec17d826f27f0659b26102207"
+    },
+    "m5_study_registry_summary.json": {
+      "bytes": 1697,
+      "sha256": "f346ad1ab1ddada384f0f8983090d8cb7e6678696ce348e56c03bcad5f083952"
+    },
+    "m5_test_summary.json": {
+      "bytes": 169996,
+      "sha256": "988a2dc4eb40dc67cda2722369000c068da82fd7a2bc38461255923ec9b9791c"
+    }
+  },
+  "generated_utc": "2026-11-12T16:10:41.093979+00:00",
+  "milestone": "M5",
+  "total_files": 10
+}

@@ -26,9 +26,14 @@ The record license allows reuse with attribution. The voice recordings remain po
 - Demographic workbook: source indicates age, sex, and diagnosis label; exact values and column mapping must be taken from the local workbook and generated manifest/audit. Do not infer age, sex, or disease labels from file names.
 - Participants and recordings: verify ID-to-WAV mapping and repeats before treating every WAV as one independent participant.
 
-## Mandatory bias and integrity checks
+## Mandatory bias and integrity checks (Milestone 2 Completed Findings)
 
-The cohort may have demographic imbalance; published reports describe age differences across PD/control groups. `audit_dataset.py` summarizes observed age/sex by label and computes a Mann–Whitney comparison and standardized mean difference when data are present. `evaluate_model.py` compares age-only, voice-only, and age-plus-voice logistic baselines on the same participant folds. The combined model is exploratory and does not estimate a causal or disease-specific voice contribution. Sex subgroup metrics require enough participants and must remain descriptive. Device/environment confounding cannot be separated when those fields were not recorded. These comparisons do not establish disease-specific biomarkers.
+The cohort has severe demographic imbalance: HC mean age 47.73 ± 14.33 years vs PD 67.04 ± 8.98 years (standardized mean difference -1.61, Mann–Whitney p=1.75×10⁻⁸). Milestone 2 completed a rigorous empirical bias audit (`docs/reports/M2_BIAS_AUDIT_REPORT.md`):
+1. **Age-Only Superiority:** Age-only logistic regression achieves **83.89%** balanced accuracy, exceeding all voice-only models (linear SVM: 70.54%, logistic: 73.88%).
+2. **Uncertain Incremental Value:** In paired testing on the primary seed, adding voice to age yields $\Delta\text{BA} = -0.0758$ (95% CI [$-0.1842, +0.0284$], supplementary McNemar exact $p = 0.2632$; repeated-CV $\Delta = -0.0681$); adding voice to age and sex yields $\Delta\text{BA} = -0.0745$ (95% CI [$-0.1843, +0.0310$], supplementary McNemar exact $p = 0.2632$; repeated-CV $\Delta = -0.0762$). The retrospective cohort did not establish statistically supported positive incremental predictive benefit from the voice features beyond demographic comparators. The confidence intervals include zero and positive effects; therefore, the true incremental contribution remains uncertain.
+3. **Caliper Matching Exhaustion:** Enforcing a standard 0.2 SD age caliper (2.44 years) with exact sex matching retains only **5 pairs (10 participants)** &mdash; an 87.2% participant attrition rate. Cross-validation modeling on the matched subcohort is formally **NOT ESTIMABLE** per SAP Rule 5.
+4. **Asymmetric Attrition:** Quality exclusions (excessive clipping >0.5%) occurred exclusively in the PD cohort (3/40 [7.5%] vs 0/41 HC; Fisher exact p = 0.1158).
+5. **Prospective Protocol:** Phase 8 establishes a formal prospective validation protocol (`docs/clinical_validation/M2_EXTERNAL_COHORT_PROTOCOL.md`) requiring N=240 participants (1:1 age- and sex-matched) under calibrated sound-booth conditions.
 
 ## Modeling boundary
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -21,6 +22,12 @@ from scripts.build_source_archive import OUTPUT as SOURCE_ARCHIVE  # noqa: E402
 from scripts.build_source_archive import ROOT, build_archive  # noqa: E402
 
 REVIEW_ARCHIVE = ROOT / "VoxNeuro_AI_review_bundle.zip"
+M2_ARCHIVE = ROOT / "VoxNeuro_M2_VERIFIED.zip"
+M3_ARCHIVE = ROOT / "VoxNeuro_M3_VERIFIED.zip"
+M4_ARCHIVE = ROOT / "VoxNeuro_M4_VERIFIED.zip"
+M5_ARCHIVE = ROOT / "VoxNeuro_M5_VERIFIED.zip"
+M6_ARCHIVE = ROOT / "VoxNeuro_M6_VERIFIED.zip"
+
 EVIDENCE_SOURCES = {
     "uams_nested_evaluation.html": ROOT / "artifacts/reports/model_evaluation/uams_nested.html",
     "uams_nested_summary.csv": ROOT / "data/processed/nested_uams_summary.csv",
@@ -33,6 +40,126 @@ EVIDENCE_SOURCES = {
     / "data/processed/nested_uams_evaluation_receipt.json",
     "uci_evaluation_receipt.json": ROOT / "data/processed/uci_model_evaluation_receipt.json",
 }
+
+M2_ADDITIONAL_EVIDENCE = {
+    "m2_demographic_audit.html": ROOT
+    / "artifacts/reports/scientific_audit/m2_demographic_audit.html",
+    "m2_attrition_analysis.html": ROOT
+    / "artifacts/reports/scientific_audit/m2_attrition_analysis.html",
+    "m2_matching_balance.html": ROOT
+    / "artifacts/reports/scientific_audit/m2_matching_balance.html",
+    "m2_bias_audit.html": ROOT / "artifacts/reports/scientific_audit/m2_bias_audit.html",
+    "m2_model_comparison.html": ROOT
+    / "artifacts/reports/scientific_audit/m2_model_comparison.html",
+    "m2_demographic_summary.json": ROOT / "data/processed/m2_demographic_summary.json",
+    "m2_attrition_summary.json": ROOT / "data/processed/m2_attrition_summary.json",
+    "m2_matching_sensitivity.csv": ROOT / "data/processed/m2_matching_sensitivity.csv",
+    "m2_comparator_metrics.csv": ROOT / "data/processed/m2_comparator_metrics.csv",
+    "m2_paired_incremental_voice.csv": ROOT / "data/processed/m2_paired_incremental_voice.csv",
+    "m2_sex_subgroup_summary.csv": ROOT / "data/processed/m2_sex_subgroup_summary.csv",
+    "m2_age_subgroup_summary.csv": ROOT / "data/processed/m2_age_subgroup_summary.csv",
+    "m2_feature_fdr_summary.csv": ROOT / "data/processed/m2_feature_fdr_summary.csv",
+    "m2_analysis_receipt.json": ROOT / "data/processed/m2_analysis_receipt.json",
+}
+
+M3_ADDITIONAL_EVIDENCE = {
+    "m3_task_schema_registry.json": ROOT / "review_evidence/m3_task_schema_registry.json",
+    "m3_task_feature_contract.csv": ROOT / "review_evidence/m3_task_feature_contract.csv",
+    "m3_synthetic_fixture_verification.json": ROOT
+    / "review_evidence/m3_synthetic_fixture_verification.json",
+    "m3_implementation_test_summary.json": ROOT
+    / "review_evidence/m3_implementation_test_summary.json",
+    "m3_provenance_summary.json": ROOT / "review_evidence/m3_provenance_summary.json",
+}
+
+M4_ADDITIONAL_EVIDENCE = {
+    "m4_domain_registry.json": ROOT / "review_evidence/m4_domain_registry.json",
+    "m4_domain_assessment.json": ROOT / "review_evidence/m4_domain_assessment.json",
+    "m4_domain_shift_summary.csv": ROOT / "review_evidence/m4_domain_shift_summary.csv",
+    "m4_domain_shift_summary.json": ROOT / "review_evidence/m4_domain_shift_summary.json",
+    "m4_safety_gate_test_summary.json": ROOT / "review_evidence/m4_safety_gate_test_summary.json",
+    "m4_provenance_summary.json": ROOT / "review_evidence/m4_provenance_summary.json",
+    "m4_review_manifest.json": ROOT / "review_evidence/m4_review_manifest.json",
+    "m4_authorization_registry_verification.json": (
+        ROOT / "review_evidence/m4_authorization_registry_verification.json"
+    ),
+    "m4_reviewer_authorization_summary.json": (
+        ROOT / "review_evidence/m4_reviewer_authorization_summary.json"
+    ),
+    "m4_source_authorization_summary.json": (
+        ROOT / "review_evidence/m4_source_authorization_summary.json"
+    ),
+    "m4_dataset_access_authentication_summary.json": (
+        ROOT / "review_evidence/m4_dataset_access_authentication_summary.json"
+    ),
+}
+
+M5_ADDITIONAL_EVIDENCE = {
+    "m5_study_registry_summary.json": ROOT / "review_evidence/m5_study_registry_summary.json",
+    "m5_database_schema_summary.json": ROOT / "review_evidence/m5_database_schema_summary.json",
+    "m5_consent_governance_summary.json": ROOT
+    / "review_evidence/m5_consent_governance_summary.json",
+    "m5_dataset_access_summary.json": ROOT / "review_evidence/m5_dataset_access_summary.json",
+    "m5_session_pipeline_summary.json": ROOT / "review_evidence/m5_session_pipeline_summary.json",
+    "m5_quality_control_summary.json": ROOT / "review_evidence/m5_quality_control_summary.json",
+    "m5_longitudinal_analysis_summary.json": ROOT
+    / "review_evidence/m5_longitudinal_analysis_summary.json",
+    "m5_privacy_audit_summary.json": ROOT / "review_evidence/m5_privacy_audit_summary.json",
+    "m5_provenance_summary.json": ROOT / "review_evidence/m5_provenance_summary.json",
+    "m5_test_summary.json": ROOT / "review_evidence/m5_test_summary.json",
+    "m5_review_manifest.json": ROOT / "review_evidence/m5_review_manifest.json",
+}
+
+M6_ADDITIONAL_EVIDENCE = {
+    "m6_dataset_readiness.json": ROOT / "review_evidence/m6_dataset_readiness.json",
+    "m6_experiment_summary.json": ROOT / "review_evidence/m6_experiment_summary.json",
+    "m6_model_card.json": ROOT / "review_evidence/m6_model_card.json",
+    "m6_model_card.html": ROOT / "review_evidence/m6_model_card.html",
+    "m6_database_and_auth_summary.json": (
+        ROOT / "review_evidence/m6_database_and_auth_summary.json"
+    ),
+    "m6_prediction_service_summary.json": (
+        ROOT / "review_evidence/m6_prediction_service_summary.json"
+    ),
+    "m6_ui_architecture_summary.json": (ROOT / "review_evidence/m6_ui_architecture_summary.json"),
+    "m6_provenance_summary.json": ROOT / "review_evidence/m6_provenance_summary.json",
+    "m6_test_summary.json": ROOT / "review_evidence/m6_test_summary.json",
+    "m6_review_manifest.json": ROOT / "review_evidence/m6_review_manifest.json",
+}
+
+
+def get_evidence_sources(milestone: str = "m1") -> dict[str, Path]:
+    """Return the evidence mapping for the given milestone."""
+    m = str(milestone).strip().lower()
+    if m == "m6":
+        return {
+            **EVIDENCE_SOURCES,
+            **M2_ADDITIONAL_EVIDENCE,
+            **M3_ADDITIONAL_EVIDENCE,
+            **M4_ADDITIONAL_EVIDENCE,
+            **M5_ADDITIONAL_EVIDENCE,
+            **M6_ADDITIONAL_EVIDENCE,
+        }
+    if m == "m5":
+        return {
+            **EVIDENCE_SOURCES,
+            **M2_ADDITIONAL_EVIDENCE,
+            **M3_ADDITIONAL_EVIDENCE,
+            **M4_ADDITIONAL_EVIDENCE,
+            **M5_ADDITIONAL_EVIDENCE,
+        }
+    if m == "m4":
+        return {
+            **EVIDENCE_SOURCES,
+            **M2_ADDITIONAL_EVIDENCE,
+            **M3_ADDITIONAL_EVIDENCE,
+            **M4_ADDITIONAL_EVIDENCE,
+        }
+    if m == "m3":
+        return {**EVIDENCE_SOURCES, **M2_ADDITIONAL_EVIDENCE, **M3_ADDITIONAL_EVIDENCE}
+    if m == "m2":
+        return {**EVIDENCE_SOURCES, **M2_ADDITIONAL_EVIDENCE}
+    return dict(EVIDENCE_SOURCES)
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -137,12 +264,13 @@ participant-level predictions are not included.</p>
     return rendered
 
 
-def _review_readme(evidence: dict[str, bytes]) -> bytes:
+def _review_readme(evidence: dict[str, bytes], milestone: str = "m1") -> bytes:
     rows = "\n".join(
         f"- `{name}` — SHA-256 `{hashlib.sha256(payload).hexdigest()}`"
         for name, payload in sorted(evidence.items())
     )
-    content = f"""VoxNeuro AI review bundle
+    title = f"VoxNeuro AI review bundle ({milestone.upper()})"
+    content = f"""{title}
 ========================
 
 This ZIP contains the complete compact source package plus aggregate model-evaluation evidence.
@@ -152,7 +280,8 @@ Scope and privacy
 -----------------
 - `review_evidence/` contains cohort summaries, fold metrics, and provenance receipts.
 - Audio, participant-level feature/prediction rows, and model binaries are excluded.
-- The source includes a reviewed policy with pseudonymous UAMS IDs for reproducibility.
+- The review package includes aggregate exclusion counts and reasons;
+  participant-level exclusion IDs are excluded for privacy.
   The supplemental dataset audit HTML contains aggregate counts only.
 - The bundled feature-extraction receipt replaces its excluded-ID list with a count.
 - UAMS results are internal estimates from a small, age-confounded cohort. They are not
@@ -181,13 +310,16 @@ def _write_member(archive: zipfile.ZipFile, name: str, payload: bytes) -> None:
 def build_review_bundle(
     output_path: Path | None = None,
     *,
+    milestone: str = "m1",
     manifest_path: Path | None = None,
     extraction_report_path: Path | None = None,
     evidence_sources: dict[str, Path] | None = None,
     source_archive_path: Path | None = None,
 ) -> dict[str, object]:
     """Rebuild the source archive and add only aggregate, hashed review evidence."""
-    active_evidence = evidence_sources if evidence_sources is not None else EVIDENCE_SOURCES
+    active_evidence = (
+        evidence_sources if evidence_sources is not None else get_evidence_sources(milestone)
+    )
     for _name, path in active_evidence.items():
         if not path.is_file():
             raise FileNotFoundError(f"Required review evidence is missing: {path}")
@@ -219,8 +351,23 @@ def build_review_bundle(
     audit_html = evidence["uams_dataset_audit.html"].decode("utf-8").casefold()
     if re.search(r"\buams-\d+\b", audit_html):
         raise ValueError("Aggregate dataset audit must not include sample identifiers.")
-    readme = _review_readme(evidence)
-    output = (output_path or REVIEW_ARCHIVE).resolve()
+    readme = _review_readme(evidence, milestone=milestone)
+    m = str(milestone).strip().lower()
+    default_out = (
+        M6_ARCHIVE
+        if m == "m6"
+        else M5_ARCHIVE
+        if m == "m5"
+        else M4_ARCHIVE
+        if m == "m4"
+        else M3_ARCHIVE
+        if m == "m3"
+        else M2_ARCHIVE
+        if m == "m2"
+        else REVIEW_ARCHIVE
+    )
+    target_out = output_path or default_out
+    output = target_out.resolve()
     with tempfile.NamedTemporaryFile(
         prefix=f".{output.stem}-", suffix=".tmp", dir=output.parent, delete=False
     ) as temporary:
@@ -255,8 +402,11 @@ def build_review_bundle(
             forbidden = [
                 name
                 for name in actual_names
-                if name.casefold().endswith((".wav", ".joblib", ".pkl", ".parquet"))
+                if name.casefold().endswith(
+                    (".wav", ".joblib", ".pkl", ".parquet", ".db", ".sqlite", ".sqlite3")
+                )
                 or "oof_predictions" in name.casefold()
+                or "matching_assignments" in name.casefold()
                 or (
                     name.startswith("review_evidence/")
                     and b"uams-0" in review_zip.read(name).lower()
@@ -266,6 +416,40 @@ def build_review_bundle(
                 raise zipfile.BadZipFile(
                     f"Non-aggregate or excluded evidence entered bundle: {forbidden}"
                 )
+
+            path_leak_pattern = re.compile(rb"[A-Za-z]:(?:\\\\|\\|/(?!/))|/[Uu]sers/|/home/")
+            for ev_name, ev_bytes in evidence.items():
+                if path_leak_pattern.search(ev_bytes):
+                    raise ValueError(f"Workstation path detected in review_evidence/{ev_name}")
+
+            for manifest_name in (
+                "m4_review_manifest.json",
+                "m5_review_manifest.json",
+                "m6_review_manifest.json",
+            ):
+                if manifest_name in evidence:
+                    manifest_data = json.loads(evidence[manifest_name].decode("utf-8"))
+                    entries = [
+                        (fname, meta.get("sha256"))
+                        for fname, meta in manifest_data.get("files", {}).items()
+                    ] + [
+                        (
+                            item["path"].removeprefix("review_evidence/"),
+                            item.get("sha256"),
+                        )
+                        for item in manifest_data.get("artifacts", [])
+                    ]
+                    if not entries:
+                        raise ValueError(f"{manifest_name} contains no manifest entries")
+                    for fname, expected_sha in entries:
+                        if fname not in evidence:
+                            raise ValueError(f"{manifest_name} references missing file {fname!r}")
+                        actual_sha = hashlib.sha256(evidence[fname]).hexdigest()
+                        if actual_sha != expected_sha:
+                            raise ValueError(
+                                f"{manifest_name} checksum mismatch for {fname!r}: "
+                                f"{actual_sha} != {expected_sha}"
+                            )
         size = temporary_path.stat().st_size
         if size > 5 * 1024 * 1024:
             raise ValueError(
@@ -284,8 +468,23 @@ def build_review_bundle(
     }
 
 
-def main() -> int:
-    report = build_review_bundle()
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Build an AI review bundle.")
+    parser.add_argument(
+        "--milestone",
+        choices=["m1", "m2", "m3", "m4", "m5", "m6"],
+        default="m6",
+        help="Target milestone review evidence set (default: m5)",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Path to output archive (default: depends on --milestone)",
+    )
+    args = parser.parse_args(argv)
+
+    report = build_review_bundle(output_path=args.output, milestone=args.milestone)
     print(
         f"PASS AI review bundle: {report['members']} files ({report['source_members']} source, "
         f"{report['members'] - report['source_members']} review attachments), "

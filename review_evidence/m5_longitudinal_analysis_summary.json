@@ -1,0 +1,28 @@
+{
+  "methodology": {
+    "feature_summary_metrics": [
+      "n_observations",
+      "mean_change",
+      "std_change",
+      "median_change",
+      "iqr_change"
+    ],
+    "interval_metrics": [
+      "mean_days",
+      "std_days",
+      "median_days",
+      "min_days",
+      "max_days"
+    ],
+    "minimum_observations_for_summary": 5,
+    "required_minimum_visits": 2,
+    "tracking_paradigm": "Descriptive intra-individual feature differences (Visit_k - Visit_1)"
+  },
+  "milestone": "M5",
+  "schema_version": "voxneuro.longitudinal_analysis.v1",
+  "scientific_integrity_invariant": {
+    "disclaimer_text": "Descriptive acoustic tracking only. Changes in voice measurements over time do not establish neurodegenerative progression, symptom worsening, or therapeutic response.",
+    "strict_constraint": "Longitudinal observations are purely descriptive acoustic measurements. They MUST NOT be used or interpreted as evidence of disease progression, symptom worsening, therapeutic efficacy, or clinical outcome."
+  },
+  "timestamp_utc": "2026-11-12T16:09:13.982850+00:00"
+}

@@ -1,0 +1,31 @@
+{
+  "authenticated_user_pages": [
+    "My History"
+  ],
+  "generated_utc": "2026-11-12T17:18:12.244508+00:00",
+  "guided_workflow_steps": [
+    "Prepare",
+    "Consent",
+    "Record",
+    "Quality",
+    "Features",
+    "Result"
+  ],
+  "initial_sidebar_state": "collapsed",
+  "legacy_compatibility_sidebar_preserved": true,
+  "milestone": "M6",
+  "role_gated_portals": [
+    "Researcher",
+    "Model Admin",
+    "System Admin"
+  ],
+  "top_navigation_public_pages": [
+    "Home",
+    "Voice Check",
+    "Results",
+    "How It Works",
+    "Privacy & Safety",
+    "Help",
+    "Account"
+  ]
+}

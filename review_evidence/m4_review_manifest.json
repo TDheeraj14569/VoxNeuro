@@ -1,0 +1,37 @@
+{
+  "artifacts": [
+    {
+      "path": "review_evidence/m4_domain_assessment.json",
+      "sha256": "b531d50f94076b5792c10bb918dc6a6b8709b693bbbffea7e7bc9ddce41122fa",
+      "size_bytes": 15951
+    },
+    {
+      "path": "review_evidence/m4_domain_registry.json",
+      "sha256": "0430add4ef39fbb583e2beaf7b1f10c67c22cd750f1c138cb0be1d5e721d38e1",
+      "size_bytes": 11945
+    },
+    {
+      "path": "review_evidence/m4_domain_shift_summary.csv",
+      "sha256": "70217dac74458734b99b9ea61668902c208df7aaa11a11e3350f213bcec96f0a",
+      "size_bytes": 228
+    },
+    {
+      "path": "review_evidence/m4_domain_shift_summary.json",
+      "sha256": "694227e11e0e81e7f4c0daead33e2962499fefe388eca53c31f15c299e02d5a9",
+      "size_bytes": 313
+    },
+    {
+      "path": "review_evidence/m4_provenance_summary.json",
+      "sha256": "8ec4ce7cb4115e309fa07dc7b06849c633987564dc27a34cbd1197ec3cfb4f3b",
+      "size_bytes": 1899
+    },
+    {
+      "path": "review_evidence/m4_safety_gate_test_summary.json",
+      "sha256": "ce35d63d4f642a7e95bdd1890a580289302cff7c4a35d57ad783863f34e18323",
+      "size_bytes": 174622
+    }
+  ],
+  "generated_utc": "2026-11-12T16:09:12.358445+00:00",
+  "manifest_version": "1.0.0",
+  "milestone": "M4"
+}

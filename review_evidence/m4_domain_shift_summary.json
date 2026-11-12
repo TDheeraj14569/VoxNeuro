@@ -1,0 +1,10 @@
+{
+  "candidate_participants": null,
+  "comparison_performed": false,
+  "domain_shift_metrics": null,
+  "features_evaluated": 0,
+  "milestone": "M4",
+  "reason": "No eligible independent external feature dataset is available.",
+  "reference_participants": null,
+  "status": "DOMAIN_VALIDATION_PENDING"
+}

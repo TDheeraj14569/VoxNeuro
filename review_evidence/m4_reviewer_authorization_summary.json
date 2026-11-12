@@ -1,0 +1,39 @@
+{
+  "artifact_type": "m4_reviewer_authorization_summary",
+  "caller_supplied_authorized_reviewers_accepted": false,
+  "deprecated_cli_override_probe": {
+    "error_code_observed": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED",
+    "exit_code": 1,
+    "flag": "--authorized-reviewers",
+    "rejected": true
+  },
+  "generated_utc": "2026-11-12T16:09:12.333919+00:00",
+  "milestone": "M4",
+  "pending_cli_probe": {
+    "authorization_trust_root_status": "AUTHORIZATION_TRUST_ROOT_NOT_VERIFIED",
+    "evaluation_status": "FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING",
+    "exit_code": 0
+  },
+  "verified_test_cases": {
+    "cases": [
+      {
+        "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+        "name": "test_attestation_rejects_unauthorized_reviewer_or_source",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_reviewer_authorization_failures",
+        "status": "passed"
+      },
+      {
+        "file": "tests/unit/test_m4_trust_registry.py",
+        "name": "test_cli_rejects_unsigned_reviewer_and_source_flags",
+        "status": "passed"
+      }
+    ],
+    "failed_count": 0,
+    "matched_count": 3,
+    "passed_count": 3
+  }
+}

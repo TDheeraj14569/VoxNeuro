@@ -10,14 +10,14 @@ from scripts.extract_features import _reviewed_exclusion_failures
 def test_partial_extraction_requires_explicit_reviewed_policy():
     statuses = [
         {
-            "sample_id": "uams-045",
+            "sample_id": "sample-clip-01",
             "extraction_status": "failed",
             "failure_reason": "Too many samples are clipped.",
         }
     ]
     policy = {
         "reviewed_exclusions": {
-            "uams-045": {
+            "sample-clip-01": {
                 "review_status": "reviewed",
                 "category": "clipping",
                 "expected_failure_fragment": "Too many samples are clipped",
@@ -31,14 +31,14 @@ def test_partial_extraction_requires_explicit_reviewed_policy():
 def test_reviewed_exclusion_does_not_allow_different_failure_modes():
     statuses = [
         {
-            "sample_id": "uams-045",
+            "sample_id": "sample-clip-01",
             "extraction_status": "failed",
             "failure_reason": "Audio is too short.",
         }
     ]
     policy = {
         "reviewed_exclusions": {
-            "uams-045": {
+            "sample-clip-01": {
                 "review_status": "reviewed",
                 "category": "clipping",
                 "expected_failure_fragment": "Too many samples are clipped",

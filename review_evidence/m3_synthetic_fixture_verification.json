@@ -1,0 +1,61 @@
+{
+  "timestamp_utc": "2026-11-11T20:21:22.416100+00:00",
+  "disclaimer": "These synthetic audio fixtures verify software implementation correctness and signal-processing edge cases only. Passing a synthetic fixture bound (e.g., VSA bounds, DDK rates, or pause counts) does not establish a healthy reference range, validate physiological maximum performance, diagnose clinical dysarthria, or establish population-level formant accuracy.",
+  "ddk_fixtures": {
+    "rate_3.0hz": {
+      "target_rate_hz": 3.0,
+      "measured_rate_hz": 2.9985,
+      "error_hz": 0.0015,
+      "events_detected": 11,
+      "status": "PASS"
+    },
+    "rate_5.0hz": {
+      "target_rate_hz": 5.0,
+      "measured_rate_hz": 5.0,
+      "error_hz": 0.0,
+      "events_detected": 18,
+      "status": "PASS"
+    },
+    "rate_7.0hz": {
+      "target_rate_hz": 7.0,
+      "measured_rate_hz": 7.0015,
+      "error_hz": 0.0015,
+      "events_detected": 24,
+      "status": "PASS"
+    },
+    "timing_variability_jitter_test": {
+      "uniform_cv_iei": 0.0,
+      "jittered_cv_iei": 0.1804,
+      "status": "PASS"
+    },
+    "rate_drift_acceleration_test": {
+      "drift_slope_s_per_event": -0.005,
+      "status": "PASS"
+    }
+  },
+  "connected_speech_fixture": {
+    "total_duration_s": 6.5,
+    "pause_count": 2,
+    "pause_fraction": 0.18,
+    "f0_median_hz": 150.49,
+    "f0_range_semitones": 3.73,
+    "status": "PASS"
+  },
+  "vowel_space_fixture": {
+    "vowel_a_formants_hz": {
+      "f1": 752.45,
+      "f2": 1105.89
+    },
+    "vowel_i_formants_hz": {
+      "f1": 341.54,
+      "f2": 1700.8
+    },
+    "vowel_u_formants_hz": {
+      "f1": 403.7,
+      "f2": 876.59
+    },
+    "vowel_space_area_hz2": 150848.3,
+    "status": "PASS"
+  },
+  "overall_verification": "PASS"
+}

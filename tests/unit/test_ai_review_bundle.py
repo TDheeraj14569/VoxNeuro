@@ -84,7 +84,7 @@ def synthetic_bundle_fixtures(tmp_path: Path):
                 json.dumps(
                     {
                         "status": "accepted_reviewed_exclusions",
-                        "excluded_sample_ids": ["uams-045", "uams-046"],
+                        "excluded_sample_ids": ["sample-ex-01", "sample-ex-02"],
                         "total_recordings": 2,
                     },
                     indent=2,
@@ -176,3 +176,55 @@ def test_ai_review_bundle_readme_hashes_match_entries(
             if member_path in zf.namelist():
                 actual_hash = hashlib.sha256(zf.read(member_path)).hexdigest()
                 assert actual_hash.casefold() == expected_hash.casefold()
+
+
+def test_ai_review_bundle_m6_milestone_verifies_m6_manifest(
+    tmp_path: Path, synthetic_bundle_fixtures: dict
+):
+    import json
+
+    from scripts.build_ai_review_bundle import M6_ADDITIONAL_EVIDENCE
+
+    evidence_dir = tmp_path / "m6_ev"
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    evidence_sources = dict(synthetic_bundle_fixtures["evidence_sources"])
+    manifest_files = {}
+    for name in sorted(M6_ADDITIONAL_EVIDENCE):
+        if name == "m6_review_manifest.json":
+            continue
+        p = evidence_dir / name
+        content = (
+            "<!doctype html><html><body>Aggregate M6 card</body></html>"
+            if name.endswith(".html")
+            else json.dumps({"milestone": "M6", "artifact": name})
+        ).encode("utf-8")
+        p.write_bytes(content)
+        evidence_sources[name] = p
+        manifest_files[name] = {
+            "bytes": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        }
+
+    manifest_path = evidence_dir / "m6_review_manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {"milestone": "M6", "total_files": len(manifest_files), "files": manifest_files}
+        ),
+        encoding="utf-8",
+    )
+    evidence_sources["m6_review_manifest.json"] = manifest_path
+
+    out_zip = tmp_path / "VoxNeuro_M6_TEST.zip"
+    build_review_bundle(
+        out_zip,
+        milestone="m6",
+        manifest_path=synthetic_bundle_fixtures["manifest_path"],
+        extraction_report_path=synthetic_bundle_fixtures["extraction_report_path"],
+        evidence_sources=evidence_sources,
+    )
+    with zipfile.ZipFile(out_zip) as zf:
+        assert zf.testzip() is None
+        readme = zf.read("AI_REVIEW_BUNDLE_README.txt").decode("utf-8")
+        assert "(M6)" in readme
+        assert "review_evidence/m6_review_manifest.json" in zf.namelist()
+        assert "review_evidence/m6_model_card.json" in zf.namelist()

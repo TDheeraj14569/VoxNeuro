@@ -1,0 +1,31 @@
+{
+  "disclaimer": "RESEARCH PROTOTYPE NOTICE: VoxNeuro is an investigational software platform for speech acoustics research. It does NOT provide clinical diagnostic decisions, rule-out determinations, or diagnostic disease probabilities. All metrics are descriptive and exploratory.",
+  "governance_rules": {
+    "fail_closed_if_unregistered": true,
+    "required_approval_state_for_ingestion": "APPROVED",
+    "required_dua_states_for_ingestion": [
+      "ACTIVE",
+      "NOT_REQUIRED"
+    ],
+    "task_authorization_matching_enforced": true,
+    "valid_access_approval_states": [
+      "APPROVED",
+      "DENIED",
+      "EXPIRED",
+      "PENDING"
+    ],
+    "valid_dua_states": [
+      "ACTIVE",
+      "DENIED",
+      "EXPIRED",
+      "NOT_REQUIRED",
+      "PENDING",
+      "RESTRICTED"
+    ]
+  },
+  "milestone": "M5",
+  "registered_datasets": [],
+  "schema_version": "voxneuro.dataset_access.v1",
+  "status": "RUNTIME_DATASET_AUTHORIZATION_NOT_INCLUDED_IN_RELEASE",
+  "timestamp_utc": "2026-11-12T16:09:13.981849+00:00"
+}

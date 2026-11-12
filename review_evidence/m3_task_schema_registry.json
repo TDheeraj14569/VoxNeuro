@@ -1,0 +1,57 @@
+{
+  "milestone": "M3",
+  "envelope_schema_version": "voxneuro.voice.v4",
+  "envelope_schema_fingerprint": "cc1d53b907cdf6f86e882a980d98015c3e04e2e10cccf59670c87bc6a54c0429",
+  "schemas": [
+    {
+      "schema_name": "sustained_vowel",
+      "schema_version": "voxneuro.voice.v3",
+      "schema_fingerprint": "a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f",
+      "feature_count": 39,
+      "description": "Canonical sustained vowel /a/ Core39 features for vocal fold vibration and acoustic stability.",
+      "failure_isolation_policy": "independent",
+      "is_legacy_canonical": true,
+      "model_compatible": true
+    },
+    {
+      "schema_name": "ddk",
+      "schema_version": "voxneuro.task.ddk.v1",
+      "schema_fingerprint": "b26bf914d14af54d85e98b40238c653d4134c5b72af3f7140ccf95f606ab4e5b",
+      "feature_count": 11,
+      "description": "Diadochokinetic syllable repetition (AMR/SMR) event rate, regularity, and rate drift features.",
+      "failure_isolation_policy": "independent",
+      "is_legacy_canonical": false,
+      "model_compatible": false
+    },
+    {
+      "schema_name": "connected_speech",
+      "schema_version": "voxneuro.task.connected_speech.v1",
+      "schema_fingerprint": "7a5763d4cdbda4b1034113a47dd197bf9942621df73312134cece35b8ae419b1",
+      "feature_count": 20,
+      "description": "Connected speech segmentation, pause architecture, prosodic f0 dynamics, and intensity decay.",
+      "failure_isolation_policy": "independent",
+      "is_legacy_canonical": false,
+      "model_compatible": false
+    },
+    {
+      "schema_name": "vowel_space",
+      "schema_version": "voxneuro.task.vowel_space.v1",
+      "schema_fingerprint": "e20bbc3ba00eb1f80d864823fc7e27537dcb0665693baf04ea149054c5b53993",
+      "feature_count": 16,
+      "description": "Corner vowels (/a/, /i/, /u/) Burg LPC formant tracking and triangular Vowel Space Area (VSA).",
+      "failure_isolation_policy": "independent",
+      "is_legacy_canonical": false,
+      "model_compatible": false
+    },
+    {
+      "schema_name": "multi_task_envelope",
+      "schema_version": "voxneuro.voice.v4",
+      "schema_fingerprint": "cc1d53b907cdf6f86e882a980d98015c3e04e2e10cccf59670c87bc6a54c0429",
+      "feature_count": "variable_by_active_tasks",
+      "description": "Hierarchical multi-task session envelope packaging independent task outputs with failure isolation.",
+      "failure_isolation_policy": "hierarchical_aggregation",
+      "is_legacy_canonical": false,
+      "model_compatible": false
+    }
+  ]
+}

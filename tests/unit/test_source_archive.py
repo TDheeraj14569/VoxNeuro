@@ -33,6 +33,12 @@ def test_source_archive_keeps_project_files_and_excludes_data_and_caches(tmp_pat
         "keys/private.key": "private key",
         "keys/identity.p12": "private certificate",
         "keys/id_ed25519": "private key",
+        "LICENSE": "MIT",
+        ".streamlit/config.toml": "headless = true",
+        "src/voxneuro/provenance.py": "def project_code_fingerprint(): pass",
+        "frontend/acoustic-visualizer/package.json": "{}",
+        "frontend/acoustic-visualizer/package-lock.json": "{}",
+        "frontend/acoustic-visualizer/src/main.js": "console.log();",
         "frontend/acoustic-visualizer/dist/visualizer.bundle.js": "local frontend bundle",
         "other-project/dist/build.js": "ordinary build output",
         "AI_REVIEW_BUNDLE_README.txt": "review-bundle-only notes",
@@ -55,6 +61,12 @@ def test_source_archive_keeps_project_files_and_excludes_data_and_caches(tmp_pat
     assert "data/processed/features.csv" not in names
     assert not any("__pycache__" in name or ".venv" in name or ".git/" in name for name in names)
     assert ".env.example" in names
+    assert ".streamlit/config.toml" in names
+    assert "LICENSE" in names
+    assert "src/voxneuro/provenance.py" in names
+    assert "frontend/acoustic-visualizer/package.json" in names
+    assert "frontend/acoustic-visualizer/package-lock.json" in names
+    assert "frontend/acoustic-visualizer/src/main.js" in names
     assert "frontend/acoustic-visualizer/dist/visualizer.bundle.js" in names
     assert "other-project/dist/build.js" not in names
     assert "AI_REVIEW_BUNDLE_README.txt" not in names
@@ -93,3 +105,101 @@ def test_checked_in_source_inventory_matches_archive_inclusion_rules():
     assert f"Total: {len(expected)}" in summary
     for path, count in counts.items():
         assert f"{path}: {count}" in summary
+
+
+def test_source_archive_fails_when_mandatory_provenance_file_missing(tmp_path):
+    files = {
+        "app.py": "import streamlit",
+        "README.md": "project",
+        "pyproject.toml": "project = true",
+        "requirements-lock.txt": "package==1",
+        "uv.lock": "version = 1",
+        "LICENSE": "MIT",
+        "src/voxneuro/__init__.py": "",
+        "src/voxneuro/provenance.py": "code",
+        "scripts/verify_project.py": "",
+        "tests/__init__.py": "",
+        "configs/audio_config.yaml": "sample_rate: 16000",
+        "docs/ARCHITECTURE.md": "# Architecture",
+        "frontend/acoustic-visualizer/package.json": "{}",
+        "frontend/acoustic-visualizer/package-lock.json": "{}",
+        "frontend/acoustic-visualizer/src/main.js": "console.log();",
+        "frontend/acoustic-visualizer/dist/visualizer.bundle.js": "local bundle",
+        # Intentionally omit .streamlit/config.toml
+    }
+    for name, text in files.items():
+        p = tmp_path / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+
+    import pytest
+
+    with pytest.raises(FileNotFoundError) as exc_info:
+        build_archive(tmp_path, tmp_path / "broken.zip", refresh_inventory=False)
+    assert ".streamlit/config.toml" in str(exc_info.value)
+
+
+def test_clean_extraction_contains_all_provenance_inputs_and_computes_fingerprint(tmp_path):
+    import subprocess
+    import sys
+
+    # 1. Build an archive to a temporary path without dirtying git inventory
+    archive_path = tmp_path / "clean_test_archive.zip"
+    report = build_archive(ROOT, archive_path, refresh_inventory=False)
+    assert archive_path.is_file()
+    assert report["members"] > 0
+
+    # 2. Extract into a clean directory outside the repository
+    extraction_dir = tmp_path / "extracted_project"
+    extraction_dir.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(archive_path) as zf:
+        zf.extractall(extraction_dir)
+
+    # 3. Verify mandatory provenance files exist in the clean extraction
+    assert (extraction_dir / ".streamlit" / "config.toml").is_file()
+    assert (extraction_dir / "app.py").is_file()
+    assert (extraction_dir / "pyproject.toml").is_file()
+    assert (extraction_dir / "uv.lock").is_file()
+    assert (extraction_dir / "requirements-lock.txt").is_file()
+    assert (extraction_dir / "src" / "voxneuro" / "provenance.py").is_file()
+    assert (
+        extraction_dir / "frontend" / "acoustic-visualizer" / "dist" / "visualizer.bundle.js"
+    ).is_file()
+
+    # 4. Verify sensitive / generated files are absent
+    for p in extraction_dir.rglob("*"):
+        if p.is_file():
+            assert not p.name.startswith(".env") or p.name == ".env.example"
+            assert p.suffix.casefold() not in {
+                ".pyc",
+                ".pyo",
+                ".wav",
+                ".joblib",
+                ".parquet",
+                ".pkl",
+            }
+            assert not any(
+                part in {".venv", "__pycache__", ".pytest_cache", ".git"} for part in p.parts
+            )
+
+    # 5. Run provenance computation inside clean extraction via isolated subprocess
+    cmd = [
+        sys.executable,
+        "-c",
+        (
+            "import sys; "
+            "from pathlib import Path; "
+            "root = Path.cwd(); "
+            "sys.path.insert(0, str(root / 'src')); "
+            "from voxneuro import config; "
+            "config.PROJECT_ROOT = root; "
+            "from voxneuro.provenance import project_code_fingerprint, frontend_code_fingerprint; "
+            "p_fp = project_code_fingerprint(); "
+            "f_fp = frontend_code_fingerprint(); "
+            "assert len(p_fp) == 64; "
+            "assert len(f_fp) == 64; "
+            "print('PASS clean extraction fingerprint:', p_fp[:8], f_fp[:8])"
+        ),
+    ]
+    proc = subprocess.run(cmd, cwd=str(extraction_dir), capture_output=True, text=True, check=True)
+    assert "PASS clean extraction fingerprint:" in proc.stdout

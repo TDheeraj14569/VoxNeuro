@@ -30,9 +30,59 @@ uv sync --all-extras --locked
 | Component | Version | Scope & Role |
 | :--- | :--- | :--- |
 | **Python Package** | `0.1.0` | Core `voxneuro` library, preprocessing, and validation pipelines (`pyproject.toml`). |
-| **Acoustic Feature Schema** | `voxneuro.voice.v3` | 39 versioned, deterministic Praat and Librosa measurement definitions. |
+| **Canonical Sustained Vowel Schema** | `voxneuro.voice.v3` | 39 versioned, deterministic Praat and Librosa measurement definitions (Core39). |
+| **DDK Syllable Repetition Schema** | `voxneuro.task.ddk.v1` | 11 diadochokinetic syllable rate, timing variability, and rate drift features. |
+| **Connected Speech Schema** | `voxneuro.task.connected_speech.v1` | 20 speech segmentation, pause distribution, and prosodic dynamics features. |
+| **Vowel Space Area Schema** | `voxneuro.task.vowel_space.v1` | 16 Burg LPC formant tracking and triangular acoustic vowel space area features. |
+| **Multi-Task Session Envelope** | `voxneuro.voice.v4` | Hierarchical session container packaging multi-task results with failure isolation. |
 | **Session Technical Report** | `0.3.0` | Individual session acoustic quality, waveform, and measurement HTML report. |
 | **Research Model Bundle** | `0.4.0-research` | Internal UAMS cross-validation cohort baseline (domain-restricted; research only). |
+| **Recording Domain Registry** | `voxneuro.domain_registry.v1` | Authoritative recording-domain registry and metadata governance schema (`configs/recording_domain_registry.yaml`). |
+| **Domain Assessment Dossier** | `voxneuro.domain_assessment.v1` | Cryptographically hashed candidate domain evaluation and domain-shift dossier schema. |
+
+---
+
+## Milestone 4: Independent Recording-Domain Validation & Safe Inference
+
+Milestone 4 establishes a formal framework for independent recording-domain validation, quantitative domain-shift characterization, and fail-closed inference safety:
+
+1. **Recording Domain Architecture:** Strict architectural separation between recording domain IDs, acquisition metadata, capture origins, and model compatibility approvals.
+2. **Canonical Domain Registry (`configs/recording_domain_registry.yaml`):** Tracks the reference development domain (`uams_telephone`) and candidate external domains (`neurovoz_studio`, `pc_gita_condenser`, `italian_parkinsons_headset`). In Milestone 4, `approved_domains: []` remains strictly empty.
+3. **Independent Validation Protocol (`VOXNEURO-M4-EXT-VAL-2026-V1`):** Frozen-model evaluation protocol with participant-level bootstrap uncertainty ($B=1,000$), small-cell suppression ($N < 10$), and prespecified primary/secondary endpoints.
+4. **Domain Shift Engine:** Computes standardized mean differences (Cohen's $d$), two-sample Kolmogorov–Smirnov tests, and multiple-testing corrections (Benjamini–Hochberg FDR and Bonferroni) across all Core39 acoustic features.
+5. **Fail-Closed Inference Safety:** Mandatory verification of input capture context (`InputCaptureContext`). User uploads, live browser/app microphones, and unknown capture origins are unconditionally rejected. `TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256` remains empty (`frozenset()`).
+6. **Milestone 4 Evaluation Status:** Formally designated as `FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING` (framework verified; independent raw audio pending DUA; no candidate domain approved for prediction compatibility).
+
+*Detailed Milestone 4 specifications:*
+- Domain Architecture: [`docs/M4_DOMAIN_ARCHITECTURE.md`](docs/M4_DOMAIN_ARCHITECTURE.md)
+- Domain Metadata Schema: [`docs/M4_DOMAIN_METADATA_SCHEMA.md`](docs/M4_DOMAIN_METADATA_SCHEMA.md)
+- Domain Shift Methodology: [`docs/M4_DOMAIN_SHIFT_METHODOLOGY.md`](docs/M4_DOMAIN_SHIFT_METHODOLOGY.md)
+- External Dataset Eligibility Register: [`docs/audit/M4_EXTERNAL_DATASET_REGISTER.md`](docs/audit/M4_EXTERNAL_DATASET_REGISTER.md)
+- Independent Validation Protocol: [`docs/M4_INDEPENDENT_DOMAIN_VALIDATION_PROTOCOL.md`](docs/M4_INDEPENDENT_DOMAIN_VALIDATION_PROTOCOL.md)
+- Compatibility Decision Framework: [`docs/M4_DOMAIN_COMPATIBILITY_DECISION_FRAMEWORK.md`](docs/M4_DOMAIN_COMPATIBILITY_DECISION_FRAMEWORK.md)
+- Inference Safety: [`docs/M4_INFERENCE_SAFETY.md`](docs/M4_INFERENCE_SAFETY.md)
+- M4 Baseline Report: [`docs/audit/M4_BASELINE_REPORT.md`](docs/audit/M4_BASELINE_REPORT.md)
+- M4 Completion Report: [`docs/audit/M4_COMPLETION_REPORT.md`](docs/audit/M4_COMPLETION_REPORT.md)
+
+---
+
+## Milestone 3: Multi-Task Voice Assessment
+
+Milestone 3 extends VoxNeuro beyond single sustained vowel phonation (`voxneuro.voice.v3`) to a comprehensive 4-task speech battery:
+
+1. **Sustained Vowel Phonation (`/a/`):** Preserves canonical Core39 acoustic features without modification.
+2. **Diadochokinetic Syllable Repetition (DDK):** Evaluates rapid alternating speech motor control across AMR (`/pa/`, `/ta/`, `/ka/`) and SMR (`/pa-ta-ka/`), extracting syllable event counts, rates (events/s), inter-event interval variability (CV IEI), and rate drift slopes.
+3. **Connected Speech:** Evaluates speech breathing and prosody using a standardized reading passage (Bamboo Passage), extracting speech/pause segmentation, pause ratios, prosodic pitch variation ($F_0$ median, semitone range), and vocal intensity dynamics.
+4. **Multi-Vowel Formants & Vowel Space Area (VSA):** Tracks $F_1$ and $F_2$ formants across corner vowels (`/a/`, `/i/`, `/u/`) using Burg LPC and calculates triangular VSA ($\text{Hz}^2$) via the Shoelace formula.
+5. **Interactive Multi-Task Workspace:** An integrated Streamlit page (`Multi-task assessment`) enables independent upload, analysis, acoustic triangle visualization, and export of multi-task session receipts (`voxneuro.voice.v4`) and standalone HTML reports.
+
+*Detailed multi-task specifications:*
+- Architecture: [`docs/M3_MULTITASK_ARCHITECTURE.md`](docs/M3_MULTITASK_ARCHITECTURE.md)
+- Clinical & Technical Protocols: [`docs/M3_TASK_PROTOCOL.md`](docs/M3_TASK_PROTOCOL.md)
+- Feature Definitions & Math: [`docs/M3_FEATURE_SCHEMA.md`](docs/M3_FEATURE_SCHEMA.md)
+- Algorithmic Constraints: [`docs/M3_ALGORITHM_LIMITATIONS.md`](docs/M3_ALGORITHM_LIMITATIONS.md)
+- Schema Compatibility & Governance: [`docs/M3_SCHEMA_COMPATIBILITY.md`](docs/M3_SCHEMA_COMPATIBILITY.md)
+- Prospective Clinical Acquisition Protocol: [`docs/clinical_validation/M3_MULTITASK_ACQUISITION_PROTOCOL.md`](docs/clinical_validation/M3_MULTITASK_ACQUISITION_PROTOCOL.md)
 
 ---
 

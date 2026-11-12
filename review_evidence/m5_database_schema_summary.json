@@ -1,0 +1,45 @@
+{
+  "applied_migrations": [
+    "001_initial_study_schema.sql",
+    "002_participant_study_constraints.sql",
+    "003_composite_foreign_keys_and_retention_defaults.sql",
+    "004_dataset_access_dua_fingerprint.sql",
+    "005_dataset_access_registry_binding.sql"
+  ],
+  "foreign_key_violations": 0,
+  "foreign_keys_enabled": true,
+  "integrity_check_passed": true,
+  "milestone": "M5",
+  "schema_version": "voxneuro.database_schema.v1",
+  "table_count": 13,
+  "tables": [
+    "audit_log",
+    "consents",
+    "dataset_access",
+    "derived_features",
+    "participants",
+    "processing_runs",
+    "protocols",
+    "schema_migrations",
+    "sessions",
+    "sqlite_sequence",
+    "studies",
+    "task_recordings",
+    "tombstones"
+  ],
+  "tables_specification": {
+    "audit_log": "Privacy-sanitized operational audit trail",
+    "consents": "Informed consent records and permitted task/use scopes",
+    "dataset_access": "Data Use Agreements (DUA) and institutional authorizations",
+    "derived_features": "Extracted acoustic features without persisting raw audio",
+    "participants": "Pseudonymous participant cohort with zero direct identifiers",
+    "processing_runs": "Immutable cryptographic receipts of batch processing runs",
+    "protocols": "Immutable task specifications, schedules, and quality gates",
+    "schema_migrations": "Tracks applied migration versions and timestamps",
+    "sessions": "Longitudinal visit sessions and operational quality state",
+    "studies": "Research studies linking cohorts to immutable protocol versions",
+    "task_recordings": "Task-specific audio recording metadata and pass/fail states",
+    "tombstones": "Cryptographic records of consent withdrawal and feature deletion"
+  },
+  "timestamp_utc": "2026-11-12T16:09:13.934036+00:00"
+}

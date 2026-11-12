@@ -1,0 +1,90 @@
+{
+  "applied_migrations": [
+    "001_initial_study_schema.sql",
+    "002_participant_study_constraints.sql",
+    "003_composite_foreign_keys_and_retention_defaults.sql",
+    "004_dataset_access_dua_fingerprint.sql",
+    "005_dataset_access_registry_binding.sql",
+    "006_m6_platform_and_ml_registry.sql"
+  ],
+  "generated_utc": "2026-11-12T17:18:12.243508+00:00",
+  "milestone": "M6",
+  "model_lifecycle_states": [
+    "EXTERNAL_VALIDATION_PENDING",
+    "REJECTED",
+    "RESEARCH_EVALUATED",
+    "RESEARCH_INFERENCE_APPROVED",
+    "RETIRED",
+    "TRAINED",
+    "TRAINING"
+  ],
+  "password_hashing": "PBKDF2-HMAC-SHA256 (200000 iterations)",
+  "rbac_roles": [
+    "admin",
+    "ml_admin",
+    "participant",
+    "researcher"
+  ],
+  "schema_integrity": {
+    "clean": true,
+    "foreign_key_violations": [],
+    "integrity_check": [
+      "ok"
+    ],
+    "tables": [
+      "abstention_events",
+      "audit_log",
+      "consents",
+      "dataset_access",
+      "derived_features",
+      "model_domain_approvals",
+      "model_evaluations",
+      "model_lifecycle_events",
+      "model_versions",
+      "participants",
+      "password_reset_tokens",
+      "prediction_records",
+      "processing_runs",
+      "protocols",
+      "schema_migrations",
+      "sessions",
+      "sqlite_sequence",
+      "studies",
+      "task_recordings",
+      "tombstones",
+      "training_datasets",
+      "training_runs",
+      "user_sessions",
+      "users"
+    ]
+  },
+  "self_registration_default_role": "participant",
+  "session_token_storage": "SHA-256 hash only (raw token never stored)",
+  "table_count": 24,
+  "tables": [
+    "abstention_events",
+    "audit_log",
+    "consents",
+    "dataset_access",
+    "derived_features",
+    "model_domain_approvals",
+    "model_evaluations",
+    "model_lifecycle_events",
+    "model_versions",
+    "participants",
+    "password_reset_tokens",
+    "prediction_records",
+    "processing_runs",
+    "protocols",
+    "schema_migrations",
+    "sessions",
+    "sqlite_sequence",
+    "studies",
+    "task_recordings",
+    "tombstones",
+    "training_datasets",
+    "training_runs",
+    "user_sessions",
+    "users"
+  ]
+}

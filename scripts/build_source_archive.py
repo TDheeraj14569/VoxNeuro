@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import sys
 import tempfile
 import zipfile
 from collections import Counter
@@ -11,7 +12,16 @@ from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT / "src"))
+
+from voxneuro.provenance import (  # noqa: E402
+    FRONTEND_PROVENANCE_REQUIRED_FILES,
+    PROVENANCE_REQUIRED_FILES,
+)
+
 OUTPUT = ROOT / "VoxNeuro_source_audit.zip"
+VERIFIED_OUTPUT = ROOT / "VoxNeuro_M0_VERIFIED.zip"
 MAX_SOURCE_FILE_BYTES = 25 * 1024 * 1024
 EXCLUDED_DIRECTORIES = {
     ".git",
@@ -24,6 +34,8 @@ EXCLUDED_DIRECTORIES = {
     "htmlcov",
     "build",
     "dist",
+    "scratch",
+    "workspace",
 }
 REVIEW_BUNDLE_EVIDENCE_DIRECTORY = "review_evidence"
 REVIEW_BUNDLE_README = "AI_REVIEW_BUNDLE_README.txt"
@@ -35,12 +47,12 @@ PLACEHOLDER_ONLY_DIRECTORIES = {
     "artifacts/reports",
 }
 REQUIRED_FILES = {
-    "app.py",
+    *PROVENANCE_REQUIRED_FILES,
+    *FRONTEND_PROVENANCE_REQUIRED_FILES,
     "README.md",
-    "pyproject.toml",
-    "requirements-lock.txt",
-    "uv.lock",
+    "LICENSE",
     "src/voxneuro/__init__.py",
+    "src/voxneuro/provenance.py",
     "scripts/verify_project.py",
     "tests/__init__.py",
     "configs/audio_config.yaml",
@@ -64,6 +76,9 @@ EXCLUDED_SUFFIXES = {
     ".tar",
     ".gz",
     ".bz2",
+    ".db",
+    ".sqlite",
+    ".sqlite3",
 }
 EXCLUDED_SECRET_SUFFIXES = {
     ".pem",
@@ -134,6 +149,7 @@ def _is_secret_file(relative: Path) -> bool:
     return (
         filename == ".env"
         or (filename.startswith(".env.") and filename != ".env.example")
+        or (filename.startswith(".env_") and filename != ".env.example")
         or filename.startswith(".envrc.")
         or filename in EXCLUDED_SECRET_FILENAMES
         or (filename.startswith("id_") and "." not in filename)
@@ -156,7 +172,9 @@ def source_files(root: Path, output: Path) -> list[Path]:
         for filename in filenames:
             path = current / filename
             relative = path.relative_to(root)
-            if len(relative.parts) == 1 and filename == REVIEW_BUNDLE_README:
+            if len(relative.parts) == 1 and (
+                filename == REVIEW_BUNDLE_README or filename.endswith(".sha256")
+            ):
                 continue
             if path.resolve() == output.resolve() or path.is_symlink():
                 continue
@@ -172,7 +190,11 @@ def source_files(root: Path, output: Path) -> list[Path]:
                 continue
             if _path_has_excluded_directory(relative):
                 continue
-            if filename in {".coverage"} or filename.endswith(".tmp"):
+            if (
+                filename == ".coverage"
+                or filename.startswith(".coverage.")
+                or filename.endswith(".tmp")
+            ):
                 continue
             files.append(path)
     return sorted(files, key=lambda item: item.relative_to(root).as_posix().casefold())
@@ -204,11 +226,14 @@ def _refresh_inventory_documents(root: Path, output: Path) -> None:
     (audit_dir / "PROJECT_FILE_INVENTORY_COUNTS.txt").write_text(summary, encoding="utf-8")
 
 
-def build_archive(root: Path = ROOT, output: Path = OUTPUT) -> dict[str, object]:
+def build_archive(
+    root: Path = ROOT, output: Path = OUTPUT, refresh_inventory: bool = True
+) -> dict[str, object]:
     """Write a deterministic source ZIP, verify CRCs, and report its contents."""
     root = root.resolve()
     output = output.resolve()
-    _refresh_inventory_documents(root, output)
+    if refresh_inventory:
+        _refresh_inventory_documents(root, output)
     members = source_files(root, output)
     relative_names = {path.relative_to(root).as_posix() for path in members}
     missing = REQUIRED_FILES - relative_names
@@ -264,12 +289,35 @@ def build_archive(root: Path = ROOT, output: Path = OUTPUT) -> dict[str, object]
 
 
 def main() -> int:
-    report = build_archive()
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Build and verify the compact source-only project review archive."
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default=OUTPUT,
+        help="Path to output archive (default: VoxNeuro_source_audit.zip)",
+    )
+    args = parser.parse_args()
+
+    report = build_archive(output=args.output)
     print(
         f"PASS source archive: {report['members']} files, {report['bytes']:,} bytes, "
         f"SHA-256 {report['sha256']}"
     )
     print(report["path"])
+
+    if args.output.resolve() == OUTPUT.resolve():
+        verified_report = build_archive(output=VERIFIED_OUTPUT, refresh_inventory=False)
+        print(
+            f"PASS verified archive: {verified_report['members']} files, "
+            f"{verified_report['bytes']:,} bytes, "
+            f"SHA-256 {verified_report['sha256']}"
+        )
+        print(verified_report["path"])
     return 0
 
 

@@ -1,0 +1,176 @@
+{
+  "cohorts": [
+    {
+      "acquisition_domain_id": "uams_telephone",
+      "blockers": [],
+      "class_counts": {
+        "HC": 41,
+        "PD": 37
+      },
+      "core39_compatible": true,
+      "dataset_id": "uams",
+      "dataset_name": "UAMS Sustained-Vowel /a/ Cohort",
+      "dataset_sha256": "ec406fe8f1630a1ccadae3f547af252cc2fa460cddeb06a516b4f21bd7b4bc4c",
+      "dataset_version": "figshare-23849127.v1",
+      "dua_authorization_state": "OPEN_CC_BY_4_0",
+      "exact_duplicate_feature_rows": 0,
+      "license_name": "CC BY 4.0",
+      "missing_values_count": 0,
+      "notes": [
+        "Verified 78 participants with zero cross-fold leakage.",
+        "Telephone-collected 8 kHz sustained vowel /a/; severe age confounding (PD older than HC).",
+        "Mean age HC=47.73 vs PD=66.91 (strong age confound)."
+      ],
+      "participant_count": 78,
+      "participant_label_conflicts": 0,
+      "raw_audio_available": true,
+      "ready_for_external_validation": false,
+      "ready_for_training": true,
+      "recording_count": 78,
+      "status": "READY_INTERNAL_RESEARCH_ONLY"
+    },
+    {
+      "acquisition_domain_id": "uci470_precomputed_44k_mic",
+      "blockers": [
+        "No raw audio or Core39 mapping available (precomputed table only)."
+      ],
+      "class_counts": {
+        "HC": 192,
+        "PD": 564
+      },
+      "core39_compatible": false,
+      "dataset_id": "uci470",
+      "dataset_name": "UCI Parkinson's Disease Classification (#470)",
+      "dataset_sha256": "9495d1100beaa24005ea951d4b6588186091de4c21cc45009b027f38f699b8ab",
+      "dataset_version": "doi-10.24432/C5MS4X|schema-0aae68277c6e",
+      "dua_authorization_state": "OPEN_CC_BY_4_0",
+      "exact_duplicate_feature_rows": 1,
+      "license_name": "CC BY 4.0",
+      "missing_values_count": 0,
+      "notes": [
+        "252 participants x 3 repeats; 752 pre-extracted predictors; raw WAV audio withheld.",
+        "No per-participant age column; cannot serve as Core39 microphone validation."
+      ],
+      "participant_count": 252,
+      "participant_label_conflicts": 0,
+      "raw_audio_available": false,
+      "ready_for_external_validation": false,
+      "ready_for_training": true,
+      "recording_count": 756,
+      "status": "READY_FEATURE_TABLE_BENCHMARK_ONLY"
+    },
+    {
+      "acquisition_domain_id": "italian_parkinsons_headset",
+      "blockers": [
+        "No authorized local audio or feature files present for 'italian_parkinsons_headset'.",
+        "M4/M5 DUA authorization incomplete (NOT_REGISTERED_OR_NO_DB)."
+      ],
+      "class_counts": {},
+      "core39_compatible": true,
+      "dataset_id": "italian_parkinsons_headset",
+      "dataset_name": "Italian Parkinson's Voice and Speech (IPVS) Domain",
+      "dataset_sha256": null,
+      "dataset_version": "v1",
+      "dua_authorization_state": "NOT_REGISTERED_OR_NO_DB",
+      "exact_duplicate_feature_rows": 0,
+      "license_name": "DUA / Restricted Access",
+      "missing_values_count": 0,
+      "notes": [
+        "Candidate external recording domain (unknown, status=CANDIDATE_TASK_COMPATIBILITY_UNVERIFIED)."
+      ],
+      "participant_count": 0,
+      "participant_label_conflicts": 0,
+      "raw_audio_available": false,
+      "ready_for_external_validation": false,
+      "ready_for_training": false,
+      "recording_count": 0,
+      "status": "BLOCKED_EXTERNAL_DATA_OR_DUA_MISSING"
+    },
+    {
+      "acquisition_domain_id": "neurovoz_studio",
+      "blockers": [
+        "No authorized local audio or feature files present for 'neurovoz_studio'.",
+        "M4/M5 DUA authorization incomplete (NOT_REGISTERED_OR_NO_DB)."
+      ],
+      "class_counts": {},
+      "core39_compatible": true,
+      "dataset_id": "neurovoz_studio",
+      "dataset_name": "NeuroVoz Clinical Corpus Domain",
+      "dataset_sha256": null,
+      "dataset_version": "v1",
+      "dua_authorization_state": "NOT_REGISTERED_OR_NO_DB",
+      "exact_duplicate_feature_rows": 0,
+      "license_name": "DUA / Restricted Access",
+      "missing_values_count": 0,
+      "notes": [
+        "Candidate external recording domain (headset_microphone, status=DOMAIN_VALIDATION_PENDING)."
+      ],
+      "participant_count": 0,
+      "participant_label_conflicts": 0,
+      "raw_audio_available": false,
+      "ready_for_external_validation": false,
+      "ready_for_training": false,
+      "recording_count": 0,
+      "status": "BLOCKED_EXTERNAL_DATA_OR_DUA_MISSING"
+    },
+    {
+      "acquisition_domain_id": "pc_gita_condenser",
+      "blockers": [
+        "No authorized local audio or feature files present for 'pc_gita_condenser'.",
+        "M4/M5 DUA authorization incomplete (NOT_REGISTERED_OR_NO_DB)."
+      ],
+      "class_counts": {},
+      "core39_compatible": true,
+      "dataset_id": "pc_gita_condenser",
+      "dataset_name": "PC-GITA Dynamic Microphone Domain",
+      "dataset_sha256": null,
+      "dataset_version": "v1",
+      "dua_authorization_state": "NOT_REGISTERED_OR_NO_DB",
+      "exact_duplicate_feature_rows": 0,
+      "license_name": "DUA / Restricted Access",
+      "missing_values_count": 0,
+      "notes": [
+        "Candidate external recording domain (dynamic_microphone, status=DOMAIN_VALIDATION_PENDING)."
+      ],
+      "participant_count": 0,
+      "participant_label_conflicts": 0,
+      "raw_audio_available": false,
+      "ready_for_external_validation": false,
+      "ready_for_training": false,
+      "recording_count": 0,
+      "status": "BLOCKED_EXTERNAL_DATA_OR_DUA_MISSING"
+    }
+  ],
+  "external_validation_data_ready": false,
+  "report_sha256": "c9fee36050145afc003a8ee02c89ba65e7707675cc2e98e3c98125ece9dcd144",
+  "schema_version": "voxneuro.voice.v3",
+  "summary": {
+    "external_blockers": [
+      {
+        "blockers": [
+          "No authorized local audio or feature files present for 'italian_parkinsons_headset'.",
+          "M4/M5 DUA authorization incomplete (NOT_REGISTERED_OR_NO_DB)."
+        ],
+        "dataset_id": "italian_parkinsons_headset"
+      },
+      {
+        "blockers": [
+          "No authorized local audio or feature files present for 'neurovoz_studio'.",
+          "M4/M5 DUA authorization incomplete (NOT_REGISTERED_OR_NO_DB)."
+        ],
+        "dataset_id": "neurovoz_studio"
+      },
+      {
+        "blockers": [
+          "No authorized local audio or feature files present for 'pc_gita_condenser'.",
+          "M4/M5 DUA authorization incomplete (NOT_REGISTERED_OR_NO_DB)."
+        ],
+        "dataset_id": "pc_gita_condenser"
+      }
+    ],
+    "external_cohorts_ready": 0,
+    "total_cohorts_checked": 5,
+    "training_cohorts_ready": 2
+  },
+  "training_data_ready": true
+}

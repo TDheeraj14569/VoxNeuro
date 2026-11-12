@@ -1,0 +1,43 @@
+{
+  "milestone": "M3",
+  "execution_timestamp_utc": "2026-11-11T20:22:00.194537+00:00",
+  "python_version": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "command": "python -m pytest tests/unit/test_task_audio.py tests/unit/test_ddk_features.py tests/unit/test_connected_speech_features.py tests/unit/test_vowel_space_features.py tests/unit/test_multitask_orchestration.py tests/unit/test_multitask_failures.py tests/unit/test_schema_registry.py tests/unit/test_evidence_generator.py tests/unit/test_features.py tests/integration/test_multitask_app.py tests/integration/test_app.py --junitxml=<temporary-file> -q",
+  "test_targets": [
+    "tests/unit/test_task_audio.py",
+    "tests/unit/test_ddk_features.py",
+    "tests/unit/test_connected_speech_features.py",
+    "tests/unit/test_vowel_space_features.py",
+    "tests/unit/test_multitask_orchestration.py",
+    "tests/unit/test_multitask_failures.py",
+    "tests/unit/test_schema_registry.py",
+    "tests/unit/test_evidence_generator.py",
+    "tests/unit/test_features.py",
+    "tests/integration/test_multitask_app.py",
+    "tests/integration/test_app.py"
+  ],
+  "executed_targets": [
+    "tests/unit/test_task_audio.py",
+    "tests/unit/test_ddk_features.py",
+    "tests/unit/test_connected_speech_features.py",
+    "tests/unit/test_vowel_space_features.py",
+    "tests/unit/test_multitask_orchestration.py",
+    "tests/unit/test_multitask_failures.py",
+    "tests/unit/test_schema_registry.py",
+    "tests/unit/test_evidence_generator.py",
+    "tests/unit/test_features.py",
+    "tests/integration/test_multitask_app.py",
+    "tests/integration/test_app.py"
+  ],
+  "blocked_targets": [],
+  "total": 122,
+  "passed": 122,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "pass_rate_percentage": 100.0,
+  "duration_seconds": 35.179,
+  "exit_code": 0,
+  "execution_status": "PASS"
+}

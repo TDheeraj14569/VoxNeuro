@@ -1,0 +1,14 @@
+{
+  "milestone": "M3",
+  "timestamp_utc": "2026-11-11T20:22:00.247955+00:00",
+  "python_version": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "project_code_fingerprint": "f9cced52e226e87d386e1b1523883d004ea006ca8bf63a42d178c81e054ab3e3",
+  "canonical_v3_schema_fingerprint": "a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f",
+  "ddk_v1_schema_fingerprint": "b26bf914d14af54d85e98b40238c653d4134c5b72af3f7140ccf95f606ab4e5b",
+  "connected_speech_v1_schema_fingerprint": "7a5763d4cdbda4b1034113a47dd197bf9942621df73312134cece35b8ae419b1",
+  "vowel_space_v1_schema_fingerprint": "e20bbc3ba00eb1f80d864823fc7e27537dcb0665693baf04ea149054c5b53993",
+  "v4_envelope_schema_fingerprint": "cc1d53b907cdf6f86e882a980d98015c3e04e2e10cccf59670c87bc6a54c0429",
+  "schema_registry_count": 4,
+  "microphone_inference_policy": "allow_user_microphone_inference: false (locked)"
+}

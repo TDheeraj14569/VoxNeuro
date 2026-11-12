@@ -1,0 +1,44 @@
+{
+  "description": "Milestone 6 cryptographic review evidence manifest",
+  "files": {
+    "m6_database_and_auth_summary.json": {
+      "bytes": 2140,
+      "sha256": "8a88a599b6d987869074245f7ebc26aed4fd3448a1c3999828fb81f9f0a27c3b"
+    },
+    "m6_dataset_readiness.json": {
+      "bytes": 6627,
+      "sha256": "c11841e2fe0c8c291787782c313344b201bc28f7e844c2573fa79ae5e20089d7"
+    },
+    "m6_experiment_summary.json": {
+      "bytes": 49605,
+      "sha256": "db8b3b49ab1d48134d8ce0b69bea51f227087ecd55fe44aa6a4f011fc07e1306"
+    },
+    "m6_model_card.html": {
+      "bytes": 3190,
+      "sha256": "a992820efcd70a92e172f4f5a392a3901fdd177a0a8f2a00841212d563ef09fc"
+    },
+    "m6_model_card.json": {
+      "bytes": 28328,
+      "sha256": "7ac41b6dbf3f3d6c55d38ac49d68a9c6e6518e34248e5fcf3e7950d272968960"
+    },
+    "m6_prediction_service_summary.json": {
+      "bytes": 765,
+      "sha256": "436c1c40305f747c375e88b984acb7004ff5411b270cf9d74327378ccb506122"
+    },
+    "m6_provenance_summary.json": {
+      "bytes": 1091,
+      "sha256": "c26b3defb6f920beee3a3a14128afec4fe432d9c8ce05d0a1910aff20d751fd8"
+    },
+    "m6_test_summary.json": {
+      "bytes": 140009,
+      "sha256": "bb54eb872319517a8ece77accc201f92434acafdb0ebe6beca23b35d553c20db"
+    },
+    "m6_ui_architecture_summary.json": {
+      "bytes": 588,
+      "sha256": "0b30ac57131f16763a20cca3301ddfb14548e1648a495f95aec780bb2819aef3"
+    }
+  },
+  "generated_utc": "2026-11-12T17:18:12.293174+00:00",
+  "milestone": "M6",
+  "total_files": 9
+}

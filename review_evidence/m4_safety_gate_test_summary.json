@@ -1,0 +1,4674 @@
+{
+  "milestone": "M4",
+  "generated_utc": "2026-11-12T16:09:08.174285+00:00",
+  "exit_code": 0,
+  "fully_successful": true,
+  "total_tests": 577,
+  "passed_tests": 577,
+  "failed_tests": 0,
+  "error_tests": 0,
+  "skipped_tests": 0,
+  "blocked_tests": 0,
+  "duration_seconds": 128.124,
+  "python_version": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "test_targets": [
+    "tests"
+  ],
+  "categories": {
+    "m0_m3_regression_tests": {
+      "total": 402,
+      "passed": 402,
+      "failed": 0
+    },
+    "m4_unit_tests": {
+      "total": 70,
+      "passed": 70,
+      "failed": 0
+    },
+    "m4_integration_tests": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    "private_dataset_dependent_tests": {
+      "total": 55,
+      "passed": 55,
+      "failed": 0
+    },
+    "private_model_dependent_tests": {
+      "total": 31,
+      "passed": 31,
+      "failed": 0
+    },
+    "streamlit_dependent_tests": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    }
+  },
+  "safety_invariants": {
+    "allow_user_microphone_inference": false,
+    "trusted_domain_validation_report_sha256_count": 0,
+    "approved_domains_count": 0,
+    "policy_status": "ENFORCED_FAIL_CLOSED"
+  },
+  "test_cases": [
+    {
+      "name": "test_app_home_renders_and_start_button_opens_recording_page",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.698,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_wav_upload_runs_analysis_features_and_report",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 9.071,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_all_navigation_sections_render_without_exceptions",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 2.839,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_invalid_wav_shows_actionable_error_without_crashing",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.442,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_shows_safe_empty_state_when_research_receipts_and_report_are_absent",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 0.839,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_stereo_upload_displays_stereo_channel_text",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.614,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_nonzero_permitted_clipping_displays_measured_percentage",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.405,
+      "status": "passed"
+    },
+    {
+      "name": "test_app_acoustic_benchmark_cards_render_em_dash_for_missing_values",
+      "classname": "tests.integration.test_app",
+      "file": "tests/integration/test_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 0.031,
+      "status": "passed"
+    },
+    {
+      "name": "test_valid_wav_runs_end_to_end_to_features",
+      "classname": "tests.integration.test_audio_pipeline",
+      "file": "tests/integration/test_audio_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.159,
+      "status": "passed"
+    },
+    {
+      "name": "test_research_bundle_prediction_contract",
+      "classname": "tests.integration.test_inference_pipeline",
+      "file": "tests/integration/test_inference_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.044,
+      "status": "passed"
+    },
+    {
+      "name": "test_m2_bias_analysis_pipeline_execution",
+      "classname": "tests.integration.test_m2_bias_pipeline",
+      "file": "tests/integration/test_m2_bias_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 2.568,
+      "status": "passed"
+    },
+    {
+      "name": "test_m2_demographic_evaluation_outputs_validation",
+      "classname": "tests.integration.test_m2_bias_pipeline",
+      "file": "tests/integration/test_m2_bias_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_m2_report_data_consistency",
+      "classname": "tests.integration.test_m2_bias_pipeline",
+      "file": "tests/integration/test_m2_bias_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_domain_pipeline_end_to_end",
+      "classname": "tests.integration.test_m4_domain_pipeline",
+      "file": "tests/integration/test_m4_domain_pipeline.py",
+      "category": "m4_integration_tests",
+      "time_seconds": 0.11,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_gate_trusted_allowlist_is_strictly_empty",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "category": "m4_integration_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_gate_microphone_inference_is_strictly_disabled",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "category": "m4_integration_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_gate_registry_approved_domains_is_strictly_empty",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "category": "m4_integration_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_gate_reference_model_bundle_safety_flags",
+      "classname": "tests.integration.test_m4_safety_gates",
+      "file": "tests/integration/test_m4_safety_gates.py",
+      "category": "m4_integration_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_m5_operations_pipeline_end_to_end",
+      "classname": "tests.integration.test_m5_operations_pipeline",
+      "file": "tests/integration/test_m5_operations_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 5.402,
+      "status": "passed"
+    },
+    {
+      "name": "test_multitask_page_renders_without_exception",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 0.496,
+      "status": "passed"
+    },
+    {
+      "name": "test_research_operations_page_renders_without_exception",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 0.482,
+      "status": "passed"
+    },
+    {
+      "name": "test_multitask_ddk_upload_and_analysis",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.081,
+      "status": "passed"
+    },
+    {
+      "name": "test_multitask_connected_speech_upload_and_analysis",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.261,
+      "status": "passed"
+    },
+    {
+      "name": "test_multitask_vowel_space_upload_and_computation",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.369,
+      "status": "passed"
+    },
+    {
+      "name": "test_multitask_unified_session_assembly_and_clear",
+      "classname": "tests.integration.test_multitask_app",
+      "file": "tests/integration/test_multitask_app.py",
+      "category": "streamlit_dependent_tests",
+      "time_seconds": 1.575,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_evaluation_and_fixed_fit_are_usable",
+      "classname": "tests.integration.test_training_pipeline",
+      "file": "tests/integration/test_training_pipeline.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 3.114,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_is_mono_finite_and_render_bounded",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_supports_start_seconds_offset",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_downsampling_preserves_short_transients",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples0]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples1]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples2]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples3]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples4]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples5]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples6]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples7]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_payload_rejects_invalid_samples[samples8]",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_spectrogram_payload_is_bounded_and_uses_fixed_db_scale",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_spectrogram_payload_rejects_nyquist_and_stereo_input",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_local_viewer_embeds_the_built_bundle_and_has_a_fallback",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_home_visualization_identifies_its_decorative_status",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_spectrogram_payload_validates_types",
+      "classname": "tests.unit.test_acoustic_3d",
+      "file": "tests/unit/test_acoustic_3d.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_ai_review_bundle_builds_and_verifies_integrity",
+      "classname": "tests.unit.test_ai_review_bundle",
+      "file": "tests/unit/test_ai_review_bundle.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 1.971,
+      "status": "passed"
+    },
+    {
+      "name": "test_ai_review_bundle_blocks_sample_ids_and_forbidden_binaries",
+      "classname": "tests.unit.test_ai_review_bundle",
+      "file": "tests/unit/test_ai_review_bundle.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 1.47,
+      "status": "passed"
+    },
+    {
+      "name": "test_ai_review_bundle_readme_hashes_match_entries",
+      "classname": "tests.unit.test_ai_review_bundle",
+      "file": "tests/unit/test_ai_review_bundle.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 1.774,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_reports_actual_metadata",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_accepts_bytesio_directly",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_corrupt_wav_is_rejected",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_empty_wav_is_rejected",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_non_wav_container_is_rejected",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_wave_extensible_container_is_accepted",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_unsupported_sample_rate_is_rejected",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.069,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_invalid_sample_rate[16000.5-TypeError-sample_rate must be an integer]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_invalid_sample_rate[8000.0-TypeError-sample_rate must be an integer]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_invalid_sample_rate[True-TypeError-sample_rate must be an integer]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_invalid_sample_rate[4000-ValueError-sample_rate must be an integer between 8000 and 48000 Hz]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_invalid_sample_rate[96000-ValueError-sample_rate must be an integer between 8000 and 48000 Hz]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_complex_samples",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_rejects_non_numeric_samples",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_three_channel_wav_is_rejected_with_audio_read_error",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_record_converts_list_samples_to_numpy_array",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_audio_exceeding_duration_limit",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[nan]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[inf]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[-inf]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[-1.0]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[0.0]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[True]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[False]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_decode_audio_rejects_invalid_max_duration_seconds[300]",
+      "classname": "tests.unit.test_audio_io",
+      "file": "tests/unit/test_audio_io.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_frame_rms_returns_seconds_and_nonnegative_levels",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_frame_rms_rejects_invalid_configuration[0-20]",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_frame_rms_rejects_invalid_configuration[16000-0]",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_frame_rms_rejects_invalid_configuration[16000--1]",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_frame_rms_rejects_stereo_instead_of_flattening_channels",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_frame_rms_rejects_non_finite_samples",
+      "classname": "tests.unit.test_audio_quality",
+      "file": "tests/unit/test_audio_quality.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_valid_sustained_vowel_passes",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_silence_and_short_input_are_rejected_with_reasons",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_clipping_is_rejected",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_zero_clipping_limit_accepts_a_clean_recording",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.015,
+      "status": "passed"
+    },
+    {
+      "name": "test_clipping_limit_accepts_equality_and_rejects_only_above_it",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.053,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_audio_dimensions_return_structured_validation_errors[samples0-2-Audio must have one or two channels]",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_audio_dimensions_return_structured_validation_errors[samples1-2-Audio must have one or two channels]",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_audio_dimensions_return_structured_validation_errors[samples2-1-channel metadata does not match the sample-array shape]",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_nonfinite_samples_are_rejected",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_empty_audio_is_rejected",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_quiet_nonzero_audio_is_rejected_as_low_level",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_long_audio_is_rejected",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.132,
+      "status": "passed"
+    },
+    {
+      "name": "test_unvoiced_noise_is_rejected",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_stereo_phase_cancellation_is_rejected",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_stereo_phase_cancellation_is_invalid_before_processing",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.014,
+      "status": "passed"
+    },
+    {
+      "name": "test_unknown_mono_policy_fails_closed",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_validation_config_enforces_numeric_ranges",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_validation_with_dc_offset_does_not_artificially_fail_harmonics",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.033,
+      "status": "passed"
+    },
+    {
+      "name": "test_pure_sine_tone_is_rejected_as_non_vocal",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.014,
+      "status": "passed"
+    },
+    {
+      "name": "test_square_wave_is_rejected_as_synthetic",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_praat_pitch_failure_with_zero_min_voiced_fraction_returns_clean_result",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_audio_rejects_invalid_sample_rate",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_audio_rejects_complex_samples",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_audio_rejects_non_numeric_object_samples",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_audio_rejects_boolean_samples",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_validation_config_from_dict_and_thresholds",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_validation_config_from_dict_rejects_type_coercion",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_validation_config_from_yaml_loader",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_audio_early_exit_on_invalid_duration",
+      "classname": "tests.unit.test_audio_validation",
+      "file": "tests/unit/test_audio_validation.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.138,
+      "status": "passed"
+    },
+    {
+      "name": "test_demographic_summary_handles_malformed_missing_boolean_and_out_of_range_ages",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_duplicate_hash_summary_ignores_missing_and_malformed_values",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_audit_returns_nonzero_for_label_mismatch",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.051,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_audit_handles_missing_match_column_without_traceback",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.044,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_audit_reports_malformed_and_missing_ages_as_json",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.034,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_audit_fails_for_boolean_age_values",
+      "classname": "tests.unit.test_audit_dataset",
+      "file": "tests/unit/test_audit_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.039,
+      "status": "passed"
+    },
+    {
+      "name": "test_sanitize_for_json_precision_and_types",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_clopper_pearson_bounds",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_pooled_sd_calculation",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_age_distribution",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_rank_biserial_sign_convention",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.028,
+      "status": "passed"
+    },
+    {
+      "name": "test_age_student_t_confidence_intervals",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_cramers_v_without_yates",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_age_distribution_missing_columns",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_age_distribution_missing_class",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_sex_distribution",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_sex_distribution_missing_values",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_joint_distribution",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_joint_distribution_no_support",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_demographic_integrity",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_age_strata_small_cell_suppression",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.013,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_feature_level_associations",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_quality_attrition",
+      "classname": "tests.unit.test_bias_audit",
+      "file": "tests/unit/test_bias_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[PwPD-PD]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[PD-PD]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[HC-HC]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_accepts_only_explicit_known_labels[healthy control-HC]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[None]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[nan]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[unknown]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_normalize_label_rejects_missing_or_unknown_values[unclassified]",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_folder_mapping_requires_an_exact_known_class_folder",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_duplicate_normalized_sample_ids_must_have_consistent_metadata",
+      "classname": "tests.unit.test_build_manifest",
+      "file": "tests/unit/test_build_manifest.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_calibration_summary_requires_binary_oof_labels_and_probabilities",
+      "classname": "tests.unit.test_calibration_and_cards",
+      "file": "tests/unit/test_calibration_and_cards.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_card_template_keeps_research_only_boundary",
+      "classname": "tests.unit.test_calibration_and_cards",
+      "file": "tests/unit/test_calibration_and_cards.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_checked_in_configurations_pass_typed_validation[application_config.yaml]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_checked_in_configurations_pass_typed_validation[audio_config.yaml]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_checked_in_configurations_pass_typed_validation[feature_config.yaml]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_checked_in_configurations_pass_typed_validation[model_config.yaml]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_checked_in_configurations_pass_typed_validation[reviewed_exclusions.yaml]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[application_config.yaml-updates0-store_recordings]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[application_config.yaml-updates1-unknown keys]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[audio_config.yaml-updates2-finite number]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.029,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[audio_config.yaml-updates3-less than]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.028,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[feature_config.yaml-updates4-less than]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[feature_config.yaml-updates5-cannot exceed]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.033,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates6-cv_splits]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates7-inner_cv_splits]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.029,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates8-cv_repeats]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates9-bootstrap_iterations]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_invalid_types_ranges_and_unknown_keys[model_config.yaml-updates10-not supported]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.018,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_configuration_requires_the_schema_mfcc_count[12]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_configuration_requires_the_schema_mfcc_count[14]",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.022,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_configuration_rejects_cutoff_at_target_nyquist",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.029,
+      "status": "passed"
+    },
+    {
+      "name": "test_configuration_loader_rejects_missing_keys_and_unknown_config_names",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_reviewed_exclusion_config_rejects_unreviewed_entries",
+      "classname": "tests.unit.test_config",
+      "file": "tests/unit/test_config.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.022,
+      "status": "passed"
+    },
+    {
+      "name": "test_connected_speech_schema_fingerprint_and_features",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_segmentation_detects_known_bouts_and_pauses",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.031,
+      "status": "passed"
+    },
+    {
+      "name": "test_prosodic_pitch_metrics_accuracy",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_intensity_metrics_extracted",
+      "classname": "tests.unit.test_connected_speech_features.TestConnectedSpeechFeatures",
+      "file": "tests/unit/test_connected_speech_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.027,
+      "status": "passed"
+    },
+    {
+      "name": "test_manifest_flags_duplicate_ids_and_missing_paths",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_validator_rejects_identity_predictor",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_receipt_checks_code_data_and_artifact_hashes",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_validator_preserves_missing_measures_but_rejects_malformed_text",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_validator_rejects_boolean_measurements[True]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.018,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_validator_rejects_boolean_measurements[False]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_validator_rejects_boolean_measurements[boolean_value2]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_validator_rejects_boolean_measurements[boolean_value3]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_manifest_rejects_empty_rows_and_malformed_waveform_hashes",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.021,
+      "status": "passed"
+    },
+    {
+      "name": "test_manifest_verifies_sha256_against_existing_audio",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.04,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_recomputes_label_from_source_and_audio_folder",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_label_metadata_hash_and_duplicate_issues",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_requires_match_and_hash_columns",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[True]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[False]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[age2]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_boolean_participant_ages[age3]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.014,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_unknown_source_sex_category",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.014,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_conflicting_repeated_participant_demographics[ages0-sex_codes0-age]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.027,
+      "status": "passed"
+    },
+    {
+      "name": "test_integrity_manifest_rejects_conflicting_repeated_participant_demographics[ages1-sex_codes1-sex]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_extraction_receipt_must_match_current_manifest_and_feature_files",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.024,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluation_receipt_must_match_current_grouped_evaluation_outputs",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[[]]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[\"text\"]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[7]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[true]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.013,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_validators_reject_valid_json_with_non_object_roots[null]",
+      "classname": "tests.unit.test_dataset",
+      "file": "tests/unit/test_dataset.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.013,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_zip_refreshes_partial_existing_output",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.058,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_zip_rejects_checksum_mismatch_without_touching_output",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.047,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_zip_rejects_path_traversal",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_zip_rejects_windows_absolute_member_paths",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_zip_rejects_alternate_stream_member_paths",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.028,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_archive_listing_rejects_unsafe_or_unexpected_members[members0--rw-r--r-- 0 0 10 Feb 1 ../outside.csv]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_archive_listing_rejects_unsafe_or_unexpected_members[members1-lrwxrwxrwx 0 0 20 Feb 1 pd_speech_features.csv]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_archive_listing_rejects_unsafe_or_unexpected_members[members2--rw-r--r-- 0 0 10 Feb 1 pd_speech_features.csv]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_accepts_the_documented_repeated_participant_structure",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.508,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[id-755-0-exactly three recordings]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[gender-0-None-missing values]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.018,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[gender-0-2-0/1 encoding]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.013,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[class-0-0-class counts]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[PPE-0-corrupt-nonnumeric]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.29,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[PPE-0-inf-non-finite]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.345,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_invalid_metadata_and_predictors[PPE-0-True-Boolean]",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.273,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_table_rejects_header_name_or_order_drift",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.034,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_inspection_reextracts_csv_without_a_matching_archive_receipt",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.052,
+      "status": "passed"
+    },
+    {
+      "name": "test_uci_evaluation_rejects_non_object_source_receipt",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_inspector_supports_uci_only_without_calling_uams",
+      "classname": "tests.unit.test_dataset_inspection",
+      "file": "tests/unit/test_dataset_inspection.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_load_feature_table_requires_path_and_identity_columns",
+      "classname": "tests.unit.test_dataset_io",
+      "file": "tests/unit/test_dataset_io.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_generic_audio_manifest_never_guesses_class_and_uses_content_hash",
+      "classname": "tests.unit.test_dataset_io",
+      "file": "tests/unit/test_dataset_io.py",
+      "category": "private_dataset_dependent_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_ddk_schema_fingerprint_and_feature_names",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_event_detection_accuracy_on_known_rate",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_variability_metrics_on_uniform_vs_jittered_trains",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_rate_drift_slope_detects_acceleration",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_insufficient_signal_returns_null_features",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_four_stimuli_types_supported",
+      "classname": "tests.unit.test_ddk_features.TestDDKFeatures",
+      "file": "tests/unit/test_ddk_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_build_demographic_comparator_pipelines",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_paired_bootstrap_ci_identical",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 2.44,
+      "status": "passed"
+    },
+    {
+      "name": "test_paired_bootstrap_ci_reproducibility",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 9.287,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_demographic_models_synthetic_and_decision_rules",
+      "classname": "tests.unit.test_demographic_sensitivity",
+      "file": "tests/unit/test_demographic_sensitivity.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 14.122,
+      "status": "passed"
+    },
+    {
+      "name": "test_create_and_validate_pending_dossier",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_premature_approval_claim",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_zero_participants_with_independent_validation_true",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_zero_participants_with_numeric_overlap_count",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_zero_participants_with_overlap_checked_true",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.022,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_overlap_checked_without_receipt",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_zero_recordings_with_frozen_model_applied_true",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_dossier_rejects_null_metric_labelled_estimated",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_candidate_dossier_strictly_rejected_by_compatibility_report_loader",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.042,
+      "status": "passed"
+    },
+    {
+      "name": "test_candidate_dossier_cannot_approve_bundle",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.061,
+      "status": "passed"
+    },
+    {
+      "name": "test_pending_dossier_acquisition_differences_are_domain_specific",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_documentation_does_not_claim_verified_independence_while_not_assessed",
+      "classname": "tests.unit.test_domain_assessment",
+      "file": "tests/unit/test_domain_assessment.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.027,
+      "status": "passed"
+    },
+    {
+      "name": "test_load_default_registry",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.021,
+      "status": "passed"
+    },
+    {
+      "name": "test_registry_normalization",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_registry_rejects_duplicate_domain_declarations",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_registry_rejects_invalid_device_category",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_corrected_metadata_and_provenance_sources",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_registry_safety_enforces_approved_domain_consistency",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_ipvs_metadata_and_register_scientific_consistency",
+      "classname": "tests.unit.test_domain_registry",
+      "file": "tests/unit/test_domain_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_compare_acquisition_metadata",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_standardized_mean_difference_calculation",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_benjamini_hochberg_fdr_monotonicity",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_shift_and_summary_generation",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.015,
+      "status": "passed"
+    },
+    {
+      "name": "test_compute_feature_shift_rejects_identical_self_comparison",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_generate_domain_shift_evidence_pending_when_no_external_data",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "name": "test_generate_domain_shift_evidence_with_external_data",
+      "classname": "tests.unit.test_domain_shift",
+      "file": "tests/unit/test_domain_shift.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.203,
+      "status": "passed"
+    },
+    {
+      "name": "test_test_summary_not_hardcoded",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_generator_captures_simulated_failure",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.907,
+      "status": "passed"
+    },
+    {
+      "name": "test_portable_command_excludes_absolute_paths_and_identifies_targets",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_evidence_excludes_unix_home_and_usernames",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 1.845,
+      "status": "passed"
+    },
+    {
+      "name": "test_temporary_report_paths_replaced_with_placeholder",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.711,
+      "status": "passed"
+    },
+    {
+      "name": "test_test_counts_derived_from_actual_junit_xml",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.751,
+      "status": "passed"
+    },
+    {
+      "name": "test_sanitized_target_path_normalization",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_m4_evidence_generator_handles_pending_state",
+      "classname": "tests.unit.test_evidence_generator",
+      "file": "tests/unit/test_evidence_generator.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 1.123,
+      "status": "passed"
+    },
+    {
+      "name": "test_load_frozen_reference_model",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_frozen_model_bootstrap",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 1.499,
+      "status": "passed"
+    },
+    {
+      "name": "test_small_cell_suppression_on_small_cohort",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.032,
+      "status": "passed"
+    },
+    {
+      "name": "test_build_quality_attrition_summary",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_participant_independence_verification",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluation_provenance_receipt_verification",
+      "classname": "tests.unit.test_external_evaluation",
+      "file": "tests/unit/test_external_evaluation.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.664,
+      "status": "passed"
+    },
+    {
+      "name": "test_partial_extraction_requires_explicit_reviewed_policy",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_reviewed_exclusion_does_not_allow_different_failure_modes",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_extraction_script_validates_manifest_before_processing",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.17,
+      "status": "passed"
+    },
+    {
+      "name": "test_partial_failure_cannot_write_successful_feature_table",
+      "classname": "tests.unit.test_feature_extraction",
+      "file": "tests/unit/test_feature_extraction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.209,
+      "status": "passed"
+    },
+    {
+      "name": "test_features_follow_versioned_schema_and_are_finite_when_defined",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.185,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_schema_has_no_identity_or_label_columns",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_mfcc_names_are_zero_based_and_feature_band_is_versioned",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_configuration_fingerprint_changes_with_extraction_settings",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_configuration_schema_version_must_match_implementation",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_extractor_rejects_multichannel_input_instead_of_interleaving",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.016,
+      "status": "passed"
+    },
+    {
+      "name": "test_standalone_spectral_extractor_rejects_stereo_instead_of_flattening",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_spectral_extractor_rejects_cutoff_at_effective_nyquist",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_f0_summaries_require_at_least_three_voiced_frames[0.04]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_f0_summaries_require_at_least_three_voiced_frames[0.06]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[12]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[14]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[13.0]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_current_schema_rejects_non_13_mfcc_counts[True]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_mfcc_units_and_standard_deviation_validity_are_explicit",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_hnr_calculation_excludes_praat_undefined_unvoiced_frames",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.029,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples0]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples1]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples2]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_complex_boolean_and_string_arrays[bad_samples3]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[16000.5]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[True]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[False]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[4000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[96000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.019,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[16000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_sample_rates[-16000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[16000.5]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[True]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[False]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[0]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[4000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[96000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.027,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[16000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_invalid_original_sample_rates[-16000]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_lower_level_extractors_reject_non_numeric_and_complex_arrays",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs0-pitch_floor_hz]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs1-pitch_floor_hz]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs2-pitch_ceiling_hz]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs3-pitch_floor_hz must be strictly less]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs4-pitch_step_seconds]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs5-mel_bands]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs6-fft_window_samples]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs7-hop_samples]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs8-mel_min_hz]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs9-common_max_hz]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs10-common_max_hz]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_validates_parameter_bounds[param_kwargs11-spectral_rolloff_fraction]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_unnormalized_amplitude[1.000001]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_unnormalized_amplitude[-1.000001]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_unnormalized_amplitude[2.5]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_features_rejects_unnormalized_amplitude[-3.0]",
+      "classname": "tests.unit.test_features",
+      "file": "tests/unit/test_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_individual_html_report_contains_actual_features_and_embedded_plots",
+      "classname": "tests.unit.test_html_report",
+      "file": "tests/unit/test_html_report.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.028,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_missing_domain",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_unknown_domain",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_unapproved_domain",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_candidate_dossier_as_report",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_modified_payload",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_wrong_hash",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_when_allowlist_is_empty",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_live_microphone",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_smartphone_alias",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.009,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_browser_microphone",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_laptop_microphone",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_neutral_domain_with_microphone_capture_origin",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_unknown_capture_origin",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_incompatible_feature_schema",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_incompatible_preprocessing",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.013,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_rejects_missing_model_metadata",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_accepts_verified_research_capture_context",
+      "classname": "tests.unit.test_inference_capture_context",
+      "file": "tests/unit/test_inference_capture_context.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_core_docs_exist",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_no_forbidden_overstatements_in_docs",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.041,
+      "status": "passed"
+    },
+    {
+      "name": "test_primary_paired_delta_ba_values",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_primary_paired_confidence_intervals",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_mcnemar_qualified_as_supplementary",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_scientific_uncertainty_acknowledged",
+      "classname": "tests.unit.test_m2_documentation_consistency",
+      "file": "tests/unit/test_m2_documentation_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_age_subgroup_csv_agrees_with_json",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_markdown_report_age_table_matches_csv_and_json",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_feature_fdr_csv_schema_and_integrity",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_markdown_report_top5_fdr_features_match_csv",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_no_obsolete_feature_names_in_m2_reports",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_scientific_wording_conformance",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_external_protocol_scientific_rigor",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_negative_age_table_mutation_fails",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_negative_obsolete_feature_name_injection_fails",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_negative_corrupted_fdr_q_value_fails",
+      "classname": "tests.unit.test_m2_report_consistency.TestM2ReportDataConsistency",
+      "file": "tests/unit/test_m2_report_consistency.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_m3_docs_exist",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_no_unsupported_healthy_vsa_ranges",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.052,
+      "status": "passed"
+    },
+    {
+      "name": "test_no_deterministic_parkinsons_claims_from_vsa",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.034,
+      "status": "passed"
+    },
+    {
+      "name": "test_ddk_does_not_claim_direct_motor_planning",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_connected_speech_does_not_claim_direct_breathing_measurement",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_vowel_space_does_not_claim_physical_articulatory_movement",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_sustained_vowel_does_not_claim_mucosal_wave_measurement",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_synthetic_fixtures_strictly_software_verification",
+      "classname": "tests.unit.test_m3_scientific_terminology",
+      "file": "tests/unit/test_m3_scientific_terminology.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_independence_verification_requires_common_identity_basis",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.204,
+      "status": "passed"
+    },
+    {
+      "name": "test_independence_attestation_to_roster_binding",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.314,
+      "status": "passed"
+    },
+    {
+      "name": "test_attestation_rejects_missing_provenance_defaults",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.156,
+      "status": "passed"
+    },
+    {
+      "name": "test_attestation_rejects_tampered_source_roster_file",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.151,
+      "status": "passed"
+    },
+    {
+      "name": "test_attestation_rejects_unauthorized_reviewer_or_source",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.176,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_rejects_forged_approval_against_pending_or_expired_db_dua",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.351,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_rejects_unregistered_key_id",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.189,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_rejects_dataset_id_mismatch",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.158,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_rejects_model_sha_mismatch",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.213,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_rejects_feature_config_fingerprint_mismatch",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.163,
+      "status": "passed"
+    },
+    {
+      "name": "test_receipt_rejects_candidate_table_with_non_numeric_features",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.217,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_external_domain_cli_fails_closed_without_governance_flags",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 1.901,
+      "status": "passed"
+    },
+    {
+      "name": "test_italian_ipvs_acquisition_fields_allow_unknown",
+      "classname": "tests.unit.test_m4_provenance_and_roster_binding",
+      "file": "tests/unit/test_m4_provenance_and_roster_binding.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.012,
+      "status": "passed"
+    },
+    {
+      "name": "test_ed25519_rfc8032_vectors",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.034,
+      "status": "passed"
+    },
+    {
+      "name": "test_registry_signature_and_trust_anchor_failures",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.392,
+      "status": "passed"
+    },
+    {
+      "name": "test_reviewer_authorization_failures",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.277,
+      "status": "passed"
+    },
+    {
+      "name": "test_source_authorization_and_hmac_bypass_rejected",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.279,
+      "status": "passed"
+    },
+    {
+      "name": "test_tampered_trust_anchor_yaml_fails_closed",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.311,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_access_database_authenticity_required",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 0.651,
+      "status": "passed"
+    },
+    {
+      "name": "test_cli_rejects_unsigned_reviewer_and_source_flags",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 1.952,
+      "status": "passed"
+    },
+    {
+      "name": "test_dua_to_signed_registry_cross_binding_enforcement",
+      "classname": "tests.unit.test_m4_trust_registry",
+      "file": "tests/unit/test_m4_trust_registry.py",
+      "category": "m4_unit_tests",
+      "time_seconds": 1.675,
+      "status": "passed"
+    },
+    {
+      "name": "test_new_participant_defaults_to_pending_consent",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.059,
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_or_empty_consent_reference_blocks_session_creation",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.054,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_or_nonexistent_consent_reference_blocks_session_creation",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.063,
+      "status": "passed"
+    },
+    {
+      "name": "test_newer_more_permissive_consent_cannot_authorize_pinned_old_session",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.075,
+      "status": "passed"
+    },
+    {
+      "name": "test_withdrawn_pinned_consent_blocks_processing_even_if_participant_re_enrolled",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.056,
+      "status": "passed"
+    },
+    {
+      "name": "test_derived_feature_retention_defaults_to_false_and_prevents_storage",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.072,
+      "status": "passed"
+    },
+    {
+      "name": "test_incorrect_passed_consent_object_rejected",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.112,
+      "status": "passed"
+    },
+    {
+      "name": "test_operation_authorization_map_enforces_scope_and_research_uses",
+      "classname": "tests.unit.test_m5_consent_and_authorization_repair",
+      "file": "tests/unit/test_m5_consent_and_authorization_repair.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.095,
+      "status": "passed"
+    },
+    {
+      "name": "test_cross_study_session_assignment_rejected",
+      "classname": "tests.unit.test_m5_cross_study_safety",
+      "file": "tests/unit/test_m5_cross_study_safety.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.089,
+      "status": "passed"
+    },
+    {
+      "name": "test_consent_from_study_a_cannot_authorize_study_b",
+      "classname": "tests.unit.test_m5_cross_study_safety",
+      "file": "tests/unit/test_m5_cross_study_safety.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.09,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_version_mismatch_blocks_study",
+      "classname": "tests.unit.test_m5_cross_study_safety",
+      "file": "tests/unit/test_m5_cross_study_safety.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.051,
+      "status": "passed"
+    },
+    {
+      "name": "test_reviewed_exclusions_contains_no_participant_ids",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_no_hardcoded_fallback_hmac_secret_in_evidence_scripts",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_safety_invariants_in_model_config",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_consent_retention_default_evidence_matches_schema_and_is_false",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.099,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_access_summary_has_no_fabricated_release_approvals",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.025,
+      "status": "passed"
+    },
+    {
+      "name": "test_review_evidence_contains_no_workstation_paths",
+      "classname": "tests.unit.test_m5_release_privacy_and_evidence",
+      "file": "tests/unit/test_m5_release_privacy_and_evidence.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.115,
+      "status": "passed"
+    },
+    {
+      "name": "test_perform_optimal_matching_exact_sex",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.044,
+      "status": "passed"
+    },
+    {
+      "name": "test_caliper_enforcement_filters_distant_pairs",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "name": "test_matching_reduces_smd",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_matching_input_validation",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_matching_sensitivities_monotonicity",
+      "classname": "tests.unit.test_matching",
+      "file": "tests/unit/test_matching.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.05,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_summary_and_standalone_html_report_escape_user_text",
+      "classname": "tests.unit.test_ml_report",
+      "file": "tests/unit/test_ml_report.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_report_displays_outer_fold_metrics",
+      "classname": "tests.unit.test_ml_report",
+      "file": "tests/unit/test_ml_report.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_saves_reloads_with_full_safety_and_provenance",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.047,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_refuses_microphone_inference_configuration",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_does_not_infer_validation_from_domain_names",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_requires_and_checks_validation_report",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.047,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_rejects_microphone_domain_even_with_evidence",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_requires_timezone_aware_utc_evidence",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_detects_modified_domain_evidence_even_with_fresh_bundle_checksum",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.051,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_checksum_detects_changed_artifact_before_loading",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.084,
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_trusted_model_artifact_is_rejected",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_bundle_requires_dataset_evaluation_and_code_fingerprints",
+      "classname": "tests.unit.test_model_bundle",
+      "file": "tests/unit/test_model_bundle.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_pr_auc_and_average_precision_are_distinct_and_brier_needs_probabilities",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_baselines_produce_fold_metrics_and_oof_rows",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 2.948,
+      "status": "passed"
+    },
+    {
+      "name": "test_demographic_and_combined_baselines_share_grouped_folds",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 3.669,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_search_candidates_are_fold_safe_and_bounded",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_keeps_each_participant_in_one_outer_fold",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 4.709,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_grouped_rejects_invalid_labels_and_dimensions",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 1.74,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_grouped_and_nested_reject_misaligned_additional_predictors",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 1.8,
+      "status": "passed"
+    },
+    {
+      "name": "test_elastic_net_candidate_configures_l1_ratio_correctly",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluation_rejects_identifier_only_predictor_tables",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[1.5]",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[True]",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[False]",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[-1]",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_nested_evaluation_rejects_invalid_bootstrap_iterations[100]",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_additional_predictors_strict_sample_id_contract",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_additional_predictors_strict_participant_id_contract",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_grouped_accepts_groups_as_list_and_series",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 3.525,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_additional_predictors_rejects_duplicate_sample_ids",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_validate_additional_predictors_rejects_range_index_without_identifiers",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_evaluate_grouped_tie_breaking_for_svm_and_probability",
+      "classname": "tests.unit.test_modeling",
+      "file": "tests/unit/test_modeling.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 1.35,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_ddk_recording_retains_schema_identity",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.052,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_connected_speech_recording_retains_schema_identity",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.05,
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_corner_vowel_a_marks_vsa_not_estimable",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.09,
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_corner_vowel_i_marks_vsa_not_estimable",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.098,
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_corner_vowel_u_marks_vsa_not_estimable",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.112,
+      "status": "passed"
+    },
+    {
+      "name": "test_invalid_audio_input_type_handles_safely",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.058,
+      "status": "passed"
+    },
+    {
+      "name": "test_unexpected_extraction_exception_isolation",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.047,
+      "status": "passed"
+    },
+    {
+      "name": "test_partial_successful_session_failure_isolation",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.327,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_tasks_failed_overall_status",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.045,
+      "status": "passed"
+    },
+    {
+      "name": "test_schema_fingerprints_remain_correct_after_all_failures",
+      "classname": "tests.unit.test_multitask_failures.TestMultiTaskFailureMetadata",
+      "file": "tests/unit/test_multitask_failures.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.055,
+      "status": "passed"
+    },
+    {
+      "name": "test_v4_envelope_fingerprint_and_registry",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_complete_multitask_session",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.226,
+      "status": "passed"
+    },
+    {
+      "name": "test_error_isolation_between_tasks",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.202,
+      "status": "passed"
+    },
+    {
+      "name": "test_partial_session_with_only_ddk",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.055,
+      "status": "passed"
+    },
+    {
+      "name": "test_render_multitask_report_html",
+      "classname": "tests.unit.test_multitask_orchestration.TestMultiTaskOrchestration",
+      "file": "tests/unit/test_multitask_orchestration.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.201,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_returns_experimental_status_for_explicit_validated_domain",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.048,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_model_without_explicit_domain_compatibility",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_domain_list_alone_cannot_claim_compatibility",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_microphone_aliases_after_canonicalization",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.008,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_non_string_domain_as_compatibility_error",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_missing_features_nonfinite_values_and_wrong_order",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_all_features_missing_but_allows_named_undefined_measures",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_missing_or_false_safety_metadata",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_incompatible_feature_schema",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.005,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_bundle_without_fitted_estimator",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_microphone_flag_even_for_non_microphone_domain",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_boolean_feature_values[True]",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_boolean_feature_values[value1]",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.004,
+      "status": "passed"
+    },
+    {
+      "name": "test_prediction_rejects_feature_or_preprocessing_fingerprint_mismatch",
+      "classname": "tests.unit.test_prediction",
+      "file": "tests/unit/test_prediction.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.007,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_removes_dc_and_resamples_deterministically",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.082,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_fails_closed_on_invalid_quality",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_revalidates_original_stereo_before_downmixing",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.015,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_signal_that_is_too_short_after_trimming",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.026,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[16000.5]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[True]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[False]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[4000]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[96000]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.011,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[16000]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.013,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_rejects_invalid_target_sample_rates[-8000]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_uses_configured_frame_size_for_silence_trimming",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.038,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_resampling_filter_overshoot_is_bounded[22050]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.108,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_resampling_filter_overshoot_is_bounded[44100]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.121,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_resampling_filter_overshoot_is_bounded[48000]",
+      "classname": "tests.unit.test_preprocessing",
+      "file": "tests/unit/test_preprocessing.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.084,
+      "status": "passed"
+    },
+    {
+      "name": "test_combined_file_sha256_hashes_ordered_contents",
+      "classname": "tests.unit.test_provenance",
+      "file": "tests/unit/test_provenance.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.01,
+      "status": "passed"
+    },
+    {
+      "name": "test_combined_file_sha256_requires_files",
+      "classname": "tests.unit.test_provenance",
+      "file": "tests/unit/test_provenance.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_release_provenance_contract_and_determinism",
+      "classname": "tests.unit.test_provenance",
+      "file": "tests/unit/test_provenance.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.1,
+      "status": "passed"
+    },
+    {
+      "name": "test_report_preserves_schema_version_and_sanitizes_measurements",
+      "classname": "tests.unit.test_reporting",
+      "file": "tests/unit/test_reporting.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_v3_canonical_fingerprint_immutable",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_task_schema_fingerprints_match_authoritative_values",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_schema_feature_counts",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_v4_envelope_contains_all_registered_tasks",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_persisted_review_evidence_matches_runtime_registry",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_modifying_feature_definition_changes_schema_fingerprint",
+      "classname": "tests.unit.test_schema_registry.TestSchemaRegistryIntegrity",
+      "file": "tests/unit/test_schema_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_source_archive_keeps_project_files_and_excludes_data_and_caches",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.102,
+      "status": "passed"
+    },
+    {
+      "name": "test_checked_in_source_inventory_matches_archive_inclusion_rules",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.321,
+      "status": "passed"
+    },
+    {
+      "name": "test_source_archive_fails_when_mandatory_provenance_file_missing",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.033,
+      "status": "passed"
+    },
+    {
+      "name": "test_clean_extraction_contains_all_provenance_inputs_and_computes_fingerprint",
+      "classname": "tests.unit.test_source_archive",
+      "file": "tests/unit/test_source_archive.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 4.16,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_have_no_participant_overlap_and_cover_rows_once",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.017,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_require_ids",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_reject_conflicting_participant_diagnoses",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_reject_non_binary_labels[0.5]",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_reject_non_binary_labels[nan]",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_reject_non_binary_labels[2]",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_splits_require_both_classes_in_each_fold",
+      "classname": "tests.unit.test_splits",
+      "file": "tests/unit/test_splits.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_record_and_get_consent",
+      "classname": "tests.unit.test_study_consent",
+      "file": "tests/unit/test_study_consent.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.066,
+      "status": "passed"
+    },
+    {
+      "name": "test_verify_participant_consent_for_task",
+      "classname": "tests.unit.test_study_consent",
+      "file": "tests/unit/test_study_consent.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.069,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_access_and_dua_verification",
+      "classname": "tests.unit.test_study_consent",
+      "file": "tests/unit/test_study_consent.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.056,
+      "status": "passed"
+    },
+    {
+      "name": "test_database_fresh_creation_and_migration",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.059,
+      "status": "passed"
+    },
+    {
+      "name": "test_database_migrations_idempotency",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.052,
+      "status": "passed"
+    },
+    {
+      "name": "test_database_foreign_key_enforcement",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.057,
+      "status": "passed"
+    },
+    {
+      "name": "test_database_transaction_rollback_on_error",
+      "classname": "tests.unit.test_study_database",
+      "file": "tests/unit/test_study_database.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.055,
+      "status": "passed"
+    },
+    {
+      "name": "test_db_rejects_cross_study_consent_insert",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.061,
+      "status": "passed"
+    },
+    {
+      "name": "test_db_rejects_cross_study_session_insert",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.06,
+      "status": "passed"
+    },
+    {
+      "name": "test_db_rejects_session_referencing_different_participant_consent",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.054,
+      "status": "passed"
+    },
+    {
+      "name": "test_db_rejects_session_referencing_nonexistent_consent",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.052,
+      "status": "passed"
+    },
+    {
+      "name": "test_db_accepts_valid_composite_session",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.063,
+      "status": "passed"
+    },
+    {
+      "name": "test_migration_atomic_rollback_on_syntax_error",
+      "classname": "tests.unit.test_study_database_constraints",
+      "file": "tests/unit/test_study_database_constraints.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.033,
+      "status": "passed"
+    },
+    {
+      "name": "test_pseudonym_safety_validation",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_register_and_get_participant",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.076,
+      "status": "passed"
+    },
+    {
+      "name": "test_register_participant_unknown_study",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.067,
+      "status": "passed"
+    },
+    {
+      "name": "test_list_participants_filtering",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.07,
+      "status": "passed"
+    },
+    {
+      "name": "test_update_participant_consent_status",
+      "classname": "tests.unit.test_study_participant",
+      "file": "tests/unit/test_study_participant.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.055,
+      "status": "passed"
+    },
+    {
+      "name": "test_preflight_blocks_when_participant_withdrawn",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.099,
+      "status": "passed"
+    },
+    {
+      "name": "test_preflight_blocks_when_study_paused_or_archived",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.073,
+      "status": "passed"
+    },
+    {
+      "name": "test_preflight_blocks_when_dua_expired",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.089,
+      "status": "passed"
+    },
+    {
+      "name": "test_preflight_blocks_when_task_not_consented",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.094,
+      "status": "passed"
+    },
+    {
+      "name": "test_ephemeral_processing_when_retention_consent_false",
+      "classname": "tests.unit.test_study_preflight_and_retention",
+      "file": "tests/unit/test_study_preflight_and_retention.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.278,
+      "status": "passed"
+    },
+    {
+      "name": "test_small_cell_suppression_logic",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_cohort_qc_metrics",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.493,
+      "status": "passed"
+    },
+    {
+      "name": "test_cohort_attrition",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.5,
+      "status": "passed"
+    },
+    {
+      "name": "test_longitudinal_feature_changes",
+      "classname": "tests.unit.test_study_qc_longitudinal",
+      "file": "tests/unit/test_study_qc_longitudinal.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.435,
+      "status": "passed"
+    },
+    {
+      "name": "test_protocol_lifecycle",
+      "classname": "tests.unit.test_study_registry",
+      "file": "tests/unit/test_study_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.081,
+      "status": "passed"
+    },
+    {
+      "name": "test_study_lifecycle",
+      "classname": "tests.unit.test_study_registry",
+      "file": "tests/unit/test_study_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.178,
+      "status": "passed"
+    },
+    {
+      "name": "test_protocol_version_immutability_enforced",
+      "classname": "tests.unit.test_study_registry",
+      "file": "tests/unit/test_study_registry.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.112,
+      "status": "passed"
+    },
+    {
+      "name": "test_all_seven_reports_generated",
+      "classname": "tests.unit.test_study_reporting",
+      "file": "tests/unit/test_study_reporting.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.259,
+      "status": "passed"
+    },
+    {
+      "name": "test_csv_export",
+      "classname": "tests.unit.test_study_reporting",
+      "file": "tests/unit/test_study_reporting.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.191,
+      "status": "passed"
+    },
+    {
+      "name": "test_generate_pseudonymous_id",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_study_schema_validation",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_participant_schema_validation",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_dataset_access_record_authorization",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_processing_run_receipt_cryptographic_checksum",
+      "classname": "tests.unit.test_study_schema",
+      "file": "tests/unit/test_study_schema.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_create_session_unconsented_rejected",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.038,
+      "status": "passed"
+    },
+    {
+      "name": "test_create_and_get_session",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.044,
+      "status": "passed"
+    },
+    {
+      "name": "test_list_sessions_filters",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.038,
+      "status": "passed"
+    },
+    {
+      "name": "test_record_task_and_features",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.046,
+      "status": "passed"
+    },
+    {
+      "name": "test_ingest_multitask_audio",
+      "classname": "tests.unit.test_study_session",
+      "file": "tests/unit/test_study_session.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.176,
+      "status": "passed"
+    },
+    {
+      "name": "test_sanitize_audit_details_pii",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_audit_event_logging",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.046,
+      "status": "passed"
+    },
+    {
+      "name": "test_processing_run_receipt",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.075,
+      "status": "passed"
+    },
+    {
+      "name": "test_withdraw_participant_workflow",
+      "classname": "tests.unit.test_study_withdrawal_audit",
+      "file": "tests/unit/test_study_withdrawal_audit.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.05,
+      "status": "passed"
+    },
+    {
+      "name": "test_withdrawal_fails_closed_without_hmac_key",
+      "classname": "tests.unit.test_study_withdrawal_hmac",
+      "file": "tests/unit/test_study_withdrawal_hmac.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.046,
+      "status": "passed"
+    },
+    {
+      "name": "test_withdrawal_succeeds_and_creates_hmac_tombstone",
+      "classname": "tests.unit.test_study_withdrawal_hmac",
+      "file": "tests/unit/test_study_withdrawal_hmac.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.048,
+      "status": "passed"
+    },
+    {
+      "name": "test_withdrawal_transactional_rollback_on_error",
+      "classname": "tests.unit.test_study_withdrawal_hmac",
+      "file": "tests/unit/test_study_withdrawal_hmac.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.044,
+      "status": "passed"
+    },
+    {
+      "name": "test_ddk_audio_validation_succeeds_on_valid_train",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_connected_speech_validation_succeeds_with_pauses",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_vowel_space_validation_succeeds_on_corner_vowels",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_validation_fails_on_too_short_recording",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_validation_fails_on_nan_and_infinite_values",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_validation_fails_on_excessive_clipping",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_validation_detects_destructive_stereo_phase",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioValidation",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_ddk_preprocessing_preserves_full_duration_and_removes_dc",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_connected_speech_preprocessing_preserves_pauses",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.006,
+      "status": "passed"
+    },
+    {
+      "name": "test_vowel_space_preprocessing_trims_silent_margins",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_resamples_cleanly",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_preprocessing_raises_on_invalid_audio",
+      "classname": "tests.unit.test_task_audio.TestTaskAudioPreprocessing",
+      "file": "tests/unit/test_task_audio.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.001,
+      "status": "passed"
+    },
+    {
+      "name": "test_model_verifier_reports_missing_local_artifacts",
+      "classname": "tests.unit.test_verify_model",
+      "file": "tests/unit/test_verify_model.py",
+      "category": "private_model_dependent_tests",
+      "time_seconds": 0.002,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_and_spectrogram_figures_render_for_valid_signal",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.084,
+      "status": "passed"
+    },
+    {
+      "name": "test_grouped_metric_plot_has_research_baseline_labels",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.041,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_and_spectrogram_handle_multichannel_downmix_safely",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.085,
+      "status": "passed"
+    },
+    {
+      "name": "test_waveform_and_spectrogram_validate_arguments",
+      "classname": "tests.unit.test_visualization",
+      "file": "tests/unit/test_visualization.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "name": "test_vowel_space_schema_fingerprint_and_features",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_calculate_vsa_triangle_known_coordinates",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_calculate_vsa_triangle_returns_none_if_coordinate_missing",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.0,
+      "status": "passed"
+    },
+    {
+      "name": "test_formant_extraction_on_synthetic_vowels",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.033,
+      "status": "passed"
+    },
+    {
+      "name": "test_extract_vowel_space_complete_session",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.034,
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_corner_vowel_results_in_not_estimable",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.023,
+      "status": "passed"
+    },
+    {
+      "name": "test_multi_trial_aggregation_computes_median",
+      "classname": "tests.unit.test_vowel_space_features.TestVowelSpaceFeatures",
+      "file": "tests/unit/test_vowel_space_features.py",
+      "category": "m0_m3_regression_tests",
+      "time_seconds": 0.041,
+      "status": "passed"
+    }
+  ]
+}

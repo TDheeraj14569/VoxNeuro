@@ -1,0 +1,19 @@
+{
+  "application_version": "voxneuro-0.5.0-research",
+  "configuration_fingerprints": {
+    "audio_config": "8cd060e419204da2beb98454d8511631e3f00e87971b17b3ea732d39e606189d",
+    "feature_config": "190e79c16b8a92f6c7fa8de47956531ade096c43e5f3974d9ce9b5d88b74b5f9"
+  },
+  "generated_utc": "2026-11-12T16:09:13.983849+00:00",
+  "milestone": "M5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "project_code_fingerprint": "c112d43bcb519790c25934c0b2e56216013a0999c7004f293d5d52f3ea546416",
+  "python_version": "3.12.16",
+  "task_schema_fingerprints": {
+    "voxneuro.task.connected_speech.v1": "7a5763d4cdbda4b1034113a47dd197bf9942621df73312134cece35b8ae419b1",
+    "voxneuro.task.ddk.v1": "b26bf914d14af54d85e98b40238c653d4134c5b72af3f7140ccf95f606ab4e5b",
+    "voxneuro.task.vowel_space.v1": "e20bbc3ba00eb1f80d864823fc7e27537dcb0665693baf04ea149054c5b53993",
+    "voxneuro.voice.v3": "a7e3374210617f1e94897a219bf373be4aaa73a4fa5ec1d9581947cce2ab3e9f",
+    "voxneuro.voice.v4": "cc1d53b907cdf6f86e882a980d98015c3e04e2e10cccf59670c87bc6a54c0429"
+  }
+}
