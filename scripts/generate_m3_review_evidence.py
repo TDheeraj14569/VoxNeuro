@@ -10,6 +10,7 @@ Produces:
 from __future__ import annotations
 
 import json
+import os
 import platform
 import posixpath
 import re
@@ -297,9 +298,33 @@ def run_actual_tests_and_summarize(test_targets: list[str]) -> dict[str, object]
     with tempfile.NamedTemporaryFile(suffix=".xml", delete=False) as tf:
         xml_path = Path(tf.name)
 
-    actual_cmd = [sys.executable, "-m", "pytest", *active_targets, f"--junitxml={xml_path}", "-q"]
+    repo_root = Path(__file__).resolve().parents[1]
+    exec_cwd = repo_root
+    if active_targets:
+        first_target = Path(active_targets[0])
+        try:
+            if not first_target.resolve().is_relative_to(repo_root.resolve()):
+                exec_cwd = first_target.resolve().parent
+        except (ValueError, AttributeError):
+            exec_cwd = first_target.resolve().parent
 
-    proc = subprocess.run(actual_cmd, capture_output=True, text=True)
+    clean_env = {k: v for k, v in os.environ.items() if not k.startswith("COV_")}
+    actual_cmd = [
+        sys.executable,
+        "-m",
+        "pytest",
+        "-o",
+        "testpaths=",
+        "-p",
+        "no:cov",
+        *active_targets,
+        f"--junitxml={xml_path}",
+        "-q",
+    ]
+
+    proc = subprocess.run(
+        actual_cmd, cwd=str(exec_cwd), env=clean_env, capture_output=True, text=True
+    )
 
     try:
         tree = ET.parse(xml_path)
