@@ -185,3 +185,90 @@ def test_consumer_pages_render_edge_cases(monkeypatch):
     calls.clear()
     show_consumer_home(on_start_assessment=lambda: None)
     assert any(c[0] == "title" and "VoxNeuro" in c[1] for c in calls)
+
+
+def test_consumer_informational_pages_and_dashboard(monkeypatch):
+    from pathlib import Path
+
+    from voxneuro.study.auth import UserAccount
+    from voxneuro.ui.admin_portals import (
+        show_ml_admin_portal,
+        show_researcher_portal,
+        show_system_admin_portal,
+    )
+    from voxneuro.ui.consumer_pages import (
+        show_about_page,
+        show_help_faq,
+        show_how_it_works,
+        show_privacy_and_safety,
+        show_user_dashboard,
+    )
+
+    calls = []
+    monkeypatch.setattr(st, "title", lambda msg: calls.append(("title", msg)))
+    monkeypatch.setattr(st, "write", lambda *args, **kwargs: None)
+    monkeypatch.setattr(st, "markdown", lambda *args, **kwargs: None)
+    monkeypatch.setattr(st, "caption", lambda *args, **kwargs: None)
+    monkeypatch.setattr(st, "info", lambda msg: calls.append(("info", msg)))
+    monkeypatch.setattr(st, "warning", lambda msg: calls.append(("warning", msg)))
+    monkeypatch.setattr(st, "button", lambda *args, **kwargs: False)
+    monkeypatch.setattr(
+        st,
+        "expander",
+        lambda *args, **kwargs: type(
+            "Exp", (), {"__enter__": lambda s: s, "__exit__": lambda s, *a: None}
+        )(),
+    )
+    monkeypatch.setattr(
+        st,
+        "columns",
+        lambda spec, *args, **kwargs: [
+            type("Col", (), {"__enter__": lambda s: s, "__exit__": lambda s, *a: None})()
+            for _ in range(len(spec) if isinstance(spec, (list, tuple)) else spec)
+        ],
+    )
+
+    # 1. How it works
+    show_how_it_works()
+    assert any(c[0] == "title" and "How VoxNeuro Works" in c[1] for c in calls)
+
+    # 2. Privacy & Safety
+    calls.clear()
+    show_privacy_and_safety()
+    assert any(c[0] == "title" and "Privacy & Safety" in c[1] for c in calls)
+
+    # 3. Help / FAQ
+    calls.clear()
+    show_help_faq()
+    assert any(c[0] == "title" and "Help & Frequently Asked Questions" in c[1] for c in calls)
+
+    # 4. About
+    calls.clear()
+    show_about_page()
+    assert any(c[0] == "title" and "About VoxNeuro" in c[1] for c in calls)
+
+    # 5. User dashboard
+    dummy_user = UserAccount(
+        user_id="usr_test_123",
+        username="test_user",
+        email="test@voxneuro.org",
+        display_name="Test Subject",
+        role="consumer",
+        is_active=True,
+        participant_id=None,
+        study_id=None,
+        prediction_retention_opt_in=True,
+        created_at="2026-01-01T00:00:00Z",
+        updated_at="2026-01-01T00:00:00Z",
+        last_login_at=None,
+    )
+    calls.clear()
+    show_user_dashboard(None, dummy_user, on_start_assessment=lambda: None)
+    assert any(c[0] == "title" and "Welcome back" in c[1] for c in calls)
+
+    # 6. Admin portals gating when unauthenticated
+    calls.clear()
+    show_researcher_portal(None, None)
+    show_ml_admin_portal(None, None)
+    show_system_admin_portal(None, None, Path("dummy.db"))
+    assert any("Access Restricted" in c[1] for c in calls)
