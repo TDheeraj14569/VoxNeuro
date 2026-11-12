@@ -47,19 +47,11 @@ source = ["src/voxneuro"]
 omit = [
   "*/extracted_project/*",
   "*extracted_project*",
-  "*AppData*Local*Temp*",
-  "*/tmp/*",
-  "*/temp/*",
-  "*/Temp/*",
 ]
 
 [tool.coverage.report]
 omit = [
   "*/extracted_project/*",
   "*extracted_project*",
-  "*AppData*Local*Temp*",
-  "*/tmp/*",
-  "*/temp/*",
-  "*/Temp/*",
 ]
 

@@ -1,0 +1,748 @@
+{
+  "dataset": "uams",
+  "demographic_integrity": {
+    "valid": true,
+    "n_manifest": 81,
+    "n_demographics": 81,
+    "issues": [],
+    "unmatched_manifest_count": 0,
+    "unmatched_demographics_count": 0
+  },
+  "population_1_source": {
+    "participant_count": 81,
+    "age": {
+      "HC": {
+        "n": 41,
+        "mean": 47.73170731707317,
+        "sd": 14.328336243688419,
+        "median": 45.0,
+        "iqr": 15.0,
+        "q25": 40.0,
+        "q75": 55.0,
+        "min": 18.0,
+        "max": 79.0,
+        "mean_ci_lower_95": 43.20912635622612,
+        "mean_ci_upper_95": 52.254288277920224,
+        "mean_ci_95": [
+          43.20912635622612,
+          52.254288277920224
+        ],
+        "ci_method": "Student's t distribution (df=n-1, 95% two-sided)"
+      },
+      "PD": {
+        "n": 40,
+        "mean": 67.035,
+        "sd": 8.982818928233826,
+        "median": 67.89500000000001,
+        "iqr": 11.052500000000002,
+        "q25": 61.365,
+        "q75": 72.4175,
+        "min": 43.12,
+        "max": 85.31,
+        "mean_ci_lower_95": 64.16215513388767,
+        "mean_ci_upper_95": 69.90784486611233,
+        "mean_ci_95": [
+          64.16215513388767,
+          69.90784486611233
+        ],
+        "ci_method": "Student's t distribution (df=n-1, 95% two-sided)"
+      },
+      "mean_difference_hc_minus_pd": -19.303292682926823,
+      "median_difference_hc_minus_pd": -22.89500000000001,
+      "pooled_sd": 11.991029970482527,
+      "standardized_mean_difference": -1.6098110613053571,
+      "mann_whitney_u": 223.0,
+      "mann_whitney_p": 1.74698264096898e-08,
+      "rank_biserial_correlation": -0.7280487804878049,
+      "mean_diff_bootstrap_ci_95": [
+        -24.322936585365866,
+        -14.419168749999994
+      ],
+      "smd_bootstrap_ci_95": [
+        -2.26572839551024,
+        -1.1461636028292146
+      ]
+    },
+    "sex": {
+      "counts": {
+        "HC": {
+          "F": 25,
+          "M": 16,
+          "total": 41
+        },
+        "PD": {
+          "F": 19,
+          "M": 21,
+          "total": 40
+        }
+      },
+      "proportions": {
+        "HC": {
+          "prop_F": 0.6097560975609756,
+          "prop_M": 0.3902439024390244
+        },
+        "PD": {
+          "prop_F": 0.475,
+          "prop_M": 0.525
+        }
+      },
+      "missing_sex_count": 0,
+      "contingency_table": [
+        [
+          25,
+          16
+        ],
+        [
+          19,
+          21
+        ]
+      ],
+      "fisher_exact_p": 0.26810277859827303,
+      "odds_ratio": 1.7269736842105263,
+      "odds_ratio_ci_95": [
+        0.7144980012662752,
+        4.174172776788777
+      ],
+      "cramers_v": 0.13525182982084474,
+      "cramers_v_method": "Standard Pearson chi-square without Yates continuity correction"
+    },
+    "joint_strata": {
+      "F": {
+        "HC": {
+          "n": 25,
+          "mean": 45.2,
+          "sd": 12.900258395344903,
+          "min": 18.0,
+          "max": 72.0
+        },
+        "PD": {
+          "n": 19,
+          "mean": 67.08473684210524,
+          "sd": 9.946973503098569,
+          "min": 43.12,
+          "max": 85.31
+        },
+        "age_diff_hc_minus_pd": -21.88473684210524,
+        "mann_whitney_p": 4.260590197770019e-06,
+        "common_support_overlap": [
+          43.12,
+          72.0
+        ],
+        "has_common_support": true
+      },
+      "M": {
+        "HC": {
+          "n": 16,
+          "mean": 51.6875,
+          "sd": 15.932017030704765,
+          "min": 24.0,
+          "max": 79.0
+        },
+        "PD": {
+          "n": 21,
+          "mean": 66.99,
+          "sd": 8.264078291013464,
+          "min": 48.26,
+          "max": 80.67
+        },
+        "age_diff_hc_minus_pd": -15.302499999999995,
+        "mann_whitney_p": 0.003090673577355709,
+        "common_support_overlap": [
+          48.26,
+          79.0
+        ],
+        "has_common_support": true
+      }
+    }
+  },
+  "population_2_accepted_core39": {
+    "participant_count": 78,
+    "age": {
+      "HC": {
+        "n": 41,
+        "mean": 47.73170731707317,
+        "sd": 14.328336243688419,
+        "median": 45.0,
+        "iqr": 15.0,
+        "q25": 40.0,
+        "q75": 55.0,
+        "min": 18.0,
+        "max": 79.0,
+        "mean_ci_lower_95": 43.20912635622612,
+        "mean_ci_upper_95": 52.254288277920224,
+        "mean_ci_95": [
+          43.20912635622612,
+          52.254288277920224
+        ],
+        "ci_method": "Student's t distribution (df=n-1, 95% two-sided)"
+      },
+      "PD": {
+        "n": 37,
+        "mean": 66.90594594594596,
+        "sd": 9.334725925709234,
+        "median": 67.86,
+        "iqr": 12.200000000000003,
+        "q25": 60.78,
+        "q75": 72.98,
+        "min": 43.12,
+        "max": 85.31,
+        "mean_ci_lower_95": 63.79359336659918,
+        "mean_ci_upper_95": 70.01829852529274,
+        "mean_ci_95": [
+          63.79359336659918,
+          70.01829852529274
+        ],
+        "ci_method": "Student's t distribution (df=n-1, 95% two-sided)"
+      },
+      "mean_difference_hc_minus_pd": -19.174238628872786,
+      "median_difference_hc_minus_pd": -22.86,
+      "pooled_sd": 12.220014144394701,
+      "standardized_mean_difference": -1.5690848146577616,
+      "mann_whitney_u": 208.0,
+      "mann_whitney_p": 3.706431118376256e-08,
+      "rank_biserial_correlation": -0.7257745550428477,
+      "mean_diff_bootstrap_ci_95": [
+        -24.251271918259715,
+        -13.720119644034286
+      ],
+      "smd_bootstrap_ci_95": [
+        -2.2735371544435625,
+        -1.0896229599707732
+      ]
+    },
+    "sex": {
+      "counts": {
+        "HC": {
+          "F": 25,
+          "M": 16,
+          "total": 41
+        },
+        "PD": {
+          "F": 18,
+          "M": 19,
+          "total": 37
+        }
+      },
+      "proportions": {
+        "HC": {
+          "prop_F": 0.6097560975609756,
+          "prop_M": 0.3902439024390244
+        },
+        "PD": {
+          "prop_F": 0.4864864864864865,
+          "prop_M": 0.5135135135135135
+        }
+      },
+      "missing_sex_count": 0,
+      "contingency_table": [
+        [
+          25,
+          16
+        ],
+        [
+          18,
+          19
+        ]
+      ],
+      "fisher_exact_p": 0.3625066167239699,
+      "odds_ratio": 1.6493055555555556,
+      "odds_ratio_ci_95": [
+        0.6707902569661285,
+        4.055230062358786
+      ],
+      "cramers_v": 0.12376007565527335,
+      "cramers_v_method": "Standard Pearson chi-square without Yates continuity correction"
+    },
+    "joint_strata": {
+      "F": {
+        "HC": {
+          "n": 25,
+          "mean": 45.2,
+          "sd": 12.900258395344903,
+          "min": 18.0,
+          "max": 72.0
+        },
+        "PD": {
+          "n": 18,
+          "mean": 66.95333333333333,
+          "sd": 10.218368121124994,
+          "min": 43.12,
+          "max": 85.31
+        },
+        "age_diff_hc_minus_pd": -21.75333333333333,
+        "mann_whitney_p": 6.208424436284568e-06,
+        "common_support_overlap": [
+          43.12,
+          72.0
+        ],
+        "has_common_support": true
+      },
+      "M": {
+        "HC": {
+          "n": 16,
+          "mean": 51.6875,
+          "sd": 15.932017030704765,
+          "min": 24.0,
+          "max": 79.0
+        },
+        "PD": {
+          "n": 19,
+          "mean": 66.86105263157894,
+          "sd": 8.698024612734935,
+          "min": 48.26,
+          "max": 80.67
+        },
+        "age_diff_hc_minus_pd": -15.173552631578943,
+        "mann_whitney_p": 0.0037600891717273948,
+        "common_support_overlap": [
+          48.26,
+          79.0
+        ],
+        "has_common_support": true
+      }
+    }
+  },
+  "age_strata_audit": [
+    {
+      "age_band": "Under 50",
+      "age_range": "[0, 50)",
+      "n_hc": 23,
+      "n_pd": 3,
+      "n_total": 26,
+      "hc_mean_age": 37.74,
+      "pd_mean_age": 47.01,
+      "common_support_overlap": "[43.1, 47.0]",
+      "status": "NOT ESTIMABLE",
+      "suppression_reason": "Small-cell suppression: < 10 participants in at least one class (HC=23, PD=3)"
+    },
+    {
+      "age_band": "50-59",
+      "age_range": "[50, 60)",
+      "n_hc": 11,
+      "n_pd": 6,
+      "n_total": 17,
+      "hc_mean_age": 53.73,
+      "pd_mean_age": 57.88,
+      "common_support_overlap": "[56.5, 57.0]",
+      "status": "NOT ESTIMABLE",
+      "suppression_reason": "Small-cell suppression: < 10 participants in at least one class (HC=11, PD=6)"
+    },
+    {
+      "age_band": "60-69",
+      "age_range": "[60, 70)",
+      "n_hc": 3,
+      "n_pd": 12,
+      "n_total": 15,
+      "hc_mean_age": 66.0,
+      "pd_mean_age": 65.58,
+      "common_support_overlap": "[61.0, 69.0]",
+      "status": "NOT ESTIMABLE",
+      "suppression_reason": "Small-cell suppression: < 10 participants in at least one class (HC=3, PD=12)"
+    },
+    {
+      "age_band": "70 and above",
+      "age_range": ">=70",
+      "n_hc": 4,
+      "n_pd": 16,
+      "n_total": 20,
+      "hc_mean_age": 75.0,
+      "pd_mean_age": 75.01,
+      "common_support_overlap": "[71.0, 79.0]",
+      "status": "NOT ESTIMABLE",
+      "suppression_reason": "Small-cell suppression: < 10 participants in at least one class (HC=4, PD=16)"
+    }
+  ],
+  "feature_fdr_summary": [
+    {
+      "feature_name": "mfcc_10_sd",
+      "standardized_beta": 2.1997,
+      "odds_ratio": 9.0222,
+      "lrt_chi2": 21.3094,
+      "p_unadjusted": 3.908057728446662e-06,
+      "fdr_q_value": 0.00015241425140941983,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "f0_median_hz",
+      "standardized_beta": 2.3034,
+      "odds_ratio": 10.008,
+      "lrt_chi2": 16.3545,
+      "p_unadjusted": 5.2532206222817385e-05,
+      "fdr_q_value": 0.001024378021344939,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "f0_mean_hz",
+      "standardized_beta": 2.1229,
+      "odds_ratio": 8.3555,
+      "lrt_chi2": 15.436,
+      "p_unadjusted": 8.534794849171295e-05,
+      "fdr_q_value": 0.0011095233303922685,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_07_sd",
+      "standardized_beta": 1.1177,
+      "odds_ratio": 3.0578,
+      "lrt_chi2": 10.9893,
+      "p_unadjusted": 0.0009164064205560391,
+      "fdr_q_value": 0.008900127191818631,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_06_sd",
+      "standardized_beta": 1.1133,
+      "odds_ratio": 3.0444,
+      "lrt_chi2": 10.5835,
+      "p_unadjusted": 0.0011410419476690554,
+      "fdr_q_value": 0.008900127191818631,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_11_sd",
+      "standardized_beta": 1.1504,
+      "odds_ratio": 3.1596,
+      "lrt_chi2": 9.9567,
+      "p_unadjusted": 0.0016026764898346491,
+      "fdr_q_value": 0.010417397183925219,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_12_sd",
+      "standardized_beta": 1.1253,
+      "odds_ratio": 3.081,
+      "lrt_chi2": 9.2153,
+      "p_unadjusted": 0.002399978656477966,
+      "fdr_q_value": 0.013371309657520095,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_00_sd",
+      "standardized_beta": 1.0437,
+      "odds_ratio": 2.8397,
+      "lrt_chi2": 8.2704,
+      "p_unadjusted": 0.004029607643746019,
+      "fdr_q_value": 0.018528116855806527,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_08_sd",
+      "standardized_beta": 0.9456,
+      "odds_ratio": 2.5744,
+      "lrt_chi2": 8.0254,
+      "p_unadjusted": 0.004612473892592518,
+      "fdr_q_value": 0.018528116855806527,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_03_sd",
+      "standardized_beta": 0.9158,
+      "odds_ratio": 2.4988,
+      "lrt_chi2": 7.9719,
+      "p_unadjusted": 0.004750799193796546,
+      "fdr_q_value": 0.018528116855806527,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_05_sd",
+      "standardized_beta": 0.88,
+      "odds_ratio": 2.4109,
+      "lrt_chi2": 7.5521,
+      "p_unadjusted": 0.005994063186548926,
+      "fdr_q_value": 0.021251678570491647,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_01_sd",
+      "standardized_beta": 1.172,
+      "odds_ratio": 3.2286,
+      "lrt_chi2": 7.3861,
+      "p_unadjusted": 0.006573043968500915,
+      "fdr_q_value": 0.021362392897627973,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_02_sd",
+      "standardized_beta": 0.9269,
+      "odds_ratio": 2.5267,
+      "lrt_chi2": 7.0147,
+      "p_unadjusted": 0.008084130170410493,
+      "fdr_q_value": 0.023821525235597517,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_09_sd",
+      "standardized_beta": 0.8365,
+      "odds_ratio": 2.3083,
+      "lrt_chi2": 6.9142,
+      "p_unadjusted": 0.008551316751240134,
+      "fdr_q_value": 0.023821525235597517,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "f0_min_hz",
+      "standardized_beta": 1.006,
+      "odds_ratio": 2.7346,
+      "lrt_chi2": 6.3056,
+      "p_unadjusted": 0.012035433774951707,
+      "fdr_q_value": 0.03129212781487444,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "f0_max_hz",
+      "standardized_beta": 0.9145,
+      "odds_ratio": 2.4955,
+      "lrt_chi2": 6.1892,
+      "p_unadjusted": 0.012853233422661819,
+      "fdr_q_value": 0.03132975646773818,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_04_sd",
+      "standardized_beta": 0.8577,
+      "odds_ratio": 2.3577,
+      "lrt_chi2": 5.9686,
+      "p_unadjusted": 0.014562523283926725,
+      "fdr_q_value": 0.03340814165136131,
+      "significant_fdr_05": true
+    },
+    {
+      "feature_name": "mfcc_00_mean",
+      "standardized_beta": -0.6943,
+      "odds_ratio": 0.4994,
+      "lrt_chi2": 4.4951,
+      "p_unadjusted": 0.03399151031371744,
+      "fdr_q_value": 0.07364827234638778,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_03_mean",
+      "standardized_beta": 0.7411,
+      "odds_ratio": 2.0982,
+      "lrt_chi2": 4.2861,
+      "p_unadjusted": 0.0384260120728176,
+      "fdr_q_value": 0.07887444583367824,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_01_mean",
+      "standardized_beta": -0.5641,
+      "odds_ratio": 0.5689,
+      "lrt_chi2": 3.2382,
+      "p_unadjusted": 0.07194022299505066,
+      "fdr_q_value": 0.1402834348403488,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_06_mean",
+      "standardized_beta": 0.4817,
+      "odds_ratio": 1.6188,
+      "lrt_chi2": 1.9468,
+      "p_unadjusted": 0.1629337288340471,
+      "fdr_q_value": 0.3025912106918018,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_07_mean",
+      "standardized_beta": -0.4159,
+      "odds_ratio": 0.6597,
+      "lrt_chi2": 1.802,
+      "p_unadjusted": 0.17947689856234755,
+      "fdr_q_value": 0.31816359290597973,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "spectral_bandwidth_mean_hz",
+      "standardized_beta": 0.3832,
+      "odds_ratio": 1.467,
+      "lrt_chi2": 1.665,
+      "p_unadjusted": 0.19692677569068986,
+      "fdr_q_value": 0.33391931530160457,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "hnr_mean_db",
+      "standardized_beta": 0.4145,
+      "odds_ratio": 1.5136,
+      "lrt_chi2": 1.4464,
+      "p_unadjusted": 0.22910406112987428,
+      "fdr_q_value": 0.3722940993360457,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "jitter_local",
+      "standardized_beta": -0.3105,
+      "odds_ratio": 0.7331,
+      "lrt_chi2": 0.892,
+      "p_unadjusted": 0.3449389313711855,
+      "fdr_q_value": 0.5245679204517166,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "f0_range_hz",
+      "standardized_beta": 0.2618,
+      "odds_ratio": 1.2992,
+      "lrt_chi2": 0.8368,
+      "p_unadjusted": 0.3603219785890913,
+      "fdr_q_value": 0.5245679204517166,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "shimmer_local",
+      "standardized_beta": -0.3238,
+      "odds_ratio": 0.7234,
+      "lrt_chi2": 0.821,
+      "p_unadjusted": 0.36489469834666954,
+      "fdr_q_value": 0.5245679204517166,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_02_mean",
+      "standardized_beta": 0.266,
+      "odds_ratio": 1.3048,
+      "lrt_chi2": 0.7817,
+      "p_unadjusted": 0.37661286596533505,
+      "fdr_q_value": 0.5245679204517166,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "spectral_rolloff_mean_hz",
+      "standardized_beta": 0.1671,
+      "odds_ratio": 1.1818,
+      "lrt_chi2": 0.3035,
+      "p_unadjusted": 0.5817105711654087,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "f0_sd_hz",
+      "standardized_beta": 0.144,
+      "odds_ratio": 1.1549,
+      "lrt_chi2": 0.2966,
+      "p_unadjusted": 0.5860288424307639,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "spectral_centroid_mean_hz",
+      "standardized_beta": 0.1551,
+      "odds_ratio": 1.1678,
+      "lrt_chi2": 0.2774,
+      "p_unadjusted": 0.5984109165122523,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_04_mean",
+      "standardized_beta": 0.1675,
+      "odds_ratio": 1.1824,
+      "lrt_chi2": 0.2418,
+      "p_unadjusted": 0.6228919131826459,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_11_mean",
+      "standardized_beta": 0.1802,
+      "odds_ratio": 1.1975,
+      "lrt_chi2": 0.2415,
+      "p_unadjusted": 0.6231512509233655,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_05_mean",
+      "standardized_beta": 0.1319,
+      "odds_ratio": 1.141,
+      "lrt_chi2": 0.2088,
+      "p_unadjusted": 0.6476724071330623,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_12_mean",
+      "standardized_beta": -0.1399,
+      "odds_ratio": 0.8695,
+      "lrt_chi2": 0.1948,
+      "p_unadjusted": 0.6589212759129056,
+      "fdr_q_value": 0.7342265645886663,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_09_mean",
+      "standardized_beta": -0.103,
+      "odds_ratio": 0.9022,
+      "lrt_chi2": 0.1331,
+      "p_unadjusted": 0.7152846540225116,
+      "fdr_q_value": 0.7748917085243875,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_10_mean",
+      "standardized_beta": -0.0752,
+      "odds_ratio": 0.9276,
+      "lrt_chi2": 0.0614,
+      "p_unadjusted": 0.8042821589277803,
+      "fdr_q_value": 0.8354472917479414,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "mfcc_08_mean",
+      "standardized_beta": -0.0956,
+      "odds_ratio": 0.9088,
+      "lrt_chi2": 0.0553,
+      "p_unadjusted": 0.814025566318507,
+      "fdr_q_value": 0.8354472917479414,
+      "significant_fdr_05": false
+    },
+    {
+      "feature_name": "zero_crossing_rate_mean",
+      "standardized_beta": 0.0113,
+      "odds_ratio": 1.0114,
+      "lrt_chi2": 0.0014,
+      "p_unadjusted": 0.9701369815082711,
+      "fdr_q_value": 0.9701369815082711,
+      "significant_fdr_05": false
+    }
+  ],
+  "matching_analysis": {
+    "prespecified_primary_caliper": "0.2 SD",
+    "matched_pairs_retained": 5,
+    "matched_summary": {
+      "available_pd": 37,
+      "available_hc": 41,
+      "matched_pairs": 5,
+      "matched_pd": 5,
+      "matched_hc": 5,
+      "unmatched_pd": 32,
+      "unmatched_hc": 36,
+      "caliper_multiplier": 0.2,
+      "caliper_threshold_years": 2.444,
+      "pooled_sd_years": 12.22,
+      "pre_match_age_mean_hc": 47.73,
+      "pre_match_age_mean_pd": 66.91,
+      "post_match_age_mean_hc": 71.0,
+      "post_match_age_mean_pd": 71.57,
+      "pre_match_smd": -1.569,
+      "post_match_smd": -0.066,
+      "mean_pairwise_age_diff": 1.078,
+      "median_pairwise_age_diff": 1.2,
+      "max_pairwise_age_diff": 1.55,
+      "age_range_retained_hc": [
+        57.0,
+        79.0
+      ],
+      "age_range_retained_pd": [
+        58.1,
+        80.5
+      ],
+      "sex_counts": {
+        "HC_F": 2,
+        "HC_M": 3,
+        "PD_F": 2,
+        "PD_M": 3
+      }
+    },
+    "decision": "NOT ESTIMABLE per pre-registered SAP Rule 5 (sample size exhaustion: < 10 pairs)"
+  }
+}

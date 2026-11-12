@@ -1,0 +1,5 @@
+caliper_specification,caliper_threshold,available_pd,available_hc,matched_pairs,matched_total,unmatched_pd,unmatched_hc,post_match_age_hc,post_match_age_pd,post_match_smd,mean_pairwise_diff,max_pairwise_diff
+0.1 SD,1.22 yrs,37,41,3,6,34,38,66.0,66.86,-0.11,0.857,1.2
+0.2 SD,2.44 yrs,37,41,5,10,32,36,71.0,71.57,-0.066,1.078,1.55
+0.3 SD,3.67 yrs,37,41,7,14,30,34,66.57,67.89,-0.099,1.683,3.27
+Uncalipered (Max Match),None,37,41,34,68,3,7,51.24,66.06,-1.327,14.9,45.31

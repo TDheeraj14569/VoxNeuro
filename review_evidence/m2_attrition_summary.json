@@ -1,0 +1,41 @@
+{
+  "class_summary": {
+    "HC": {
+      "eligible_count": 41,
+      "accepted_count": 41,
+      "excluded_count": 0,
+      "acceptance_rate": 1.0,
+      "exclusion_rate": 0.0,
+      "acceptance_ci_95": [
+        0.9139561637059715,
+        1.0
+      ]
+    },
+    "PD": {
+      "eligible_count": 40,
+      "accepted_count": 37,
+      "excluded_count": 3,
+      "acceptance_rate": 0.925,
+      "exclusion_rate": 0.07499999999999996,
+      "acceptance_ci_95": [
+        0.796135251267101,
+        0.9842578201489585
+      ]
+    }
+  },
+  "contingency_table": [
+    [
+      41,
+      0
+    ],
+    [
+      37,
+      3
+    ]
+  ],
+  "fisher_exact_p": 0.11579934364744487,
+  "odds_ratio": null,
+  "total_excluded": 3,
+  "clipping_exclusions": 3,
+  "other_exclusions": 0
+}

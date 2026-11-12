@@ -144,3 +144,44 @@ def test_render_prediction_outcome_card_all_cases(monkeypatch):
     )
     render_prediction_outcome_card(case_d)
     assert any("vx-card-case-d" in c for c in calls)
+
+
+def test_consumer_pages_render_edge_cases(monkeypatch):
+    from voxneuro.ui.consumer_pages import (
+        show_account_portal,
+        show_consumer_home,
+        show_user_history_page,
+    )
+
+    calls = []
+    monkeypatch.setattr(st, "info", lambda msg: calls.append(("info", msg)))
+    monkeypatch.setattr(st, "warning", lambda msg: calls.append(("warning", msg)))
+    monkeypatch.setattr(st, "title", lambda msg: calls.append(("title", msg)))
+    monkeypatch.setattr(st, "markdown", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        st,
+        "columns",
+        lambda spec, *args, **kwargs: [
+            type(
+                "Col",
+                (),
+                {"__enter__": lambda s: s, "__exit__": lambda s, *a: None},
+            )()
+            for _ in range(len(spec) if isinstance(spec, (list, tuple)) else spec)
+        ],
+    )
+    monkeypatch.setattr(st, "button", lambda *args, **kwargs: False)
+
+    # 1. History without user
+    show_user_history_page(None, None)
+    assert any("Please sign in" in c[1] for c in calls)
+
+    # 2. Account without connection
+    calls.clear()
+    show_account_portal(None)
+    assert any("Account storage database is not initialized" in c[1] for c in calls)
+
+    # 3. Consumer home landing page
+    calls.clear()
+    show_consumer_home(on_start_assessment=lambda: None)
+    assert any(c[0] == "title" and "VoxNeuro" in c[1] for c in calls)
