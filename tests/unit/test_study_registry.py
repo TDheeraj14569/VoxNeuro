@@ -13,6 +13,7 @@ from voxneuro.study.registry import (
     get_protocol,
     get_study,
     list_protocols,
+    list_studies,
     update_study_protocol,
     update_study_status,
 )
@@ -79,6 +80,16 @@ def test_study_lifecycle(db_conn):
     update_study_status(db_conn, "study_pd_obs_01", "paused")
     assert get_study(db_conn, "study_pd_obs_01").study_status == "paused"
 
+    all_studies = list_studies(db_conn)
+    assert len(all_studies) >= 1
+    assert any(s.study_id == "study_pd_obs_01" for s in all_studies)
+
+    with pytest.raises(ValueError, match="Invalid study status"):
+        update_study_status(db_conn, "study_pd_obs_01", "invalid_status_xyz")
+
+    with pytest.raises(KeyError, match="Study not found"):
+        get_study(db_conn, "non_existent_study_xyz")
+
 
 def test_protocol_version_immutability_enforced(db_conn):
     # Setup Protocol v1, Protocol v2, Study, Participant, Session under v1
@@ -101,7 +112,8 @@ def test_protocol_version_immutability_enforced(db_conn):
     update_study_protocol(db_conn, "study_immut_test", "proto_immut_test", "2.0.0")
     assert get_study(db_conn, "study_immut_test").protocol_version == "2.0.0"
 
-    # Switch back to 1.0.0
+    # Switch back to 1.0.0 and verify redundant update returns cleanly
+    update_study_protocol(db_conn, "study_immut_test", "proto_immut_test", "1.0.0")
     update_study_protocol(db_conn, "study_immut_test", "proto_immut_test", "1.0.0")
 
     # Enroll participant and create a session under v1.0.0

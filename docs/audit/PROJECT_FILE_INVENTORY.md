@@ -345,10 +345,11 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-13. 
 - `tests/unit/test_study_withdrawal_audit.py`
 - `tests/unit/test_study_withdrawal_hmac.py`
 - `tests/unit/test_task_audio.py`
+- `tests/unit/test_ui_theme.py`
 - `tests/unit/test_verify_model.py`
 - `tests/unit/test_visualization.py`
 - `tests/unit/test_vowel_space_features.py`
 - `uv.lock`
 - `WORK_LOG.md`
 
-Total included source/documentation files: **348**.
+Total included source/documentation files: **349**.

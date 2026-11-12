@@ -156,6 +156,8 @@ def test_update_participant_consent_status(test_db):
     assert updated.consent_status == "consented"
     assert updated.consent_version == "1.1"
     assert is_participant_active(test_db, pid)
+    assert not is_participant_active(test_db, "NON_EXISTENT_PID")
+    assert not is_participant_active(test_db, pid, study_id="STUDY-OTHER")
 
     with pytest.raises(ValueError, match="Invalid consent_status"):
         update_participant_consent_status(test_db, pid, "invalid_status", "1.1")

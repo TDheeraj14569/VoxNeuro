@@ -227,3 +227,36 @@ def test_longitudinal_feature_changes(populated_db):
     # Check scientific disclaimer is present
     assert "scientific_disclaimer" in long_res
     assert "Descriptive acoustic tracking only" in long_res["scientific_disclaimer"]
+
+
+def test_qc_metrics_with_failed_and_scheduled_sessions(populated_db):
+    """Verify session counts reflect QUALITY_FAILED and SCHEDULED session statuses."""
+    s_failed = ResearchSession(
+        session_id="SESS-FAILED",
+        study_id="STUDY-QC-01",
+        protocol_version="1.0.0",
+        participant_id="PT-COHORT01",
+        visit_index=5,
+        visit_label="Failed Check",
+        overall_session_status="QUALITY_FAILED",
+        consent_reference="CONSENT-PT-COHORT01",
+    )
+    create_session(populated_db, s_failed)
+    s_sched = ResearchSession(
+        session_id="SESS-SCHED",
+        study_id="STUDY-QC-01",
+        protocol_version="1.0.0",
+        participant_id="PT-COHORT02",
+        visit_index=6,
+        visit_label="Upcoming",
+        overall_session_status="SCHEDULED",
+        consent_reference="CONSENT-PT-COHORT02",
+    )
+    create_session(populated_db, s_sched)
+
+    metrics = calculate_cohort_qc_metrics(
+        populated_db, study_id="STUDY-QC-01", suppress_small_cells=False
+    )
+    sessions = metrics["session_metrics"]
+    assert sessions["sessions_failed"] >= 1
+    assert sessions["sessions_scheduled"] >= 1

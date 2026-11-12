@@ -27,12 +27,14 @@ def test_m6_public_pages_render_and_hide_privileged_admin_data(tmp_path: Path, m
     app.run()
     assert not app.exception
 
-    # Navigate to How It Works, Privacy & Safety, Help cleanly via M6 view state
+    # Navigate to How It Works, Privacy & Safety, Help, About, Account cleanly via M6 view state
     for view_name, expected_heading in [
         ("How It Works", "How VoxNeuro Works"),
+        ("About", "About VoxNeuro"),
         ("Privacy & Safety", "Privacy & Safety"),
         ("Help", "Help & Frequently Asked Questions"),
         ("Results", "Your Voice Check Results"),
+        ("Account", "Account & Preferences"),
     ]:
         app.session_state["voxneuro_m6_view"] = view_name
         app.run()
@@ -90,7 +92,7 @@ def test_m6_authenticated_admin_unlocks_role_portals_and_user_history(tmp_path: 
     app_path = Path(__file__).resolve().parents[2] / "app.py"
     app = AppTest.from_file(app_path, default_timeout=30)
     app.session_state["voxneuro_auth_token"] = admin_token
-    for view_name in ("My History", "Researcher", "Model Admin", "System Admin"):
+    for view_name in ("Dashboard", "My History", "Researcher", "Model Admin", "System Admin"):
         app.session_state["voxneuro_m6_view"] = view_name
         app.run()
         assert not app.exception

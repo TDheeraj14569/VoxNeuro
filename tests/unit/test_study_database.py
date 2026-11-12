@@ -105,3 +105,36 @@ def test_database_transaction_rollback_on_error(tmp_path: Path):
         assert cursor.fetchone()["count"] == 0
     finally:
         conn.close()
+
+
+def test_migrations_directory_and_file_edge_cases(tmp_path: Path):
+    from voxneuro.study.database import get_applied_migrations
+
+    # 1. Non-existent migrations directory
+    non_existent = tmp_path / "no_such_dir"
+    with pytest.raises(FileNotFoundError, match="Migrations directory not found"):
+        run_migrations(tmp_path / "test.db", migrations_dir=non_existent)
+
+    # 2. Empty migrations directory
+    empty_dir = tmp_path / "empty_mig"
+    empty_dir.mkdir()
+    with pytest.raises(FileNotFoundError, match="No SQL migration files found"):
+        run_migrations(tmp_path / "test.db", migrations_dir=empty_dir)
+
+    # 3. Migration file with invalid prefix is skipped
+    (empty_dir / "invalid_prefix.sql").write_text("SELECT 1;", encoding="utf-8")
+    (empty_dir / "001_valid.sql").write_text(
+        "CREATE TABLE t1 (id INT PRIMARY KEY); INSERT INTO t1 VALUES (1)", encoding="utf-8"
+    )
+    db_file = tmp_path / "prefix_test.db"
+    applied = run_migrations(db_file, migrations_dir=empty_dir)
+    assert len(applied) == 1
+    assert "001_valid.sql" in applied
+
+    # 4. get_applied_migrations on unmigrated db returns empty set
+    raw_conn = sqlite3.connect(tmp_path / "raw.db")
+    raw_conn.row_factory = sqlite3.Row
+    try:
+        assert get_applied_migrations(raw_conn) == set()
+    finally:
+        raw_conn.close()

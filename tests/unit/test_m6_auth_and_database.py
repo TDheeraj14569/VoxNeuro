@@ -238,3 +238,76 @@ def test_participant_withdrawal_deletes_retained_prediction_records(tmp_path: Pa
         assert leftover == 0
     finally:
         conn.close()
+
+
+def test_auth_edge_cases_and_error_handling(tmp_path: Path):
+    from voxneuro.study.auth import (
+        hash_password,
+        require_role,
+        verify_password,
+    )
+
+    db_path = tmp_path / "auth_edge.db"
+    run_migrations(db_path)
+    conn = get_connection(db_path)
+
+    try:
+        # 1. Short password error
+        with pytest.raises(ValueError, match="at least 8 characters"):
+            hash_password("short")
+
+        # 2. Invalid hash verification
+        assert verify_password("secret123", "md5$invalid$hash") is False
+        assert verify_password("secret123", "corrupt_hash_format") is False
+
+        # 3. Invalid username
+        with pytest.raises(ValueError, match="at least 3 non-whitespace"):
+            register_user(conn, username="a ", email="user@test.org", password="ValidPassword123!")
+
+        # 4. Invalid email
+        with pytest.raises(ValueError, match="valid email"):
+            register_user(
+                conn, username="alice", email="invalid-email", password="ValidPassword123!"
+            )
+
+        # 5. Unsupported role
+        with pytest.raises(ValueError, match="Unsupported role"):
+            register_user(
+                conn,
+                username="alice",
+                email="alice@test.org",
+                password="ValidPassword123!",
+                role="supergod",
+            )
+
+        # 6. Password reset on unknown email returns None
+        assert issue_password_reset_token(conn, email="unknown@test.org") is None
+
+        # 7. Register admin and test role checks
+        admin = register_user(
+            conn,
+            username="admin_user",
+            email="admin@test.org",
+            password="AdminPassword123!",
+            role="admin",
+        )
+        _, admin_token = authenticate_user(
+            conn, identifier="admin_user", password="AdminPassword123!"
+        )
+
+        # require_role raises AuthorizationError for missing role
+        with pytest.raises(AuthorizationError, match="is not authorized"):
+            require_role(conn, admin_token, {"consumer"})
+
+        # update_user_role_or_status with invalid role
+        with pytest.raises(ValueError, match="Unsupported role"):
+            update_user_role_or_status(
+                conn, admin_token, target_user_id=admin.user_id, new_role="bad_role"
+            )
+
+        # Deactivating a user revokes their sessions
+        update_user_role_or_status(conn, admin_token, target_user_id=admin.user_id, is_active=False)
+        with pytest.raises(AuthorizationError, match="inactive"):
+            authenticate_user(conn, identifier="admin_user", password="AdminPassword123!")
+    finally:
+        conn.close()

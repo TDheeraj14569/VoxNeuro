@@ -23,7 +23,11 @@ from voxneuro.study.schema import (
     utc_now_iso,
 )
 from voxneuro.study.session import create_session, record_task_recording
-from voxneuro.study.withdrawal import compute_withdrawal_tombstone_hash, withdraw_participant
+from voxneuro.study.withdrawal import (
+    compute_withdrawal_tombstone_hash,
+    list_tombstones,
+    withdraw_participant,
+)
 
 
 @pytest.fixture
@@ -154,6 +158,11 @@ def test_withdrawal_succeeds_and_creates_hmac_tombstone(withdraw_db, monkeypatch
     assert row is not None
     assert row["key_id"] == "voxneuro-key-v1"
     stored_hmac = row["participant_pseudonym_hash"]
+
+    tombstones = list_tombstones(withdraw_db)
+    assert len(tombstones) == 1
+    assert tombstones[0]["tombstone_id"] == res["tombstone_id"]
+    assert tombstones[0]["participant_pseudonym_hash"] == stored_hmac
 
     # Verify HMAC calculation matches
     expected_hmac, _ = compute_withdrawal_tombstone_hash(
