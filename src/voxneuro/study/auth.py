@@ -113,18 +113,32 @@ def register_user(
     study_id: str | None = None,
     prediction_retention_opt_in: bool = False,
     actor: UserAccount | None = None,
+    actor_session_token: str | None = None,
 ) -> UserAccount:
     """Create a user account; elevated roles require an authenticated admin actor or bootstrap."""
     if role not in VALID_ROLES:
         raise ValueError(f"Unsupported role {role!r}. Expected one of {VALID_ROLES}.")
     if role != "participant":
         cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) AS cnt FROM users WHERE role = 'admin';")
+        cursor.execute("SELECT COUNT(*) AS cnt FROM users WHERE role = 'admin' AND is_active = 1;")
         admin_count = int(cursor.fetchone()["cnt"])
-        if admin_count > 0 and (actor is None or actor.role != "admin"):
-            raise AuthorizationError(
-                "Creating researcher, ml_admin, or admin accounts requires an admin session."
-            )
+        if admin_count > 0:
+            if actor_session_token:
+                actor = require_role(conn, actor_session_token, {"admin"})
+            elif actor is not None:
+                row = conn.execute(
+                    "SELECT is_active, role FROM users WHERE user_id = ?;",
+                    (actor.user_id,),
+                ).fetchone()
+                if not row or not bool(row["is_active"]) or row["role"] != "admin":
+                    raise AuthorizationError(
+                        "Supplied actor is not an active verified administrator in this system."
+                    )
+            else:
+                raise AuthorizationError(
+                    "Creating researcher, ml_admin, or admin accounts "
+                    "requires an active admin session."
+                )
     norm_username = _normalize_username(username)
     norm_email = _normalize_email(email)
     pw_hash = hash_password(password)
@@ -331,6 +345,16 @@ def update_user_role_or_status(
     if role_val not in VALID_ROLES:
         raise ValueError(f"Unsupported role {role_val!r}.")
     active_val = target.is_active if is_active is None else bool(is_active)
+    if target.role == "admin" and (role_val != "admin" or not active_val):
+        other_admins = conn.execute(
+            "SELECT COUNT(*) AS cnt FROM users "
+            "WHERE role = 'admin' AND is_active = 1 AND user_id != ?;",
+            (target_user_id,),
+        ).fetchone()
+        if int(other_admins["cnt"]) == 0:
+            raise AuthorizationError(
+                "Cannot deactivate or demote the last remaining active administrator."
+            )
     now_iso = utc_now_iso()
     with transaction(conn):
         conn.execute(
@@ -393,38 +417,46 @@ def complete_password_reset(
     new_password: str,
 ) -> UserAccount:
     """Verify single-use reset token, update password hash, and revoke prior sessions."""
+    if not reset_token or not isinstance(reset_token, str):
+        raise AuthorizationError("Valid reset token required.")
+    token_hash = _hash_token(reset_token.strip())
     pw_hash = hash_password(new_password)
-    row = conn.execute(
-        "SELECT * FROM password_reset_tokens WHERE token_hash = ?;",
-        (_hash_token(reset_token.strip()),),
-    ).fetchone()
-    if not row or row["used_at"] is not None:
-        raise AuthorizationError("Invalid or already used password reset token.")
-    if datetime.fromisoformat(row["expires_at"]) <= datetime.now(UTC):
-        raise AuthorizationError("Password reset token has expired.")
     now_iso = utc_now_iso()
     with transaction(conn):
+        cur = conn.execute(
+            """
+            UPDATE password_reset_tokens
+            SET used_at = ?
+            WHERE token_hash = ? AND used_at IS NULL AND expires_at > ?;
+            """,
+            (now_iso, token_hash, now_iso),
+        )
+        if cur.rowcount != 1:
+            raise AuthorizationError("Invalid, expired, or already used password reset token.")
+        row = conn.execute(
+            "SELECT user_id, reset_id FROM password_reset_tokens WHERE token_hash = ?;",
+            (token_hash,),
+        ).fetchone()
+        if not row:
+            raise AuthorizationError("Password reset record not found.")
+        user_id = row["user_id"]
         conn.execute(
             "UPDATE users SET password_hash = ?, updated_at = ? WHERE user_id = ?;",
-            (pw_hash, now_iso, row["user_id"]),
-        )
-        conn.execute(
-            "UPDATE password_reset_tokens SET used_at = ? WHERE reset_id = ?;",
-            (now_iso, row["reset_id"]),
+            (pw_hash, now_iso, user_id),
         )
         conn.execute(
             "UPDATE user_sessions SET revoked_at = ? WHERE user_id = ? AND revoked_at IS NULL;",
-            (now_iso, row["user_id"]),
+            (now_iso, user_id),
         )
         log_audit_event(
             conn,
             operation_type="USER_PASSWORD_RESET",
             entity_type="user",
-            entity_id=row["user_id"],
+            entity_id=user_id,
             actor_role="self_service",
             details={"reset_id": row["reset_id"]},
         )
-    return get_user_by_id(conn, row["user_id"])
+    return get_user_by_id(conn, user_id)
 
 
 def list_users_admin(

@@ -305,9 +305,28 @@ def test_auth_edge_cases_and_error_handling(tmp_path: Path):
                 conn, admin_token, target_user_id=admin.user_id, new_role="bad_role"
             )
 
+        # Register backup admin to test deactivation and last-admin protection
+        backup_admin = register_user(
+            conn,
+            username="admin_backup",
+            email="backup@test.org",
+            password="AdminPassword123!",
+            role="admin",
+            actor=admin,
+        )
+        _, backup_token = authenticate_user(
+            conn, identifier="admin_backup", password="AdminPassword123!"
+        )
+
         # Deactivating a user revokes their sessions
         update_user_role_or_status(conn, admin_token, target_user_id=admin.user_id, is_active=False)
         with pytest.raises(AuthorizationError, match="inactive"):
             authenticate_user(conn, identifier="admin_user", password="AdminPassword123!")
+
+        # Deactivating the last remaining active admin fails closed
+        with pytest.raises(AuthorizationError, match="last remaining active administrator"):
+            update_user_role_or_status(
+                conn, backup_token, target_user_id=backup_admin.user_id, is_active=False
+            )
     finally:
         conn.close()

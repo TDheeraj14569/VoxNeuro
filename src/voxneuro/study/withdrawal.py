@@ -40,6 +40,8 @@ def withdraw_participant(
     key_id: str = "voxneuro-key-v1",
     deletion_reason: str = "Participant requested withdrawal of consent",
     policy_reference: str = "IRB_STANDARD_DATA_DELETION_POLICY",
+    actor_role: str = "data_protection_officer",
+    actor_session_token: str | None = None,
 ) -> dict[str, Any]:
     """Execute complete atomic participant withdrawal workflow and purge features.
 
@@ -47,11 +49,20 @@ def withdraw_participant(
     - Blocks all future processing for the participant immediately.
     - Atomically updates participant enrollment and consent statuses to 'withdrawn'.
     - Restricts existing sessions to 'RESTRICTED_WITHDRAWN'.
-    - Deletes all derived features for the participant.
+    - Deletes all derived features and prediction records for the participant.
+    - Deactivates linked user accounts and revokes active sessions.
     - Generates an irreversible keyed HMAC-SHA256 tombstone with external key material.
     - Logs a privacy-safe audit event without exposing participant personal identity.
     - Rolls back entire transaction on any failure.
     """
+    if actor_session_token:
+        from voxneuro.study.auth import require_role
+
+        actor = require_role(
+            conn, actor_session_token, {"admin", "researcher", "data_protection_officer"}
+        )
+        actor_role = actor.role
+
     participant = get_participant(conn, participant_id)
     if participant.enrollment_status == "withdrawn":
         return {
@@ -131,7 +142,26 @@ def withdraw_participant(
             (now_iso, participant_id),
         )
 
-        # 5. Insert irreversible cryptographic tombstone with non-secret key_id
+        # 5. Deactivate linked user accounts and revoke all active sessions
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users';")
+        if cursor.fetchone():
+            cursor.execute(
+                "SELECT user_id FROM users WHERE participant_id = ?;",
+                (participant_id,),
+            )
+            linked_uids = [r["user_id"] for r in cursor.fetchall()]
+            for uid in linked_uids:
+                cursor.execute(
+                    "UPDATE users SET is_active = 0, updated_at = ? WHERE user_id = ?;",
+                    (now_iso, uid),
+                )
+                cursor.execute(
+                    "UPDATE user_sessions SET revoked_at = ? "
+                    "WHERE user_id = ? AND revoked_at IS NULL;",
+                    (now_iso, uid),
+                )
+
+        # 6. Insert irreversible cryptographic tombstone with non-secret key_id
         cursor.execute(
             """
             INSERT INTO tombstones (
@@ -151,13 +181,13 @@ def withdraw_participant(
             ),
         )
 
-        # 6. Record privacy-safe audit event
+        # 7. Record privacy-safe audit event
         log_audit_event(
             conn,
             operation_type="PARTICIPANT_WITHDRAWAL_EXECUTED",
             entity_type="participant",
             entity_id=tombstone_id,
-            actor_role="data_protection_officer",
+            actor_role=actor_role,
             details={
                 "tombstone_id": tombstone_id,
                 "study_id": participant.study_id,

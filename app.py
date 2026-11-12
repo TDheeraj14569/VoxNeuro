@@ -63,7 +63,6 @@ from voxneuro.study.consent import (
     register_dataset_access,
 )
 from voxneuro.study.database import (
-    DEFAULT_DB_PATH,
     get_connection,
     run_migrations,
 )
@@ -2842,23 +2841,23 @@ def _show_research_operations() -> None:
         return
 
     # Database initialization check
-    if not DEFAULT_DB_PATH.is_file():
+    active_db = _current_db_path()
+    if not active_db.is_file():
         st.info(
-            "The SQLite research study database has not been initialized yet at "
-            "`workspace/voxneuro_research.db`."
+            f"The SQLite research study database has not been initialized yet at `{active_db}`."
         )
         col1, _ = st.columns([1, 2])
         with col1:
             if st.button("Initialize research database", key="m5_init_db"):
                 try:
-                    applied = run_migrations(DEFAULT_DB_PATH)
+                    applied = run_migrations(active_db)
                     st.success(f"Initialized database with {len(applied)} migration(s).")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Migration error: {e}")
         return
 
-    conn = get_connection(DEFAULT_DB_PATH)
+    conn = get_connection(active_db)
     try:
         tab_studies, tab_participants, tab_sessions, tab_longitudinal, tab_audit = st.tabs(
             [

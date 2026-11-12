@@ -72,7 +72,7 @@ Milestone 3 extends VoxNeuro beyond single sustained vowel phonation (`voxneuro.
 
 1. **Sustained Vowel Phonation (`/a/`):** Preserves canonical Core39 acoustic features without modification.
 2. **Diadochokinetic Syllable Repetition (DDK):** Evaluates rapid alternating speech motor control across AMR (`/pa/`, `/ta/`, `/ka/`) and SMR (`/pa-ta-ka/`), extracting syllable event counts, rates (events/s), inter-event interval variability (CV IEI), and rate drift slopes.
-3. **Connected Speech:** Evaluates speech breathing and prosody using a standardized reading passage (Bamboo Passage), extracting speech/pause segmentation, pause ratios, prosodic pitch variation ($F_0$ median, semitone range), and vocal intensity dynamics.
+3. **Connected Speech:** Evaluates speech breathing and prosody using a standardized reading passage (The North Wind and the Sun, `north_wind_sun_en_v1`), extracting speech/pause segmentation, pause ratios, prosodic pitch variation ($F_0$ median, semitone range), and vocal intensity dynamics.
 4. **Multi-Vowel Formants & Vowel Space Area (VSA):** Tracks $F_1$ and $F_2$ formants across corner vowels (`/a/`, `/i/`, `/u/`) using Burg LPC and calculates triangular VSA ($\text{Hz}^2$) via the Shoelace formula.
 5. **Interactive Multi-Task Workspace:** An integrated Streamlit page (`Multi-task assessment`) enables independent upload, analysis, acoustic triangle visualization, and export of multi-task session receipts (`voxneuro.voice.v4`) and standalone HTML reports.
 

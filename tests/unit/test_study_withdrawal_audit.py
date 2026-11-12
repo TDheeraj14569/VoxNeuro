@@ -215,3 +215,36 @@ def test_withdraw_participant_workflow(test_db):
     # Verify idempotency
     second_res = withdraw_participant(test_db, "PT-WITHDRAW01")
     assert second_res["status"] == "ALREADY_WITHDRAWN"
+
+
+def test_withdraw_participant_deactivates_linked_user_and_revokes_sessions(test_db):
+    """Verify withdrawing a participant deactivates their linked account and revokes sessions."""
+    from voxneuro.study.auth import authenticate_user, register_user, resolve_session_user
+
+    p = Participant(
+        participant_id="PT-USER-LINK01",
+        study_id="STUDY-W-01",
+        enrollment_status="active",
+        consent_status="consented",
+    )
+    register_participant(test_db, p)
+    user = register_user(
+        test_db,
+        username="linked_user",
+        email="linked@example.org",
+        password="ValidPassword123!",
+        participant_id="PT-USER-LINK01",
+        study_id="STUDY-W-01",
+    )
+    _, token = authenticate_user(test_db, identifier="linked_user", password="ValidPassword123!")
+    assert resolve_session_user(test_db, token) is not None
+
+    res = withdraw_participant(
+        test_db, "PT-USER-LINK01", deletion_reason="Participant left study", actor_role="admin"
+    )
+    assert res["status"] == "WITHDRAWAL_COMPLETED"
+
+    # User session is now revoked and account is inactive
+    assert resolve_session_user(test_db, token) is None
+    cur = test_db.execute("SELECT is_active FROM users WHERE user_id = ?;", (user.user_id,))
+    assert bool(cur.fetchone()["is_active"]) is False

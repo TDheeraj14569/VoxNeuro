@@ -84,7 +84,7 @@ def _assess_ood_features(
 ) -> tuple[bool, str, dict[str, Any]]:
     """Detect severe out-of-distribution feature vectors relative to training statistics."""
     if not distribution_stats:
-        return True, "TRAINING_STATS_UNAVAILABLE", {"checked_features": 0, "extreme_features": []}
+        return False, "OOD_REFERENCE_UNAVAILABLE", {"checked_features": 0, "extreme_features": []}
     extreme: list[str] = []
     max_z = 0.0
     checked = 0
@@ -341,7 +341,12 @@ def run_prediction_service(
             else None
         )
         in_dist, ood_status, ood_meta = _assess_ood_features(features, dist_stats)
-        if dist_stats and not in_dist:
+        if not dist_stats:
+            reasons.append("OOD_REFERENCE_UNAVAILABLE")
+            reason_messages.append(
+                "Training distribution statistics are unavailable for OOD assessment."
+            )
+        elif not in_dist:
             reasons.append("OUT_OF_DISTRIBUTION_FEATURES")
             reason_messages.append(
                 "Voice measurements fall outside the distribution of the model's training cohort."
@@ -420,11 +425,45 @@ def run_prediction_service(
         [[features.get(col) for col in FEATURE_NAMES]], columns=list(FEATURE_NAMES)
     )
     estimator = bundle["model"]
-    score = (
-        float(estimator.predict_proba(X_row)[0, 1])
-        if hasattr(estimator, "predict_proba")
-        else float(estimator.predict(X_row)[0])
-    )
+    if not hasattr(estimator, "predict_proba"):
+        return PredictionResult(
+            prediction_id=pred_id,
+            status="ABSTAINED_FAIL_CLOSED",
+            abstained=True,
+            abstention_reasons=["NON_PROBABILISTIC_ESTIMATOR"],
+            abstention_reason="Model estimator does not provide continuous probability outputs.",
+            model_id=registered_model.model_id,
+            model_version=registered_model.model_version,
+            model_checksum=registered_model.artifact_sha256,
+            research_score=None,
+            research_classification=None,
+            calibration_status=registered_model.calibration_status,
+            uncertainty={"ood": ood_meta},
+            ood_status=ood_status,
+            acquisition_domain_id=input_domain,
+            capture_origin=capture_context.capture_origin,
+        )
+
+    score = float(estimator.predict_proba(X_row)[0, 1])
+    if not math.isfinite(score) or score < 0.0 or score > 1.0:
+        return PredictionResult(
+            prediction_id=pred_id,
+            status="ABSTAINED_FAIL_CLOSED",
+            abstained=True,
+            abstention_reasons=["NON_FINITE_MODEL_OUTPUT"],
+            abstention_reason="Model estimator returned non-finite or out-of-range output.",
+            model_id=registered_model.model_id,
+            model_version=registered_model.model_version,
+            model_checksum=registered_model.artifact_sha256,
+            research_score=None,
+            research_classification=None,
+            calibration_status=registered_model.calibration_status,
+            uncertainty={"ood": ood_meta},
+            ood_status=ood_status,
+            acquisition_domain_id=input_domain,
+            capture_origin=capture_context.capture_origin,
+        )
+
     band = (
         "LOW_RESEARCH_SIGNAL"
         if score < 0.33

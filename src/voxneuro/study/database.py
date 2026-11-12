@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import sqlite3
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -100,17 +101,23 @@ def run_migrations(
     applied_names: list[str] = []
     conn = get_connection(db_path)
     try:
-        # Ensure migration tracking table exists atomically
+        # Ensure migration tracking table exists atomically with checksum
         with transaction(conn):
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS schema_migrations (
                     version INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
-                    applied_at TEXT NOT NULL
+                    applied_at TEXT NOT NULL,
+                    checksum TEXT
                 );
                 """
             )
+            cols = [
+                r["name"] for r in conn.execute("PRAGMA table_info(schema_migrations);").fetchall()
+            ]
+            if "checksum" not in cols:
+                conn.execute("ALTER TABLE schema_migrations ADD COLUMN checksum TEXT;")
 
         already_applied = get_applied_migrations(conn)
 
@@ -121,10 +128,22 @@ def run_migrations(
             except ValueError:
                 continue
 
+            sql_content = file_path.read_text(encoding="utf-8")
+            sha256 = hashlib.sha256(sql_content.encode("utf-8")).hexdigest()
+
             if version in already_applied:
+                row = conn.execute(
+                    "SELECT checksum FROM schema_migrations WHERE version = ?;",
+                    (version,),
+                ).fetchone()
+                if row and row["checksum"] and row["checksum"] != sha256:
+                    raise RuntimeError(
+                        f"Migration {file_path.name} (v{version}) checksum mismatch! "
+                        f"Stored: {row['checksum']}, Current: {sha256}. "
+                        "Applied SQL migration files are immutable."
+                    )
                 continue
 
-            sql_content = file_path.read_text(encoding="utf-8")
             now_iso = datetime.now(UTC).isoformat()
 
             # Atomically apply all statements in the migration file
@@ -133,8 +152,9 @@ def run_migrations(
                 for stmt in _split_sql_script(sql_content):
                     conn.execute(stmt)
                 conn.execute(
-                    "INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, ?);",
-                    (version, file_path.name, now_iso),
+                    "INSERT INTO schema_migrations (version, name, applied_at, checksum) "
+                    "VALUES (?, ?, ?, ?);",
+                    (version, file_path.name, now_iso, sha256),
                 )
                 conn.commit()
             except Exception:

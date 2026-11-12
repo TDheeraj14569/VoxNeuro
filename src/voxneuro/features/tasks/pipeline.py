@@ -35,6 +35,7 @@ from voxneuro.features.schema import (
     schema_fingerprint as v3_schema_fingerprint,
 )
 from voxneuro.features.tasks.connected_speech import (
+    STANDARD_PASSAGE_ID,
     ConnectedSpeechConfig,
     ConnectedSpeechResult,
     extract_connected_speech_features,
@@ -249,10 +250,10 @@ def analyze_multitask_session(
     ddk_cfg_fp = configuration_fingerprint(asdict(ddk_cfg))
     if ddk_recordings:
         for stim_key, audio_item in ddk_recordings.items():
-            stim_norm = stim_key.strip().lower()
-            t_id = f"ddk_{stim_norm}"
-            rec = None
             try:
+                stim_norm = str(stim_key).strip().lower()
+                t_id = f"ddk_{stim_norm}"
+                rec = None
                 rec = _coerce_audio_record(audio_item)
                 prep_ddk = preprocess_task_audio(rec, task_type="ddk")
                 ddk_res: DDKResult = extract_ddk_features(
@@ -264,6 +265,8 @@ def analyze_multitask_session(
                 tasks[t_id] = ddk_res.to_dict()
                 task_statuses.append(ddk_res.task_status)
             except AudioValidationError as ave:
+                stim_norm = str(stim_key).strip().lower()
+                t_id = f"ddk_{stim_norm}"
                 meta = (
                     {
                         "sample_rate": rec.sample_rate,
@@ -291,6 +294,8 @@ def analyze_multitask_session(
                 }
                 task_statuses.append("quality_failed")
             except Exception as exc:
+                stim_norm = str(stim_key).strip().lower()
+                t_id = f"ddk_{stim_norm}"
                 meta = (
                     {
                         "sample_rate": rec.sample_rate,
@@ -352,7 +357,7 @@ def analyze_multitask_session(
                 "task_schema_version": CONNECTED_SPEECH_SCHEMA_VERSION,
                 "task_schema_fingerprint": connected_speech_schema_fingerprint(),
                 "task_status": "quality_failed",
-                "stimulus_id": "bamboo_passage",
+                "stimulus_id": STANDARD_PASSAGE_ID,
                 "language_code": "en",
                 "features": {name: None for name in CONNECTED_SPEECH_FEATURE_NAMES},
                 "quality": {"valid": False},
@@ -380,7 +385,7 @@ def analyze_multitask_session(
                 "task_schema_version": CONNECTED_SPEECH_SCHEMA_VERSION,
                 "task_schema_fingerprint": connected_speech_schema_fingerprint(),
                 "task_status": "processing_failed",
-                "stimulus_id": "bamboo_passage",
+                "stimulus_id": STANDARD_PASSAGE_ID,
                 "language_code": "en",
                 "features": {name: None for name in CONNECTED_SPEECH_FEATURE_NAMES},
                 "quality": {"valid": False},

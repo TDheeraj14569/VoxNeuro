@@ -12,8 +12,13 @@
 
 This report presents the rigorous empirical evaluation of multiple classification model families on the **UAMS** (University of Arkansas for Medical Sciences) voice dataset and the **UCI #470** Parkinson's dataset.
 
-### Key Findings
-1. **Voice-Only Models (UAMS Development Cohort, N=78):**
+### Key Findings & Dual Evaluation Protocols
+
+To maintain absolute scientific transparency, VoxNeuro reports two prespecified evaluation protocols:
+- **Protocol A (Repeated Nested-CV, Seeds 2026–2028, 15 outer folds):** Extra Trees BA **0.762 ± 0.020**, ROC-AUC **0.784 ± 0.014** (documented in authoritative `MODEL_CARD.md`).
+- **Protocol B (Fixed-Seed M6 Benchmark, Seed 2026, 5 outer folds):** Detailed below across model families.
+
+1. **Voice-Only Models (UAMS Development Cohort, N=78, Protocol B):**
    - **Extra Trees** achieved the highest mean balanced accuracy among voice-only candidates: **0.7821** (ROC-AUC: 0.7831, Brier score: 0.1888, ECE: 0.1354).
    - **Random Forest** achieved balanced accuracy of **0.7726** (ROC-AUC: 0.7877, Brier score: 0.1844, ECE: 0.0969).
    - **RBF SVM** achieved balanced accuracy of **0.7442** (ROC-AUC: 0.7732, Brier score: 0.1996, ECE: 0.1338).

@@ -36,7 +36,8 @@ def project_code_fingerprint() -> str:
         paths.extend(
             path
             for path in directory.rglob("*")
-            if path.is_file() and path.suffix.casefold() in {".py", ".yaml", ".yml", ".json"}
+            if path.is_file()
+            and path.suffix.casefold() in {".py", ".yaml", ".yml", ".json", ".sql"}
         )
     digest = hashlib.sha256()
     for path in sorted(set(paths)):

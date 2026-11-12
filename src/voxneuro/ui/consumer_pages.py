@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import sqlite3
 from collections.abc import Callable
 from typing import Any
@@ -505,7 +506,14 @@ def show_guided_consent_step(conn: sqlite3.Connection | None, user: UserAccount 
             f"Signed in as {user.display_name}. Your voice recording will be evaluated in "
             f"temporary memory. Summary retention: {ret_label}."
         )
-        return True
+        ack = st.checkbox(
+            "I voluntary consent to this voice assessment and understand that VoxNeuro is a "
+            "research platform and NOT a medical diagnosis tool.",
+            value=bool(st.session_state.get("voxneuro_user_consent_ack", False)),
+            key="voxneuro_user_consent_checkbox",
+        )
+        st.session_state["voxneuro_user_consent_ack"] = ack
+        return ack
 
     active = get_active_consent_for_participant(conn, user.participant_id, study_id=user.study_id)
     if active:
@@ -592,10 +600,24 @@ def show_plain_results_page(
             "soundwave. They describe physical vocal properties and cannot diagnose or rule "
             "out any health condition."
         )
-        f0_val = float(features.get("f0_mean_hz", 0.0))
-        jit_val = float(features.get("jitter_local", 0.0)) * 100.0
-        shim_val = float(features.get("shimmer_local", 0.0)) * 100.0
-        hnr_val = float(features.get("hnr_mean_db", features.get("hnr_db", 0.0)))
+
+        def _safe_fmt(val: Any, unit: str = "", factor: float = 1.0, fmt: str = ".1f") -> str:
+            if val is None:
+                return "N/A"
+            try:
+                fval = float(val)
+                if not math.isfinite(fval):
+                    return "N/A"
+                return f"{fval * factor:{fmt}} {unit}".strip()
+            except (TypeError, ValueError):
+                return "N/A"
+
+        f0_disp = _safe_fmt(features.get("f0_mean_hz"), unit="Hz", fmt=".1f")
+        jit_disp = _safe_fmt(features.get("jitter_local"), unit="%", factor=100.0, fmt=".2f")
+        shim_disp = _safe_fmt(features.get("shimmer_local"), unit="%", factor=100.0, fmt=".2f")
+        hnr_val = features.get("hnr_mean_db")
+        hnr_raw = hnr_val if hnr_val is not None else features.get("hnr_db")
+        hnr_disp = _safe_fmt(hnr_raw, unit="dB", fmt=".1f")
 
         c1, c2, c3, c4 = st.columns(4)
         with c1:
@@ -604,7 +626,7 @@ def show_plain_results_page(
                 '<div style="font-size:0.80rem; font-weight:700; color:var(--vx-teal); '
                 'text-transform:uppercase;">Pitch (F0)</div>'
                 f'<div style="font-size:1.8rem; font-weight:700; color:var(--vx-ink); '
-                f'margin:0.25rem 0;">{f0_val:.1f} Hz</div>'
+                f'margin:0.25rem 0;">{f0_disp}</div>'
                 '<p style="font-size:0.80rem; color:var(--vx-muted);">'
                 "Vocal fold vibration rate</p>"
                 "</div>",
@@ -616,7 +638,7 @@ def show_plain_results_page(
                 '<div style="font-size:0.80rem; font-weight:700; color:var(--vx-teal); '
                 'text-transform:uppercase;">Pitch Steadiness</div>'
                 f'<div style="font-size:1.8rem; font-weight:700; color:var(--vx-ink); '
-                f'margin:0.25rem 0;">{jit_val:.2f}%</div>'
+                f'margin:0.25rem 0;">{jit_disp}</div>'
                 '<p style="font-size:0.80rem; color:var(--vx-muted);">'
                 "Frequency variation</p>"
                 "</div>",
@@ -628,7 +650,7 @@ def show_plain_results_page(
                 '<div style="font-size:0.80rem; font-weight:700; color:var(--vx-teal); '
                 'text-transform:uppercase;">Volume Steadiness</div>'
                 f'<div style="font-size:1.8rem; font-weight:700; color:var(--vx-ink); '
-                f'margin:0.25rem 0;">{shim_val:.2f}%</div>'
+                f'margin:0.25rem 0;">{shim_disp}</div>'
                 '<p style="font-size:0.80rem; color:var(--vx-muted);">'
                 "Loudness variation</p>"
                 "</div>",
@@ -640,7 +662,7 @@ def show_plain_results_page(
                 '<div style="font-size:0.80rem; font-weight:700; color:var(--vx-teal); '
                 'text-transform:uppercase;">Voice Clarity</div>'
                 f'<div style="font-size:1.8rem; font-weight:700; color:var(--vx-ink); '
-                f'margin:0.25rem 0;">{hnr_val:.1f} dB</div>'
+                f'margin:0.25rem 0;">{hnr_disp}</div>'
                 '<p style="font-size:0.80rem; color:var(--vx-muted);">'
                 "Harmonics-to-noise</p>"
                 "</div>",
@@ -799,18 +821,17 @@ def show_account_portal(conn: sqlite3.Connection | None) -> None:
     with tab_reset:
         with st.form("m6_reset_req_form"):
             reset_email = st.text_input("Registered email address")
-            if st.form_submit_button("Generate Single-Use Reset Token"):
-                tok = issue_password_reset_token(conn, email=reset_email)
-                if tok:
-                    st.info(
-                        "Single-use local reset token generated (expires in 30 minutes). "
-                        "Use the confirmation form below."
-                    )
-                    st.code(tok, language="text")
-                else:
-                    st.info("If the email matches an active account, a reset token is ready.")
+            if st.form_submit_button("Request Password Recovery"):
+                issue_password_reset_token(conn, email=reset_email)
+                st.info(
+                    "If an active account is associated with this email, a single-use "
+                    "recovery token has been recorded. To protect participant privacy and "
+                    "prevent account takeover, tokens are not displayed publicly. In this "
+                    "local prototype, obtain your token from your study administrator."
+                )
         with st.form("m6_reset_complete_form"):
-            tok_input = st.text_input("Reset token")
+            st.caption("Enter the single-use recovery token provided by your study administrator:")
+            tok_input = st.text_input("Reset token", type="password")
             new_pw = st.text_input("New password (min 8 chars)", type="password")
             if st.form_submit_button("Reset Password"):
                 try:

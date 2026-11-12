@@ -138,3 +138,23 @@ def test_migrations_directory_and_file_edge_cases(tmp_path: Path):
         assert get_applied_migrations(raw_conn) == set()
     finally:
         raw_conn.close()
+
+
+def test_database_migration_checksum_immutability(tmp_path: Path):
+    """Verify that tampering with an already-applied SQL migration file raises a RuntimeError."""
+    mig_dir = tmp_path / "immutable_migs"
+    mig_dir.mkdir()
+    mig_file = mig_dir / "001_initial.sql"
+    mig_file.write_text("CREATE TABLE test_imm (id INT PRIMARY KEY);", encoding="utf-8")
+
+    db_file = tmp_path / "imm_test.db"
+    applied = run_migrations(db_file, migrations_dir=mig_dir)
+    assert len(applied) == 1
+
+    # Tampering with the already-applied migration file must fail closed
+    mig_file.write_text(
+        "CREATE TABLE test_imm (id INT PRIMARY KEY, tampered INT);",
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="checksum mismatch"):
+        run_migrations(db_file, migrations_dir=mig_dir)
