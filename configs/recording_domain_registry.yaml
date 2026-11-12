@@ -1,0 +1,269 @@
+registry_version: "1.0.0"
+registry_schema: "voxneuro.domain_registry.v1"
+
+# Training domains: reference development cohorts
+training_domains:
+  - "uams_telephone"
+
+# Candidate external domains: independent domains assessed or under assessment
+candidate_domains:
+  - "neurovoz_studio"
+  - "pc_gita_condenser"
+  - "italian_parkinsons_headset"
+
+# Approved domains: domains with reviewed, verified, and approved compatibility
+# STRICT SAFETY INVARIANT: Must remain empty in Milestone 4 and Milestone 5.
+approved_domains: []
+
+domains:
+  uams_telephone:
+    domain_id: "uams_telephone"
+    domain_name: "UAMS Telephone Audio Domain"
+    domain_category: "training_domain"
+    dataset_id: "uams_figshare_23849127"
+    dataset_version: "v1"
+    collection_site_id: "uams_little_rock"
+    country: "USA"
+    region: "Arkansas"
+    collection_period: "historical"
+
+    device_manufacturer: null
+    device_model: null
+    device_category: "telephone"
+    microphone_type: "carbon_or_electret_telephony"
+    recording_software: "telephone_network_recorder"
+    recording_software_version: null
+
+    audio_codec: "pcm_s16le"
+    container_format: "wav"
+    original_sample_rate: 16000
+    bit_depth: 16
+    channel_count: 1
+
+    microphone_distance_cm: null
+    microphone_angle_degrees: null
+    automatic_gain_control: "unknown"
+    noise_suppression: "unknown"
+    compression_enabled: "unknown"
+
+    recording_environment: "telephone_network"
+    estimated_background_noise_db: null
+    protocol_id: "uams_sustained_a_v1"
+    task_type: "sustained_vowel"
+    language: "en"
+    dialect_metadata: "north_american"
+
+    feature_schema_compatibility: "voxneuro.voice.v3"
+    research_evaluation_eligible: true
+    candidate_compatibility_status: "REFERENCE_TRAINING_CORPUS"
+    inference_eligible: false
+    human_review_status: "REFERENCE_COHORT"
+    approval_status: "TRAINING_REFERENCE_NOT_APPROVED_FOR_INFERENCE"
+
+    sources:
+      - source_title: "VoxNeuro UAMS Voice Analysis Dataset"
+        author_or_institution: "University of Arkansas for Medical Sciences (UAMS)"
+        publication_year: 2023
+        doi_or_url: "https://doi.org/10.6084/m9.figshare.23849127.v1"
+        dataset_repository_url: "https://figshare.com/articles/dataset/VoxNeuro_UAMS/23849127"
+        fields_supported:
+          - "device_category"
+          - "microphone_type"
+          - "original_sample_rate"
+          - "bit_depth"
+          - "channel_count"
+          - "task_type"
+          - "language"
+        verification_status: "VERIFIED"
+        reviewer_notes: "Reference development training cohort (81 total participants, 78 valid after QC)."
+
+  neurovoz_studio:
+    domain_id: "neurovoz_studio"
+    domain_name: "NeuroVoz Clinical Corpus Domain"
+    domain_category: "candidate_external_domain"
+    dataset_id: "neurovoz_corpus"
+    dataset_version: "v1"
+    collection_site_id: "hgugm_madrid"
+    country: "ESP"
+    region: "Madrid"
+    collection_period: "historical"
+
+    device_manufacturer: "AKG"
+    device_model: "C420"
+    device_category: "headset_microphone"
+    microphone_type: "electret_condenser_headset"
+    recording_software: null
+    recording_software_version: null
+
+    audio_codec: "pcm_s16le"
+    container_format: "wav"
+    original_sample_rate: 44100
+    bit_depth: 16
+    channel_count: 1
+
+    microphone_distance_cm: null
+    microphone_angle_degrees: null
+    automatic_gain_control: "unknown"
+    noise_suppression: "unknown"
+    compression_enabled: "unknown"
+
+    recording_environment: "clinical_quiet_room"
+    estimated_background_noise_db: null
+    protocol_id: "neurovoz_vowel_protocol"
+    task_type: "sustained_vowel"
+    language: "es"
+    dialect_metadata: "castilian"
+
+    feature_schema_compatibility: "voxneuro.voice.v3"
+    research_evaluation_eligible: true
+    candidate_compatibility_status: "DOMAIN_VALIDATION_PENDING"
+    inference_eligible: false
+    human_review_status: "UNREVIEWED"
+    approval_status: "UNAPPROVED"
+
+    sources:
+      - source_title: "NeuroVoz: a Castillian Spanish corpus of parkinsonian speech"
+        author_or_institution: "Hospital General Universitario Gregorio Marañón / Scientific Data (Nature)"
+        publication_year: 2024
+        doi_or_url: "https://doi.org/10.1038/s41597-024-04186-z"
+        dataset_repository_url: "https://github.com/NeuroVoz/corpus"
+        fields_supported:
+          - "device_manufacturer"
+          - "device_model"
+          - "device_category"
+          - "microphone_type"
+          - "recording_environment"
+          - "original_sample_rate"
+          - "bit_depth"
+          - "channel_count"
+          - "task_type"
+          - "language"
+          - "dialect_metadata"
+          - "collection_site_id"
+        verification_status: "VERIFIED"
+        reviewer_notes: "112 participants: 54 PD and 58 healthy controls. AKG C420 headset mic, phantom-powered preamp, Creative SoundBlaster Live sound card. Recorded in quiet clinical room (not sound-treated booth, mean SNR 24.3 dB). Published in Scientific Data (Nature) 2024, DOI: 10.1038/s41597-024-04186-z, PMCID: PMC11655668."
+
+  pc_gita_condenser:
+    domain_id: "pc_gita_condenser"
+    domain_name: "PC-GITA Dynamic Microphone Domain"
+    domain_category: "candidate_external_domain"
+    dataset_id: "pc_gita_corpus"
+    dataset_version: "v1"
+    collection_site_id: "udea_medellin"
+    country: "COL"
+    region: "Antioquia"
+    collection_period: "historical"
+
+    device_manufacturer: "Shure"
+    device_model: "SM63L"
+    device_category: "dynamic_microphone"
+    microphone_type: "dynamic_omnidirectional"
+    recording_software: null
+    recording_software_version: null
+
+    audio_codec: "pcm_s16le"
+    container_format: "wav"
+    original_sample_rate: 44100
+    bit_depth: 16
+    channel_count: 1
+
+    microphone_distance_cm: null
+    microphone_angle_degrees: null
+    automatic_gain_control: "unknown"
+    noise_suppression: "unknown"
+    compression_enabled: "unknown"
+
+    recording_environment: "sound_treated_booth"
+    estimated_background_noise_db: null
+    protocol_id: "pc_gita_protocol"
+    task_type: "sustained_vowel"
+    language: "es"
+    dialect_metadata: "colombian"
+
+    feature_schema_compatibility: "voxneuro.voice.v3"
+    research_evaluation_eligible: true
+    candidate_compatibility_status: "DOMAIN_VALIDATION_PENDING"
+    inference_eligible: false
+    human_review_status: "UNREVIEWED"
+    approval_status: "UNAPPROVED"
+
+    sources:
+      - source_title: "PC-GITA: A Spanish speech database for the automatic analysis of Parkinson's disease"
+        author_or_institution: "University of Antioquia (GITA Lab, Orozco-Arroyave et al.)"
+        publication_year: 2014
+        doi_or_url: "https://doi.org/10.1016/j.csl.2014.07.003"
+        fields_supported:
+          - "device_manufacturer"
+          - "device_model"
+          - "device_category"
+          - "microphone_type"
+          - "recording_environment"
+          - "original_sample_rate"
+          - "bit_depth"
+          - "channel_count"
+          - "task_type"
+          - "language"
+          - "dialect_metadata"
+          - "collection_site_id"
+        verification_status: "VERIFIED"
+        reviewer_notes: "Omnidirectional dynamic Shure SM63L microphone with M-Audio Fast Track C400 audio interface inside sound-treated booth. 100 Colombian Spanish participants (50 PD, 50 HC; 25M/25F in each group). Citations: PMC10017962, PMC12565443."
+
+  italian_parkinsons_headset:
+    domain_id: "italian_parkinsons_headset"
+    domain_name: "Italian Parkinson's Voice and Speech (IPVS) Domain"
+    domain_category: "candidate_external_domain"
+    dataset_id: "italian_parkinsons_voice_and_speech"
+    dataset_version: "v1"
+    collection_site_id: "uniba_bari"
+    country: "ITA"
+    region: "Apulia"
+    collection_period: "historical"
+
+    device_manufacturer: null
+    device_model: null
+    device_category: "unknown"
+    microphone_type: "unknown"
+    recording_software: null
+    recording_software_version: null
+
+    audio_codec: "unknown"
+    container_format: "wav"
+    original_sample_rate: null
+    bit_depth: null
+    channel_count: null
+
+    microphone_distance_cm: null
+    microphone_angle_degrees: null
+    automatic_gain_control: "unknown"
+    noise_suppression: "unknown"
+    compression_enabled: "unknown"
+
+    recording_environment: "unknown"
+    estimated_background_noise_db: null
+    protocol_id: "ipvs_dimauro_protocol"
+    task_type: "sustained_vowel"
+    language: "it"
+    dialect_metadata: "italian"
+
+    feature_schema_compatibility: "voxneuro.voice.v3"
+    research_evaluation_eligible: false
+    candidate_compatibility_status: "CANDIDATE_TASK_COMPATIBILITY_UNVERIFIED"
+    inference_eligible: false
+    human_review_status: "UNREVIEWED"
+    approval_status: "UNAPPROVED"
+
+    sources:
+      - source_title: "The Italian Parkinson's Voice and Speech Dataset (Dimauro & Girardi)"
+        author_or_institution: "University of Bari (Dimauro & Girardi, Studi AISV 2023)"
+        publication_year: 2023
+        doi_or_url: "https://www.aisv.it/StudiAISV/2023/vol_11/studiAISV_11.pdf"
+        dataset_repository_url: "https://ieee-dataport.org/open-access/italian-parkinsons-voice-and-speech"
+        fields_supported:
+          - "dataset_id"
+          - "collection_site_id"
+          - "country"
+          - "region"
+          - "language"
+        verification_status: "TASK_COMPATIBILITY_UNVERIFIED"
+        reviewer_notes: "65 native Italian participants: 28 PD, 22 elderly HC, 15 young HC. Speech tasks include text reading, /pa/, /ta/, and vowel phonations. Transducer hardware, original sample rate, bit depth, and channel count are not established by authoritative IPVS source. Preceding unrelated Samson Meteor microphone study (44 kHz, 16-bit, 20 cm) in same AISV publication volume must NOT be attributed to IPVS. Full pa-ta-ka DDK task not documented (/pa/ and /ta/ only). Core39 task compatibility unverified."
+        source_conflicts: "Previous registry drafts conflated this 65-speaker Bari dataset with an immediately preceding unrelated Samson Meteor microphone study in the same AISV volume, as well as unrelated PoliTO/Sapienza studies (Suppa et al., Shure WH20 headset). Transducer specifications and digital audio parameters remain unknown for IPVS."

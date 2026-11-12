@@ -1,0 +1,5 @@
+schema_version: voxneuro.m4_trust_anchors.v1
+authority_name: VoxNeuro Scientific Governance Authority
+signature_algorithm: Ed25519
+pinned_public_keys:
+  voxneuro-m4-authority-ed25519-v1: "f0161e1dcd64c2b464d5c1344de1554886780a1fbd3c6efeecff2046aaed44db"
