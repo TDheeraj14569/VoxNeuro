@@ -35,9 +35,12 @@ The table reports mean ± standard deviation across the three repeated participa
 | Extra Trees | 0.761 ± 0.020 | 0.727 ± 0.017 | 0.793 ± 0.041 | 0.732 ± 0.024 | **0.762 ± 0.020** | 0.664–0.850 | 0.784 ± 0.014 | 0.713 ± 0.067 | 0.724 ± 0.060 |
 | Histogram gradient boosting | 0.705 ± 0.013 | 0.667 ± 0.016 | 0.757 ± 0.000 | 0.659 ± 0.024 | 0.708 ± 0.012 | 0.606–0.812 | 0.739 ± 0.027 | 0.697 ± 0.069 | 0.705 ± 0.065 |
 | Age-only logistic comparator | **0.838 ± 0.007** | **0.807 ± 0.012** | **0.865 ± 0.000** | **0.813 ± 0.014** | **0.839 ± 0.007** | 0.754–0.911 | **0.849 ± 0.013** | **0.793 ± 0.015** | **0.799 ± 0.014** |
-| Age-plus-voice logistic comparator | 0.769 ± 0.013 | 0.736 ± 0.025 | 0.802 ± 0.016 | 0.740 ± 0.037 | 0.771 ± 0.012 | 0.658–0.851 | 0.817 ± 0.024 | 0.777 ± 0.021 | 0.782 ± 0.021 |
+| Age + sex logistic comparator | 0.838 ± 0.008 | 0.807 ± 0.012 | 0.847 ± 0.016 | 0.829 ± 0.014 | 0.838 ± 0.008 | 0.746–0.912 | 0.849 ± 0.013 | 0.793 ± 0.015 | 0.799 ± 0.014 |
+| Age + voice logistic comparator | 0.769 ± 0.013 | 0.736 ± 0.025 | 0.802 ± 0.016 | 0.740 ± 0.037 | 0.771 ± 0.012 | 0.658–0.851 | 0.817 ± 0.024 | 0.777 ± 0.021 | 0.782 ± 0.021 |
+| Age + sex + voice logistic comparator | 0.761 ± 0.045 | 0.736 ± 0.025 | 0.784 ± 0.041 | 0.740 ± 0.037 | 0.762 ± 0.045 | 0.659–0.848 | 0.813 ± 0.024 | 0.777 ± 0.021 | 0.782 ± 0.021 |
+| Matched voice SVM | &mdash; | &mdash; | &mdash; | &mdash; | **NOT ESTIMABLE** | &mdash; | &mdash; | &mdash; | &mdash; |
 
-These are small-cohort internal estimates. Extra Trees had the highest mean balanced accuracy among voice-only candidates, but its primary-seed interval is wide. The age-only comparator was higher (0.839 versus 0.762 BA); age-plus-voice did not exceed age-only BA or ROC-AUC. This cohort cannot establish that voice contributes disease-specific information independently of age. Average precision is distinct from trapezoidal PR-AUC.
+These are small-cohort internal estimates. Extra Trees had the highest mean balanced accuracy among voice-only candidates, but its primary-seed interval is wide. The age-only comparator was higher (0.839 versus 0.762 BA). In primary-seed paired testing, adding voice to age (Age + Voice) yields $\Delta\text{BA} = -0.0758$ (95% bootstrap CI [$-0.1842, +0.0284$], supplementary McNemar exact $p = 0.2632$; repeated-CV $\Delta = -0.0681$); adding voice to age and sex (Age + Sex + Voice) yields $\Delta\text{BA} = -0.0745$ (95% bootstrap CI [$-0.1843, +0.0310$], supplementary McNemar exact $p = 0.2632$; repeated-CV $\Delta = -0.0762$). Enforcing a 0.2 SD age caliper with exact sex matching retains only 5 pairs (10 participants, 87.2% discarded), making matched-cohort cross-validation formally NOT ESTIMABLE per SAP Rule 5. The retrospective cohort did not establish statistically supported positive incremental predictive benefit from the voice features beyond demographic comparators. The confidence intervals include zero and positive effects; therefore, the true incremental contribution remains uncertain. Average precision is distinct from trapezoidal PR-AUC.
 
 ## Separate UCI feature-table benchmark
 
@@ -63,8 +66,9 @@ The bundle records the data checksum, schema/configuration fingerprints, source 
 - All three quality exclusions are PD recordings. This class-dependent exclusion can bias the training cohort.
 - The development dataset is small, retrospective, telephone-collected, and limited to sustained /a/. Language, device, channel, room, task, medication, fatigue, age, and other conditions can affect voice.
 - Compatibility with laptop, smartphone, browser-microphone, or other recording domains is unverified. The application withholds disease classification for new recordings.
+- Milestone 4 establishes the formal recording domain validation framework (`VOXNEURO-M4-EXT-VAL-2026-V1`) and candidate assessment dossier schema (`voxneuro.domain_assessment.v1`). External raw audio datasets (NeuroVoz, PC-GITA, Italian Parkinson's) remain `ACCESS_PENDING` under institutional DUAs; authoritative status is `FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING`. Prediction compatibility remains disabled (`allow_user_microphone_inference: false`, empty allowlist `TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256 = frozenset()`).
 - No calibrated clinical probability, decision threshold, external test, prospective cohort, Indian-population evaluation, clinician feedback, ethics review, or regulatory authorization has been established.
-- NeuroVoz was not used because its access process requires a Data Use Agreement and an access request that were not completed.
+- NeuroVoz and other external cohorts were not used because their access processes require formal institutional Data Use Agreements (DUAs) and ethics clearances that were not completed.
 - Voice is potentially identifying biometric data. Recordings are held in application memory and are not saved by default.
 
 Do not use this model to make or change clinical decisions. A generated nested-results report is available locally at artifacts/reports/model_evaluation/uams_nested.html; reproducibility details are in [model evaluation methodology](../methodology/model_evaluation.md).
