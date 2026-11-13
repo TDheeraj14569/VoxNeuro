@@ -12,6 +12,7 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from voxneuro.features.schema import FEATURE_NAMES
 from voxneuro.modeling.prediction_service import (
     PredictionResult,
     run_prediction_service,
@@ -333,11 +334,14 @@ def show_help_faq() -> None:
         ),
         (
             "Why did my assessment say 'We could not provide a reliable result'?",
-            "VoxNeuro has strict scientific safety gates. It will abstain from predicting "
-            "whenever: (1) the recording was made on an uncalibrated consumer microphone, "
-            "(2) background noise or room echo was detected, (3) audio quality was insufficient, "
-            "or (4) prospective clinical validation for the device is still ongoing. "
-            "Abstaining ensures we never provide misleading or fabricated predictions.",
+            "VoxNeuro keeps approved clinical prediction disabled because recording-domain "
+            "compatibility and clinical validation have not been established. A local research "
+            "model may show a separate exploratory candidate only if its current provenance "
+            "evidence, declared device category, task, audio quality, feature schema, and "
+            "out-of-distribution checks pass. Otherwise the page gives the specific abstention "
+            "reason and retains the acoustic analysis. "
+            "An exploratory candidate is not a diagnosis, "
+            "is not a probability, and must not guide care.",
         ),
         (
             "How should I position my microphone for best results?",
@@ -847,16 +851,25 @@ def build_session_prediction(
     quality_valid: bool,
     capture_origin: str,
     input_domain: str,
+    acquisition_domain_source: str,
     conn: sqlite3.Connection | None,
     user: UserAccount | None,
+    recording_metadata: dict[str, Any] | None = None,
+    source_audio_sha256: str | None = None,
 ) -> PredictionResult:
-    """Execute fail-closed PredictionService with the active user/domain context."""
-    from voxneuro.modeling.prediction import InputCaptureContext
+    """Try approved inference first, then the separate provenance-checked research path."""
+    from voxneuro.modeling.exploratory import (
+        ExploratoryPredictionInput,
+        run_exploratory_prediction,
+    )
+    from voxneuro.modeling.prediction import VALID_CAPTURE_ORIGINS, InputCaptureContext
 
     ctx = InputCaptureContext(
-        capture_origin=capture_origin, task_type="sustained_vowel", verified_origin=False
+        capture_origin=capture_origin,
+        task_type="sustained_vowel",
+        verified_origin=capture_origin in VALID_CAPTURE_ORIGINS,
     )
-    return run_prediction_service(
+    approved_result = run_prediction_service(
         features=features,
         quality_valid=quality_valid,
         capture_context=ctx,
@@ -867,3 +880,22 @@ def build_session_prediction(
         participant_id=user.participant_id if user else None,
         allow_prediction_retention=bool(user and user.prediction_retention_opt_in),
     )
+    if not quality_valid or features is None or not approved_result.abstained:
+        return approved_result
+
+    feature_names = tuple(name for name in features if name in FEATURE_NAMES)
+    exploratory_input = ExploratoryPredictionInput(
+        features=features,
+        feature_names=feature_names,
+        feature_schema_fingerprint=str(features.get("schema_fingerprint", "")),
+        task_type="sustained_vowel",
+        capture_origin=capture_origin,
+        acquisition_domain_id=input_domain,
+        acquisition_domain_source=acquisition_domain_source,
+        preprocessing_fingerprint=str(features.get("preprocessing_config_fingerprint", "")),
+        quality_valid=quality_valid,
+        source_audio_sha256=source_audio_sha256,
+        repetition_count=1,
+        recording_metadata=dict(recording_metadata or {}),
+    )
+    return run_exploratory_prediction(exploratory_input)

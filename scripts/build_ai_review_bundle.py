@@ -285,7 +285,9 @@ Scope and privacy
   The supplemental dataset audit HTML contains aggregate counts only.
 - The bundled feature-extraction receipt replaces its excluded-ID list with a count.
 - UAMS results are internal estimates from a small, age-confounded cohort. They are not
-  external or clinical validation. The app does not classify new microphone recordings.
+  external or clinical validation. When local model/evaluation receipts are present, the app
+  may show a separate, explicitly unvalidated exploratory candidate after input checks pass;
+  its approved prediction path remains disabled.
 - UCI is a separate pre-extracted feature benchmark; it does not validate raw-WAV processing.
 - Exact evaluation settings and limits are in `configs/model_config.yaml`, `docs/methodology/`,
   and `docs/reports/MODEL_CARD.md`.

@@ -51,6 +51,7 @@ from voxneuro.features.tasks.pipeline import (
 )
 from voxneuro.features.tasks.vowel_space import extract_vowel_space_features
 from voxneuro.logging_config import configure_logging
+from voxneuro.modeling.prediction_service import PredictionResult
 from voxneuro.provenance import project_code_fingerprint
 from voxneuro.reporting.html_report import render_voice_report_html
 from voxneuro.reporting.multitask_report import render_multitask_report_html
@@ -874,6 +875,7 @@ def _analyze(payload: bytes) -> None:
     max_mb = int(APP_CONFIG["max_upload_mb"])
     if len(payload) > max_mb * 1024 * 1024:
         raise ValueError(f"WAV file exceeds the {max_mb} MB upload limit.")
+    source_audio_sha256 = hashlib.sha256(payload).hexdigest()
 
     validation_config, feature_config, audio_config = _analysis_config()
     record = decode_audio(payload)
@@ -883,7 +885,18 @@ def _analyze(payload: bytes) -> None:
     st.session_state["voxneuro_quality"] = quality
     src_mode = st.session_state.get("voxneuro_audio_source", "Record with microphone")
     cap_origin = "live_browser_mic" if src_mode == "Record with microphone" else "user_upload"
-    in_domain = "laptop_microphone" if cap_origin == "live_browser_mic" else "user_upload"
+    in_domain = st.session_state.get("voxneuro_acquisition_domain", "unknown")
+    domain_source = "user_declared"
+    recording_metadata = {
+        "capture_origin": cap_origin,
+        "acquisition_domain_id": in_domain,
+        "acquisition_domain_source": domain_source,
+        "task_type": "sustained_vowel",
+        "duration_seconds": quality.duration_seconds,
+        "original_sample_rate_hz": record.sample_rate,
+        "channels": record.channels,
+        "repetition_count": 1,
+    }
     conn = _runtime_db_connection()
     try:
         active_user = _active_authenticated_user(conn)
@@ -893,8 +906,11 @@ def _analyze(payload: bytes) -> None:
                 quality_valid=False,
                 capture_origin=cap_origin,
                 input_domain=in_domain,
+                acquisition_domain_source=domain_source,
                 conn=conn,
                 user=active_user,
+                recording_metadata=recording_metadata,
+                source_audio_sha256=source_audio_sha256,
             )
             st.session_state["voxneuro_analysis_status"] = "quality_failed"
             return
@@ -920,14 +936,18 @@ def _analyze(payload: bytes) -> None:
             quality_valid=True,
             capture_origin=cap_origin,
             input_domain=in_domain,
+            acquisition_domain_source=domain_source,
             conn=conn,
             user=active_user,
+            recording_metadata=recording_metadata,
+            source_audio_sha256=source_audio_sha256,
         )
         st.session_state["voxneuro_prediction"] = pred
     finally:
         if conn is not None:
             conn.close()
-    st.session_state["voxneuro_report"] = build_report(
+    prediction = st.session_state["voxneuro_prediction"]
+    report = build_report(
         {
             "valid": quality.valid,
             "duration_seconds": quality.duration_seconds,
@@ -940,7 +960,7 @@ def _analyze(payload: bytes) -> None:
             "voiced_fraction": quality.voiced_fraction,
             "active_fraction": quality.active_fraction,
             "warnings": quality.warnings,
-            "audio_sha256": hashlib.sha256(payload).hexdigest(),
+            "audio_sha256": source_audio_sha256,
         },
         features,
         {
@@ -953,10 +973,21 @@ def _analyze(payload: bytes) -> None:
             "resampled": processed.resampled,
         },
         model_status=(
-            "Unavailable for this recording: recording-domain compatibility and clinical "
-            "validation are not established."
+            (prediction.abstention_reason or prediction.status)
+            if prediction.abstained
+            else (
+                "Exploratory result; domain compatibility and clinical validation are not "
+                "established."
+            )
         ),
     )
+    report["recording_metadata"] = recording_metadata
+    report["model_assessment"].update(prediction.to_dict())
+    report["model_assessment"]["interpretation"] = (
+        "Exploratory research output only. This is not a diagnosis, disease probability, or "
+        "clinical decision. Voice measures are not specific to Parkinson's disease."
+    )
+    st.session_state["voxneuro_report"] = report
     st.session_state["voxneuro_html_report"] = render_voice_report_html(
         st.session_state["voxneuro_report"],
         processed_samples=processed.samples,
@@ -1004,6 +1035,36 @@ def _show_assessment() -> None:
     )
     render_stepper(WIZARD_STEPS, active_step)
     render_medical_disclaimer()
+
+    domain_options = {
+        "unknown": "Unknown / I do not know the recording device",
+        "uams_telephone": "Telephone / PSTN recording (only for known telephone-source audio)",
+        "laptop_microphone": "Laptop or desktop built-in microphone",
+        "laptop_webcam_microphone": "Webcam microphone",
+        "smartphone_microphone": "Smartphone microphone",
+        "consumer_headset": "Consumer headset",
+        "laboratory_microphone": "Laboratory microphone",
+        "neurovoz_studio": "NeuroVoz studio recording",
+        "pc_gita_condenser": "PC-GITA condenser microphone",
+        "italian_parkinsons_headset": "Italian Parkinson's voice-study headset",
+    }
+    st.selectbox(
+        "Recording device / acquisition domain",
+        options=list(domain_options),
+        format_func=lambda value: domain_options[value],
+        key="voxneuro_acquisition_domain",
+        on_change=_clear_assessment,
+        help=(
+            "This is a self-reported device category, not evidence of model validation. "
+            "Upload method does not reveal which device recorded the audio."
+        ),
+    )
+    st.caption(
+        "For WAVs from the included UAMS research cohort, select Telephone / PSTN. "
+        "Exact training WAVs are then recognized and withheld from individual scoring because "
+        "an in-sample result would be misleading. Use participant-grouped evaluation for those "
+        "known recordings. Device selection does not establish clinical validation."
+    )
 
     conn_consent = _runtime_db_connection()
     try:
@@ -1104,7 +1165,10 @@ def _show_assessment() -> None:
     if quality is not None and record is not None:
         st.subheader("Signal quality")
         if quality.valid:
-            st.success("Technical quality checks passed. This is not a health assessment.")
+            st.info(
+                "Audio quality checks passed. This means measurements can be calculated; "
+                "it is not a Parkinson's or health result."
+            )
             summary = st.columns(4)
             summary[0].metric("Duration", f"{quality.duration_seconds:.2f} s")
             summary[1].metric("Sample rate", f"{record.sample_rate:,} Hz")
@@ -1118,7 +1182,7 @@ def _show_assessment() -> None:
             for warning in quality.warnings:
                 st.warning(warning)
             if status == "complete":
-                st.success("Acoustic analysis complete.")
+                st.info("Acoustic measurements are ready. No diagnosis is made by this status.")
             elif status == "failed":
                 st.error("Quality passed, but feature analysis did not complete.")
                 st.write(
@@ -1143,7 +1207,11 @@ def _show_assessment() -> None:
     if uploaded is not None and st.session_state.get("voxneuro_features") is not None:
         _render_acoustic_benchmark_cards(st.session_state["voxneuro_features"])
         if quality is not None and record is not None:
-            _render_decision_gate_panel(st.session_state["voxneuro_features"], quality)
+            _render_decision_gate_panel(
+                st.session_state["voxneuro_features"],
+                quality,
+                st.session_state.get("voxneuro_prediction"),
+            )
         st.caption(
             f"Feature schema {SCHEMA_VERSION} · measurements are descriptive "
             "and not disease-specific."
@@ -1960,7 +2028,9 @@ def _render_quality_cards(quality: dict) -> None:
         )
 
 
-def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
+def _render_decision_gate_panel(
+    features: dict, quality: AudioQuality, prediction: PredictionResult | None = None
+) -> None:
     finite_count = sum(
         1 for v in features.values() if isinstance(v, Real) and np.isfinite(float(v))
     )
@@ -1969,6 +2039,25 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
         "Not measured"
         if (quality.voiced_fraction is None or np.isnan(quality.voiced_fraction))
         else f"{quality.voiced_fraction:.0%} voiced"
+    )
+    stage_five = (
+        "EXPLORATORY CANDIDATE"
+        if prediction is not None and not prediction.abstained
+        else "ABSTAIN"
+    )
+    stage_five_detail = (
+        prediction.research_classification
+        if prediction is not None and not prediction.abstained
+        else (
+            prediction.abstention_reason
+            if prediction is not None
+            else "No model result is available."
+        )
+    )
+    domain_summary = (
+        f"{prediction.acquisition_domain_id} · {prediction.acquisition_domain_source}"
+        if prediction is not None
+        else "Unknown"
     )
     html_markup = (
         '<div class="vox-editorial-card" style="margin-top:1.15rem; '
@@ -2002,16 +2091,16 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
         f'<div class="vox-qc-sub">{finite_count}/39 finite measures ({schema_ver})</div>'
         "</div>"
         '<div class="vox-quality-card">'
-        '<div class="vox-qc-label">Stage 4 · Domain Verification</div>'
+        '<div class="vox-qc-label">Stage 4 · Domain Status</div>'
         '<div class="vox-qc-value" style="font-size:1.05rem; '
         'color:var(--vox-warning);">NOT VALIDATED</div>'
-        '<div class="vox-qc-sub">Recording-domain compatibility unestablished</div>'
+        f'<div class="vox-qc-sub">{html.escape(domain_summary)} · compatibility unvalidated</div>'
         "</div>"
         '<div class="vox-quality-card">'
         '<div class="vox-qc-label">Stage 5 · Safety Policy</div>'
-        '<div class="vox-qc-value" style="font-size:1.05rem; '
-        'color:var(--vox-vermilion);">ABSTAIN</div>'
-        '<div class="vox-qc-sub">Diagnosis withheld (Fail-closed protocol)</div>'
+        f'<div class="vox-qc-value" style="font-size:1.05rem; '
+        f'color:var(--vox-vermilion);">{html.escape(stage_five)}</div>'
+        f'<div class="vox-qc-sub">{html.escape(str(stage_five_detail))}</div>'
         "</div>"
         "</div>"
         '<div style="background:#FAF5EC; '
@@ -2024,7 +2113,8 @@ def _render_decision_gate_panel(features: dict, quality: AudioQuality) -> None:
         "distinct acoustic transfer functions and frequency responses. To prevent uncalibrated "
         "predictions and false positives, VoxNeuro operates a strict fail-closed safety gate: "
         "39 acoustic measurements and session telemetry are exported, but disease "
-        "classification is ethically and technically abstained."
+        "any displayed candidate is explicitly exploratory, uncalibrated, and not validated for "
+        "the selected device."
         "</div>"
         "</div>"
     )

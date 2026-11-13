@@ -30,7 +30,7 @@ Longitudinal clinical follow-up with standardized motor and functional measures
 
 * **VoxNeuro is Currently Outside the Clinical Care Pathway:** The current software prototype is strictly a local research tool for acoustic signal quality verification and isolated sustained-vowel (`/a/`) acoustic feature extraction.
 * **No Diagnostic Insertion:** The experimental software must not be inserted into clinical referral, triage, or diagnostic pathways.
-* **Microphone Inference Gated:** Live recording predictions are disabled until multi-device calibration, domain shift adaptation, and prospective clinical validation studies are completed.
+* **Approved Microphone Inference Gated:** The validated clinical prediction path remains disabled until device/domain validation and prospective clinical evidence are completed. A separately labeled exploratory research candidate may appear only with fresh local model receipts and passing input/OOD checks; it is unvalidated and must not influence care.
 
 ---
 

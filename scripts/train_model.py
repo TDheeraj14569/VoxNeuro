@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.metadata
+import json
 import platform
 from pathlib import Path
 
@@ -23,6 +24,7 @@ from voxneuro.features.schema import (
     feature_config_fingerprint,
     schema_fingerprint,
 )
+from voxneuro.modeling.m6_experiment import build_training_distribution_manifest
 from voxneuro.modeling.model_bundle import make_bundle, save_bundle
 from voxneuro.modeling.training import fit_tuned_logistic_reference
 from voxneuro.provenance import combined_file_sha256, project_code_fingerprint
@@ -175,6 +177,47 @@ def main() -> int:
         random_seed=int(model_config["random_seed"]),
     )
     checksum = hashlib.sha256(manifest_path.read_bytes() + path.read_bytes()).hexdigest()
+    distribution = build_training_distribution_manifest(
+        X,
+        frame["participant_id"].to_numpy(),
+        dataset_id="uams_figshare_23849127",
+        dataset_version=DATASET_VERSION,
+        dataset_sha256=checksum,
+        feature_schema_fingerprint=schema_hash,
+        feature_config_fingerprint=feature_config_hash,
+        preprocessing_config_fingerprint=preprocessing_config_hash,
+    )
+    distribution_path = ROOT / "artifacts" / "models" / "uams_logistic_research_distribution.json"
+    distribution_path.parent.mkdir(parents=True, exist_ok=True)
+    distribution_bytes = (
+        json.dumps(distribution, indent=2, sort_keys=True, allow_nan=False) + "\n"
+    ).encode("utf-8")
+    distribution_path.write_bytes(distribution_bytes)
+    distribution_sha256 = hashlib.sha256(distribution_bytes).hexdigest()
+    distribution_path.with_suffix(distribution_path.suffix + ".sha256").write_text(
+        distribution_sha256 + "\n", encoding="ascii"
+    )
+    nested_summary = pd.read_csv(nested_summary_path)
+    logistic_rows = nested_summary.loc[nested_summary["model"].eq("logistic_l2")]
+    if len(logistic_rows) != 1:
+        print(
+            "Nested evaluation must contain exactly one logistic_l2 summary row; refusing to fit."
+        )
+        return 1
+    summary = logistic_rows.iloc[0]
+    evaluation_metrics = {
+        name: float(summary[column])
+        for name, column in {
+            "balanced_accuracy": "balanced_accuracy_mean",
+            "sensitivity": "sensitivity_mean",
+            "specificity": "specificity_mean",
+            "roc_auc": "roc_auc_mean",
+            "average_precision": "average_precision_mean",
+            "balanced_accuracy_ci_low": "balanced_accuracy_ci_low",
+            "balanced_accuracy_ci_high": "balanced_accuracy_ci_high",
+        }.items()
+        if pd.notna(summary.get(column))
+    }
     bundle = make_bundle(
         model,
         dataset_provenance=("UAMS Figshare DOI 10.6084/m9.figshare.23849127; see dataset report"),
@@ -193,7 +236,29 @@ def main() -> int:
         preprocessing_config=audio_config,
         feature_config=feature_config,
         allow_user_microphone_inference=bool(model_config["allow_user_microphone_inference"]),
-        training_details=training_details,
+        training_details={
+            **training_details,
+            "model_id": "uams_logistic_research",
+            "model_family": "logistic_l2",
+            "training_participant_count": int(frame["participant_id"].nunique()),
+            "evaluation_metrics": evaluation_metrics,
+            "evaluation_source": "repeated participant-grouped nested cross-validation",
+            "label_mapping": {"0": "HC", "1": "PD"},
+            "threshold_selection": (
+                "Uncalibrated logistic decision_function threshold 0.0; fixed model decision rule, "
+                "not optimized against outer-test participants."
+            ),
+            "distribution_manifest_sha256": distribution_sha256,
+        },
+        training_distribution_manifest=distribution,
+        score_contract={
+            "method": "decision_function",
+            "kind": "uncalibrated_logit",
+            "threshold": 0.0,
+            "positive_class_label": "PD",
+            "negative_class_label": "HC",
+            "calibrated": False,
+        },
     )
     destination = ROOT / "artifacts" / "models" / "uams_logistic_research.joblib"
     save_bundle(bundle, destination)
@@ -215,8 +280,13 @@ def main() -> int:
         f"to {destination}"
     )
     print(
-        "This cohort model is not exposed for new microphone audio; "
-        "domain compatibility is unverified."
+        f"Saved versioned training-distribution manifest for "
+        f"{distribution['training_participant_count']} participants to {distribution_path}"
+    )
+    print(
+        "This cohort model is not an approved or clinically validated predictor for new "
+        "microphone audio. The app's separate exploratory path may display an explicitly "
+        "unvalidated candidate only after current provenance and input checks pass."
     )
     print("Saved exploratory coefficients; these are associations, not biomarkers.")
     return 0

@@ -10,7 +10,7 @@
 
 Milestone 5 elevates VoxNeuro from a feature-extraction and domain-validation engine into a fully compliant, privacy-preserving research-study operations platform. 
 
-VoxNeuro operates as an investigational software prototype designed for speech acoustics research and longitudinal observational tracking. The Milestone 5 architecture strictly maintains non-diagnostic boundaries: it does not perform disease classification on unverified microphone data, does not output diagnostic probabilities, and does not claim to track neurodegenerative clinical progression.
+VoxNeuro operates as an investigational software prototype designed for speech acoustics research and longitudinal observational tracking. Its approved clinical prediction gate remains closed for unverified microphone data and it does not output diagnostic probabilities or claim to track neurodegenerative clinical progression. The current UI may separately show a local research model's explicitly unvalidated candidate only after its evidence and input checks pass; this is not a validated disease result and must not guide care.
 
 ```
 +-----------------------------------------------------------------------------------+

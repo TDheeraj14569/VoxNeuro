@@ -1,57 +1,37 @@
 # Current verification report
 
-**Checked:** 2026-11-11, Windows 11, CPython 3.12.16, locked project environment. The source-review ZIP excludes the local research datasets, processed participant-level feature tables, trained model artifacts, reports generated from participant recordings, environments, and caches. Dataset/model verification was run separately in the local data-bearing workspace.
+**Checked:** 2026-11-13, Windows 11, CPython 3.12.14. Dependencies were synchronized from the checked-in lock with `uv sync --all-extras --locked`. Local datasets, participant-level tables, model binaries, and generated receipts are ignored and excluded from the source archive.
 
-## Software and application checks
+## Software checks
 
-- uv 0.13.7; uv sync --all-extras --locked checked 71 locked Python packages.
-- Full Python suite: **338 passed** (330 non-UI tests plus eight Streamlit AppTests). Coverage is **87.2%** across statements in `src/voxneuro`.
-- Ruff lint passed. Ruff format --check passed with all files formatted.
-- Project verification passed: 11 required imports and required files.
-- Model verification passed: bundle sidecar, current data/evaluation/code/config receipts, feature schema, deterministic reload prediction, and research-only/domain-incompatible metadata.
-- Frontend: npm ci completed with zero reported vulnerabilities; all three JavaScript unit tests passed; the bundled 3D visualizer rebuilt successfully at 575.9 kB.
-- Streamlit AppTests cover all seven sections, valid WAV analysis and HTML report controls, malformed WAV handling, empty research/report states, and the 3D signal views. No classification was emitted.
-- All 13 steps of the mandatory receipt refresh sequence completed with exit code 0.
+- Full Python suite: **611 passed, 0 failed**; statement coverage **85.7%** (7,108 of 8,294 statements) in `src/voxneuro`. The suite includes Streamlit AppTests and individual-result, training-audio-overlap, provenance, OOD, report, and abstention regressions.
+- Ruff: lint passed; format check passed with 303 files already formatted.
+- `scripts/verify_project.py`: 17 imports, 10 required files, project and frontend provenance passed.
+- `scripts/verify_model.py --dataset uams`: local artifact checksum, deterministic bundle reload, current extraction/evaluation/nested-evaluation/code/config/schema provenance, and research-only/domain status passed.
+- Frontend: `npm ci` reported zero vulnerabilities; three Node visualizer tests passed; `npm run build` succeeded; rebuilt 581.2 kB bundle matched the committed `dist/` output.
+- Live Streamlit/browser verification is recorded below after it is completed. Physical microphone permission is a manual OS/browser check and is not claimed by these automated results.
 
-## Milestone 2: Scientific Bias & Demographic Confounding Audit
+## UAMS dataset and evaluation evidence
 
-Milestone 2 completed an in-depth empirical investigation into demographic confounding, recording quality attrition, matching feasibility, and incremental voice diagnostic value:
+- The two downloaded UAMS archives matched the pinned Figshare hashes. Inspection found 81 mono WAVEX/FLOAT recordings at 8 kHz (41 HC, 40 PD), with no corrupt waveforms or duplicate audio hashes.
+- Manifest construction matched all 81 workbook diagnosis labels and metadata records. The audit found no label, participant, age, or waveform-hash integrity issues.
+- Feature extraction accepted 78/81 recordings. The only three exclusions are the documented clipped recordings, all from the PD group; that class-specific attrition can bias results.
+- The UAMS age gap is large: HC mean 47.73 years (SD 14.33), PD mean 67.04 (SD 8.98), standardized mean difference -1.61, Mann–Whitney p=1.75e-8.
+- Repeated nested evaluation used five participant-grouped outer folds, three grouped inner folds, and three prespecified repeats. Mean ± repeat SD balanced accuracy: age-only logistic 0.839 ± 0.007; voice-only Extra Trees 0.766 ± 0.008; voice-only L2 logistic 0.739 ± 0.007; age + voice logistic 0.771 ± 0.012. Results are internal estimates, not clinical accuracy.
+- In the primary-seed paired analysis, adding voice to age changed balanced accuracy by -0.0758 (95% participant-bootstrap interval [-0.1842, +0.0284]); adding voice to age plus sex changed it by -0.0745 (95% interval [-0.1843, +0.0310]). Across repeated nested evaluation the corresponding mean differences were -0.0681 and -0.0762. Confidence intervals include zero and positive effects; the true incremental contribution remains uncertain.
 
-1. **Demographic Disparity:**
-   - Source cohort (Pop 1, N=81): Healthy Controls mean age $47.73 \pm 14.33$ years vs Parkinson's Disease $67.04 \pm 8.98$ years. Standardized Mean Difference (SMD) $= -1.61$, Mann-Whitney $U = 223.0$, $p = 1.75 \times 10^{-8}$.
-   - Accepted Core39 cohort (Pop 2, N=78): HC mean $47.73 \pm 14.33$ vs PD $66.92 \pm 9.27$ years (SMD $= -1.56$, $p = 3.64 \times 10^{-8}$).
-   - Biological Sex: Pop 1 HC 25F/16M ($61.0\%$ F) vs PD 19F/21M ($47.5\%$ F); Fisher's exact $p = 0.268$, OR $= 1.73$, Cramér's $V = 0.111$. Pop 2: Fisher's exact $p = 0.364$.
-2. **Quality Attrition Asymmetry:**
-   - Quality exclusions occurred exclusively in the Parkinson cohort: $3/40$ PD excluded ($7.5\%$) vs $0/41$ HC ($0.0\%$), Fisher exact $p = 0.1158$. All 3 exclusions resulted from acoustic clipping ($>0.5\%$ samples at peak rail).
-3. **Caliper Matching Sensitivity & Sample Size Exhaustion:**
-   - Applying standard epidemiological calipers with exact sex matching:
-     - 0.1 SD ($1.22$ yrs): 3 pairs (6 participants, $92.3\%$ discarded).
-     - 0.2 SD ($2.44$ yrs): **5 pairs (10 participants, $87.2\%$ discarded)**.
-     - 0.3 SD ($3.67$ yrs): 7 pairs (14 participants, $82.1\%$ discarded).
-     - Uncalipered: 34 pairs ($12.8\%$ discarded), but residual age gap is $14.90$ years (SMD $= -1.327$).
-   - Per pre-registered SAP Rule 5, cross-validation modeling on the matched subset is formally **NOT ESTIMABLE** (only 5 pairs retained, violating 5-outer $\times$ 3-inner fold partition requirements).
-4. **Model Comparison Hierarchy & Incremental Value:**
-   - All 8 models evaluated across identical $5 \times 3$ nested folds (seeds 2026, 2027, 2028; N=78 participants):
-     - `age_only_logistic`: Balanced Accuracy **$83.89\%$** [$74.68\%, 91.07\%$], ROC-AUC **$0.8490$**.
-     - `age_plus_sex_logistic`: Balanced Accuracy **$83.81\%$** [$74.56\%, 91.20\%$], ROC-AUC **$0.8493$**.
-     - `voice_only_logistic`: Balanced Accuracy **$73.88\%$** [$62.79\%, 82.27\%$], ROC-AUC **$0.7697$**.
-     - `voice_only_svm`: Balanced Accuracy **$70.54\%$** [$59.13\%, 79.43\%$], ROC-AUC **$0.7559$**.
-     - `age_plus_voice_logistic`: Balanced Accuracy **$77.08\%$** [$65.89\%, 84.71\%$], ROC-AUC **$0.8141$**.
-     - `age_plus_sex_plus_voice_logistic`: Balanced Accuracy **$76.18\%$** [$65.89\%, 84.84\%$], ROC-AUC **$0.8132$**.
-     - `matched_voice_svm`: **NOT ESTIMABLE** (Sample size exhaustion).
-   - Paired incremental voice test:
-     - Primary seed (2026):
-       - Age + Voice vs Age Only: $\Delta \text{BA} = -0.0758$ ($-7.58\%$), 95% bootstrap CI [$-0.1842, +0.0284$], supplementary McNemar exact $p = 0.2632$ (discordance $b=7, c=13$).
-       - Age + Sex + Voice vs Age + Sex: $\Delta \text{BA} = -0.0745$ ($-7.45\%$), 95% bootstrap CI [$-0.1843, +0.0310$], supplementary McNemar exact $p = 0.2632$ (discordance $b=7, c=13$).
-     - Secondary repeated cross-validation ($5 \times 3$ nested CV):
-       - Age + Voice vs Age Only: $\Delta \text{BA} = -0.0681$ ($-6.81\%$).
-       - Age + Sex + Voice vs Age + Sex: $\Delta \text{BA} = -0.0762$ ($-7.62\%$).
-   - **Conclusion:** The retrospective cohort did not establish statistically supported positive incremental predictive benefit from the voice features beyond demographic comparators. The confidence intervals include zero and positive effects; therefore, the true incremental contribution remains uncertain.
-5. **Phase 8 External Validation Protocol:**
-   - Established prospective multi-center protocol (`docs/clinical_validation/M2_EXTERNAL_COHORT_PROTOCOL.md`) specifying $N=240$ participants ($120$ PD, $120$ HC) frequency-matched by 5-year age band and sex, sound-booth acoustics ($<35\text{ dBA}$), and calibrated studio condenser transducers.
+## Individual result behavior and safety boundary
 
-## Safety and domain boundary
+Capture origin (upload/live browser microphone) is tracked separately from the user-declared acquisition category. Upload type does not establish the hardware. The approved prediction path remains unavailable: `allow_user_microphone_inference` is false, the trusted domain-validation hash allowlist is empty, and the current local model remains research-only and domain-unverified.
 
-- The UAMS training audio is telephone-collected. Compatibility with laptop, browser, smartphone, other languages, other tasks, or other recording conditions is unverified.
-- Live-microphone and unknown device domains remain blocked (`allow_user_microphone_inference: false`).
-- No clinical threshold, calibrated disease probability, independent external test, prospective cohort, Indian-population performance, clinician study, ethics approval, or regulatory authorization has been established.
+When a trusted local research bundle and fresh receipts exist, a separate exploratory path may produce an **EXPLORATORY — NOT DOMAIN VALIDATED** candidate only after quality, task, complete ordered Core39 schema, provenance, declared-domain, and training-only out-of-distribution checks pass. It shows a raw uncalibrated score and fixed threshold, never a probability. Missing/stale evidence, unknown domain, invalid input, or severe/unmeasurable shift produces a specific abstention reason. The app also hashes the original uploaded WAV and withholds an exact recording already present in the development manifest as `KNOWN_TRAINING_RECORDING`; a full-refit in-sample score is not evidence of generalization. Acoustic measurements and reports remain available after abstention. A candidate is not a diagnosis, screening result, clinical accuracy estimate, or guide to care.
+
+The 40 PD-labeled UAMS recordings were checked: all files are present, 37 pass the reviewed audio-quality policy, and 3 are excluded for clipping. In the three participant-grouped nested L2 logistic runs, each run had 27 true-positive and 10 false-negative PD participants among the 37 eligible participants. The user's two usable screenshot examples match exact development-cohort WAVs and are correctly blocked from individual scoring; the clipped example fails the quality gate. These reference labels and held-out model predictions are separate.
+
+## Live browser verification
+
+**Status: limited evidence.** User-provided screenshots show the localhost assessment page rendering its technical-quality pass, unknown-domain abstention, and clipping rejection states. The exact WAVs were checked against the local manifest and the current model/evaluation safeguards were exercised directly. A fresh post-change browser click-through, report download, and physical microphone/OS permission test were not independently performed.
+
+## GitHub workflow status
+
+Local verification does not establish GitHub Actions status. Check the repository's run for the pushed commit before calling CI green. External clinical validation, device compatibility, clinical need validation, ethics approval, and regulatory authorization have not been established.

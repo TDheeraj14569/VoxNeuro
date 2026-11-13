@@ -7,7 +7,7 @@ VoxNeuro has two separate experiments:
 - **UAMS raw audio:** the primary experiment for the project's own 39-feature signal-processing pipeline.
 - **UCI #470 pre-extracted feature table:** a separate benchmark that cannot be used as a raw-WAV model or as validation of VoxNeuro's audio processing.
 
-Neither experiment establishes a clinical diagnosis or performance in a screening population. The Streamlit application continues to abstain from classifying new microphone recordings because microphone-domain compatibility and clinical validity have not been established.
+Neither experiment establishes a clinical diagnosis or performance in a screening population. The approved prediction path abstains for new microphone recordings because recording-domain compatibility and clinical validity have not been established. Separately, when fresh local research artifacts pass provenance and input checks, the application may display an explicitly unvalidated exploratory candidate. That candidate does not change the approved-domain status and is not a clinical result.
 
 ## Cohorts and evaluation unit
 
@@ -51,4 +51,4 @@ NeuroVoz was not added: its repository requires a Data Use Agreement and an acce
 
 Full measured results and the distinction between model development and clinical use are in [MODEL_CARD.md](../reports/MODEL_CARD.md), [VERIFICATION_REPORT.md](../testing/VERIFICATION_REPORT.md), and the local generated HTML under artifacts/reports/model_evaluation/uams_nested.html.
 
-Any future predictive claim requires a predefined intended use and analysis plan, independent participant cohorts recorded with a compatible protocol, transparent class-specific missingness, and independent clinical/statistical review. Until then, new microphone recordings remain outside the model inference path.
+Any future validated predictive claim requires a predefined intended use and analysis plan, independent participant cohorts recorded with a compatible protocol, transparent class-specific missingness, and independent clinical/statistical review. The distinct exploratory path is a software research output only; a user-declared device category does not prove acquisition compatibility, and an exploratory score must not be interpreted as an individual disease result.

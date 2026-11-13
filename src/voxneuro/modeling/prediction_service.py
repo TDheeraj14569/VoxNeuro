@@ -68,6 +68,12 @@ class PredictionResult:
     acquisition_domain_id: str = "unknown"
     capture_origin: str = "unknown"
     retention_persisted: bool = False
+    score_kind: str = "unknown"
+    decision_threshold: float | None = None
+    model_evaluation_metrics: dict[str, float] = field(default_factory=dict)
+    domain_validation_status: str = "UNKNOWN"
+    acquisition_domain_source: str = "unknown"
+    task_type: str = "sustained_vowel"
     research_only_disclaimer: str = M6_MEDICAL_DISCLAIMER
     generated_utc: str = field(default_factory=utc_now_iso)
 
@@ -82,33 +88,87 @@ def _assess_ood_features(
     z_threshold: float = 6.0,
     max_extreme_features: int = 3,
 ) -> tuple[bool, str, dict[str, Any]]:
-    """Detect severe out-of-distribution feature vectors relative to training statistics."""
+    """Return interpretable quantile and six-SD checks against training-only statistics."""
     if not distribution_stats:
-        return False, "OOD_REFERENCE_UNAVAILABLE", {"checked_features": 0, "extreme_features": []}
+        return (
+            False,
+            "OOD_ASSESSMENT_UNAVAILABLE",
+            {"checked_features": 0, "reason": "Training distribution statistics are missing."},
+        )
     extreme: list[str] = []
+    quantile_flags: list[str] = []
     max_z = 0.0
     checked = 0
+    missing: list[str] = []
     for name in FEATURE_NAMES:
         val = features.get(name)
         stat = distribution_stats.get(name)
-        if val is None or stat is None:
+        if val is None:
+            missing.append(name)
             continue
-        fval = float(val)
+        if stat is None or not isinstance(stat, dict):
+            return (
+                False,
+                "INSUFFICIENT_REFERENCE_DATA",
+                {"checked_features": checked, "reason": f"Training statistics missing for {name}."},
+            )
+        try:
+            fval = float(val)
+            mean = float(stat["mean"])
+            std = float(stat["std"])
+        except (KeyError, TypeError, ValueError, OverflowError):
+            return (
+                False,
+                "INSUFFICIENT_REFERENCE_DATA",
+                {"checked_features": checked, "reason": f"Training statistics invalid for {name}."},
+            )
         if not math.isfinite(fval):
-            continue
+            return (
+                False,
+                "OOD_ASSESSMENT_UNAVAILABLE",
+                {"checked_features": checked, "reason": f"Feature {name} is non-finite."},
+            )
         checked += 1
-        z = abs(fval - float(stat["mean"])) / max(float(stat["std"]), 1e-6)
+        z = abs(fval - mean) / max(std, 1e-6)
         max_z = max(max_z, z)
         if z > z_threshold:
             extreme.append(name)
-    is_in_dist = len(extreme) < max_extreme_features
-    status = "WITHIN_TRAINING_RANGE" if is_in_dist else "OUT_OF_DISTRIBUTION"
+        if "q01" in stat and "q99" in stat:
+            try:
+                if fval < float(stat["q01"]) or fval > float(stat["q99"]):
+                    quantile_flags.append(name)
+            except (TypeError, ValueError, OverflowError):
+                return (
+                    False,
+                    "INSUFFICIENT_REFERENCE_DATA",
+                    {
+                        "checked_features": checked,
+                        "reason": f"Training quantiles invalid for {name}.",
+                    },
+                )
+    if checked < len(FEATURE_NAMES) - 2 or len(missing) > 2:
+        return (
+            False,
+            "INSUFFICIENT_REFERENCE_DATA",
+            {"checked_features": checked, "missing_features": missing},
+        )
+    status = (
+        "OUT_OF_DISTRIBUTION"
+        if len(extreme) >= max_extreme_features
+        else "MILD_SHIFT"
+        if quantile_flags or extreme
+        else "IN_DISTRIBUTION"
+    )
+    is_in_dist = status != "OUT_OF_DISTRIBUTION"
     return (
         is_in_dist,
         status,
         {
             "checked_features": checked,
             "extreme_feature_count": len(extreme),
+            "extreme_features": extreme,
+            "outside_training_q01_q99": quantile_flags,
+            "missing_features": missing,
             "max_abs_z": round(max_z, 3),
         },
     )
@@ -323,17 +383,23 @@ def run_prediction_service(
     ood_status = "NOT_EVALUATED"
     ood_meta: dict[str, Any] = {}
     if features is not None:
-        missing_keys = [
-            k
-            for k in FEATURE_NAMES
-            if k not in features
-            or (isinstance(features[k], float) and not math.isfinite(features[k]))
-            or features[k] is None
-        ]
-        if len(missing_keys) > 3:
+        missing_keys = []
+        for name in FEATURE_NAMES:
+            value = features.get(name)
+            try:
+                invalid = value is None or not math.isfinite(float(value))
+            except (TypeError, ValueError, OverflowError):
+                invalid = True
+            if name not in features or invalid:
+                missing_keys.append(name)
+        allowed_missing = set(bundle.get("allowed_missing_features", ())) if bundle else set()
+        excess_missing = set(missing_keys) - allowed_missing
+        if excess_missing:
             reasons.append("EXCESSIVE_MISSING_FEATURES")
             reason_messages.append(
-                f"Too many acoustic measurements were undefined ({len(missing_keys)})."
+                "Required acoustic measurements are missing or non-finite: "
+                + ", ".join(sorted(excess_missing))
+                + "."
             )
         dist_stats = (
             registered_model.metadata.get("feature_distribution_stats")
@@ -444,7 +510,52 @@ def run_prediction_service(
             capture_origin=capture_context.capture_origin,
         )
 
+    contract = bundle.get("score_contract", {})
+    if (
+        not callable(getattr(estimator, "predict_proba", None))
+        or contract.get("method") != "predict_proba"
+    ):
+        return PredictionResult(
+            prediction_id=pred_id,
+            status="ABSTAINED_FAIL_CLOSED",
+            abstained=True,
+            abstention_reasons=["SCORE_CONTRACT_UNSUPPORTED"],
+            abstention_reason="Registered model has no compatible probability-score contract.",
+            model_id=registered_model.model_id,
+            model_version=registered_model.model_version,
+            model_checksum=registered_model.artifact_sha256,
+            research_score=None,
+            research_classification=None,
+            calibration_status=registered_model.calibration_status,
+            uncertainty={"ood": ood_meta},
+            ood_status=ood_status,
+            acquisition_domain_id=input_domain,
+            capture_origin=capture_context.capture_origin,
+        )
+    classes = list(getattr(estimator, "classes_", []))
+    if classes != [0, 1]:
+        return PredictionResult(
+            prediction_id=pred_id,
+            status="ABSTAINED_FAIL_CLOSED",
+            abstained=True,
+            abstention_reasons=["MODEL_LABEL_CONTRACT_INVALID"],
+            abstention_reason="Registered model must map class 1 to Parkinson's research labels.",
+            model_id=registered_model.model_id,
+            model_version=registered_model.model_version,
+            model_checksum=registered_model.artifact_sha256,
+            research_score=None,
+            research_classification=None,
+            calibration_status=registered_model.calibration_status,
+            uncertainty={"ood": ood_meta},
+            ood_status=ood_status,
+            acquisition_domain_id=input_domain,
+            capture_origin=capture_context.capture_origin,
+        )
     score = float(estimator.predict_proba(X_row)[0, 1])
+    try:
+        threshold = float(contract["threshold"])
+    except (KeyError, TypeError, ValueError, OverflowError):
+        threshold = float("nan")
     if not math.isfinite(score) or score < 0.0 or score > 1.0:
         return PredictionResult(
             prediction_id=pred_id,
@@ -464,10 +575,28 @@ def run_prediction_service(
             capture_origin=capture_context.capture_origin,
         )
 
-    band = (
-        "LOW_RESEARCH_SIGNAL"
-        if score < 0.33
-        else ("MODERATE_RESEARCH_SIGNAL" if score < 0.67 else "ELEVATED_RESEARCH_SIGNAL")
+    if not math.isfinite(threshold) or not 0.0 <= threshold <= 1.0:
+        return PredictionResult(
+            prediction_id=pred_id,
+            status="ABSTAINED_FAIL_CLOSED",
+            abstained=True,
+            abstention_reasons=["MODEL_THRESHOLD_INVALID"],
+            abstention_reason="Registered model decision threshold is missing or invalid.",
+            model_id=registered_model.model_id,
+            model_version=registered_model.model_version,
+            model_checksum=registered_model.artifact_sha256,
+            research_score=None,
+            research_classification=None,
+            calibration_status=registered_model.calibration_status,
+            uncertainty={"ood": ood_meta},
+            ood_status=ood_status,
+            acquisition_domain_id=input_domain,
+            capture_origin=capture_context.capture_origin,
+        )
+    candidate = "PD-pattern candidate" if score >= threshold else "HC-pattern candidate"
+    externally_calibrated = (
+        registered_model.calibration_status == "EXTERNALLY_VALIDATED_CALIBRATED"
+        and contract.get("calibrated") is True
     )
     scored_result = PredictionResult(
         prediction_id=pred_id,
@@ -479,13 +608,23 @@ def run_prediction_service(
         model_version=registered_model.model_version,
         model_checksum=registered_model.artifact_sha256,
         research_score=round(score, 4),
-        research_classification=band,
+        research_classification=candidate,
         calibration_status=registered_model.calibration_status,
-        uncertainty={"ood": ood_meta, "note": "Research score only; not a diagnostic probability."},
+        uncertainty={
+            "ood": ood_meta,
+            "note": "Model score is not a personal certainty or diagnosis.",
+        },
         ood_status=ood_status,
         acquisition_domain_id=input_domain,
         capture_origin=capture_context.capture_origin,
         retention_persisted=False,
+        score_kind="calibrated_probability"
+        if externally_calibrated
+        else "uncalibrated_model_score",
+        decision_threshold=threshold,
+        model_evaluation_metrics=registered_model.metadata.get("metrics", {}),
+        domain_validation_status="VALIDATED",
+        task_type=capture_context.task_type,
     )
     persisted = _persist_prediction_if_permitted(
         conn,

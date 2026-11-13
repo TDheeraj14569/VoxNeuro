@@ -43,9 +43,13 @@ def test_app_wav_upload_runs_analysis_features_and_report():
     )
     assert app.session_state["voxneuro_report"]["features"]["schema_version"] == SCHEMA_VERSION
     assert app.session_state["voxneuro_analysis_status"] == "complete"
-    assert app.session_state["voxneuro_report"]["model_assessment"]["status"].startswith(
-        "Unavailable"
-    )
+    model_assessment = app.session_state["voxneuro_report"]["model_assessment"]
+    assert model_assessment["status"] == "INDIVIDUAL_CLASSIFICATION_UNAVAILABLE"
+    assert model_assessment["abstained"] is True
+    assert model_assessment["abstention_reasons"]
+    assert model_assessment["research_score"] is None
+    assert "recording_metadata" in app.session_state["voxneuro_report"]
+    assert "Acoustic feature measurements" in app.session_state["voxneuro_html_report"]
     expected_sha256 = hashlib.sha256(payload.getvalue()).hexdigest()
     assert expected_sha256 in app.session_state["voxneuro_html_report"]
     assert "mfcc_12_sd" in app.session_state["voxneuro_html_report"]

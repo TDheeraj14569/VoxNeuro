@@ -25,6 +25,12 @@ no clinical calibration.
 
 ## Risk controls
 
-The application does not expose model predictions for new microphone input. Missing or poor-quality
-signals fail closed. Voice audio may be identifying; files are not retained by default.
+The approved clinical prediction path does not expose model predictions for new microphone input:
+user-microphone inference is disabled and the approved-domain allowlist is empty. A separate local
+exploratory path can display an explicitly unvalidated candidate only when the internally generated
+model and current provenance/evaluation evidence, input quality, task/schema, declared device
+category, and training-only out-of-distribution checks pass. It shows an uncalibrated score, never a
+probability, and does not establish device compatibility or clinical validity. Missing,
+poor-quality, unknown-domain, or stale-evidence inputs fail closed. Voice audio may be identifying;
+files are not retained by default.
 """

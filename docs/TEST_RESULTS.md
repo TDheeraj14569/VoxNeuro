@@ -1,32 +1,21 @@
-# Current Test and Verification Results
+# Current test and verification results
 
-**Authoritative Production Verification Run:** Verified on 2026-11-13 in the locked Windows/Python 3.12 environment (`CPython 3.12.14`). Full methodology, clinical disclaimers, and scientific limitations are in [the verification report](testing/VERIFICATION_REPORT.md).
+**Snapshot:** 2026-11-13, Windows 11, CPython 3.12.14, project dependencies synced with `uv sync --all-extras --locked`. See the [verification report](testing/VERIFICATION_REPORT.md) for execution scope and scientific limits.
 
 | Check | Result |
 |---|---|
-| Environment | Windows 11, CPython 3.12.14; uv-managed virtualenv; 71 locked Python packages checked. |
-| Python tests | **600 passed** (583 non-UI tests and 17 Streamlit UI tests; 0 failed, 0 skipped). |
-| Source coverage | **86.03%** statement coverage across 7,869 statements in `src/voxneuro` (exceeds required 85.0% threshold). |
-| Ruff | Lint passed (`0 errors` across 300 files); formatter check passed across all repository files. |
-| Project verification | 17 required module imports, 10 required files, and release provenance verified (`scripts/verify_project.py`). |
-| Model verification | Research model bundle reload, checksums, and safety gates verified (`scripts/verify_model.py`). |
-| Dataset audit | UAMS: 81 records (41 HC / 40 PD), 81 participants, zero label, waveform-hash, demographic, or age-integrity issues. |
-| UAMS feature extraction | 78/81 accepted under the exact reviewed exclusion policy; all three clipped exclusions are PD. |
-| Nested UAMS modeling | Repeated 5-outer/3-inner participant-grouped evaluation with three seeds and 1,000 primary-seed participant bootstrap resamples; report and receipts current. Age-only BA is 0.8389 ± 0.007; the highest voice-only mean BA is Extra Trees at 0.7663 ± 0.008 (ROC-AUC 0.7851). |
-| Fixed benchmark (M6) | Protocol B fixed-seed benchmark yields Extra Trees BA 0.7821, Random Forest BA 0.7726. |
-| UCI benchmark | Separate grouped evaluation passed for 756 rows / 252 participants / 752 predictors. |
-| Model bundle | Tuned logistic reference trained; current dataset/code/evaluation/schema provenance and deterministic reload verification passed. Microphone disease inference remains strictly disabled fail-closed. |
-| Frontend visualizer | Three.js visualizer bundle built and verified against git tree; vitest tests passing. |
-| Release archive | `VoxNeuro_PRODUCTION_RELEASE.zip` rebuilt and verified with detached `.sha256` checksum sidecar. |
+| Python suite | **611 passed, 0 failed**; includes the Streamlit AppTests and regressions for result/provenance/abstention states. |
+| Source coverage | **85.7%** across 8,294 statements in `src/voxneuro` (7,108 covered; above the CI 85% threshold). |
+| Ruff | `ruff check .` passed; `ruff format --check .` passed with 303 files formatted. |
+| Project verifier | 17 module imports, 10 required files, source and frontend provenance passed. |
+| Model verifier | Fresh local model checksum, grouped evaluation receipts, current code/data/config/schema provenance, and deterministic reload passed. |
+| UAMS audit and extraction | 81 recordings / 81 participants; 0 label mismatches, 0 duplicate waveform hashes; 78 accepted, with the three documented PD clipping exclusions. |
+| Nested UAMS evaluation | Three repeated participant-grouped outer evaluations with grouped inner tuning. Age-only logistic BA 0.839 ± 0.007; voice-only Extra Trees 0.766 ± 0.008; voice-only L2 logistic 0.739 ± 0.007; age + voice 0.771 ± 0.012. Internal estimates only. |
+| Frontend | `npm ci` reported 0 vulnerabilities; all 3 visualizer tests passed; build succeeded at 581.2 kB; committed bundle matched the build. |
+| Local Streamlit browser | User-provided screenshots show the assessment page rendering the technical-quality pass, unknown-domain abstention, and clipped-recording rejection. The exact sample files were checked against the manifest and current inference safeguards. No independent post-change browser interaction or physical microphone/OS permission test is claimed. |
+| Source archive | `VoxNeuro_source_audit.zip` and `VoxNeuro_PRODUCTION_RELEASE.zip` rebuilt; 351 files, 2,405,217 bytes; CRC, required inventory, and excluded-data rules passed. SHA-256 sidecars were regenerated. |
+| GitHub Actions | Check the repository's latest `main` workflow run. This document does not substitute a local result for CI status. |
 
----
+The UAMS means, age gap, and class-specific clipping exclusions limit interpretation. The age-only baseline is stronger than voice-only results. Neither internal cross-validation nor a local exploratory candidate establishes clinical accuracy, device compatibility, disease specificity, or a useful treatment decision. No model, cohort audio, participant-level feature table, or generated receipt is included in the source ZIP.
 
-## Historical Milestones (Historical Context Only)
-
-- **Milestone 1 Checkpoint (2026-11-07):** 310 tests passed (302 non-UI, 8 AppTests), 87.05% coverage across 2,232 statements.
-- **Milestone 5 Checkpoint (2026-11-10):** 566 tests passed.
-- **Milestone 6 Checkpoint (2026-11-12):** 590 tests passed.
-- **Production Release Final (2026-11-13):** 600 tests passed, 86.03% coverage across 7,869 statements.
-
-> [!IMPORTANT]
-> The browser upload demonstration uses generated synthetic audio or local research audio. Physical microphone/OS permissions, external-cohort performance, clinical validity, and regulatory status remain unverified. VoxNeuro is an academic research software prototype and does not provide clinical diagnostic utility.
+Earlier audit/test counts are historical and are not substitutes for the current snapshot above.

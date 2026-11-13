@@ -37,7 +37,7 @@ The cohort has severe demographic imbalance: HC mean age 47.73 ± 14.33 years vs
 
 ## Modeling boundary
 
-The internal cohort experiment uses a participant-wise StratifiedGroupKFold and pipelines that fit imputation and scaling within folds. No independent external test cohort is available in this dataset. These small-sample internal results are exploratory. Telephone-collected audio is not assumed equivalent to new browser or laptop recordings; the Streamlit application withholds classification for user audio. No generalization to Indian populations is claimed.
+The internal cohort experiment uses participant-wise StratifiedGroupKFold evaluation and pipelines that fit imputation/scaling within folds. No independent external test cohort is available in this dataset. These small-sample internal results are exploratory. Telephone-collected audio is not assumed equivalent to new browser or laptop recordings. The approved inference path remains disabled; a separate app path may display only an explicitly unvalidated research candidate when fresh local provenance and input/OOD checks pass. A user-declared device category is not evidence of domain compatibility. No generalization to Indian populations is claimed.
 
 ## Local files
 

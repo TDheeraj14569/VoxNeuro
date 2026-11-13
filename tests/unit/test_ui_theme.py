@@ -53,7 +53,8 @@ def test_render_plain_quality_summary_valid_and_invalid(monkeypatch):
         warnings=[],
     )
     render_plain_quality_summary(valid_qual, record)
-    assert any("Recording Quality: Clear" in c for c in calls)
+    assert any("Audio quality checks passed — not a health result" in c for c in calls)
+    assert any("does not indicate Parkinson's disease" in c for c in calls)
 
     calls.clear()
     invalid_qual = AudioQuality(
@@ -64,7 +65,7 @@ def test_render_plain_quality_summary_valid_and_invalid(monkeypatch):
         warnings=[],
     )
     render_plain_quality_summary(invalid_qual, record)
-    assert any("We could not hear your voice clearly" in c for c in calls)
+    assert any("Audio quality checks did not pass" in c for c in calls)
 
 
 def test_render_prediction_outcome_card_all_cases(monkeypatch):
@@ -86,7 +87,9 @@ def test_render_prediction_outcome_card_all_cases(monkeypatch):
         calibration_status="UNCALIBRATED",
     )
     render_prediction_outcome_card(case_c)
-    assert any("We could not provide a reliable result" in c for c in calls)
+    assert any("INDIVIDUAL CLASSIFICATION UNAVAILABLE" in c for c in calls)
+    assert not any("vx-result-container" in c for c in calls)
+    assert not any("background noise is detected" in c for c in calls)
 
     # Case A: Externally Validated & Calibrated
     calls.clear()
@@ -102,13 +105,14 @@ def test_render_prediction_outcome_card_all_cases(monkeypatch):
         research_score=0.742,
         research_classification="PD_LIKE",
         calibration_status="EXTERNALLY_VALIDATED_CALIBRATED",
+        score_kind="calibrated_probability",
     )
     render_prediction_outcome_card(case_a)
-    assert any("Calibrated Voice Assessment" in c for c in calls)
+    assert any("Externally validated research estimate" in c for c in calls)
     assert any("74.2%" in c for c in calls)
 
-    # Case B: Uncalibrated research score (high, medium, low)
-    for score, expected_word in [(0.85, "stronger"), (0.50, "moderate"), (0.20, "weaker")]:
+    # Uncalibrated values are rendered as raw scores, never likelihood percentages.
+    for score in (0.85, 0.50, 0.20):
         calls.clear()
         case_b = PredictionResult(
             prediction_id="pred_b",
@@ -124,8 +128,10 @@ def test_render_prediction_outcome_card_all_cases(monkeypatch):
             calibration_status="UNCALIBRATED",
         )
         render_prediction_outcome_card(case_b)
-        assert any("Acoustic Similarity Index" in c for c in calls)
-        assert any(expected_word in c for c in calls)
+        rendered = "".join(calls)
+        assert "Uncalibrated research output" in rendered
+        assert f"{score:+.6f}" in rendered
+        assert f"{score * 100:.1f}%" not in rendered
 
     # Case D: Inconclusive / unestimable
     calls.clear()
@@ -144,6 +150,41 @@ def test_render_prediction_outcome_card_all_cases(monkeypatch):
     )
     render_prediction_outcome_card(case_d)
     assert any("vx-card-case-d" in c for c in calls)
+
+
+def test_exploratory_result_card_shows_raw_score_without_probability(monkeypatch):
+    calls = []
+    monkeypatch.setattr(st, "markdown", lambda content, **kwargs: calls.append(content))
+    prediction = PredictionResult(
+        prediction_id="pred_exploratory",
+        status="EXPLORATORY_NOT_DOMAIN_VALIDATED",
+        abstained=False,
+        abstention_reasons=[],
+        abstention_reason=None,
+        model_id="uams_logistic_research",
+        model_version="0.4.0-research",
+        model_checksum="a" * 64,
+        research_score=0.824,
+        research_classification="PD-pattern candidate",
+        calibration_status="UNCALIBRATED_DECISION_SCORE",
+        ood_status="IN_DISTRIBUTION",
+        acquisition_domain_id="laptop_microphone",
+        capture_origin="user_upload",
+        score_kind="uncalibrated_logit",
+        decision_threshold=0.0,
+        model_evaluation_metrics={"balanced_accuracy": 0.72},
+        domain_validation_status="NOT_VALIDATED",
+        acquisition_domain_source="user_declared",
+    )
+
+    render_prediction_outcome_card(prediction)
+    rendered = "".join(calls)
+    assert "EXPLORATORY RESULT · NOT DOMAIN VALIDATED" in rendered
+    assert "PD-pattern candidate" in rendered
+    assert "+0.824000" in rendered
+    assert "not a probability" in rendered
+    assert "0.824%" not in rendered
+    assert "vx-result-container" not in rendered
 
 
 def test_consumer_pages_render_edge_cases(monkeypatch):

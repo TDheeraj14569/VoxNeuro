@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import math
 from typing import Any
 
 import streamlit as st
@@ -530,21 +531,21 @@ def render_plain_quality_summary(quality: Any, record: Any) -> None:
     """Render approachable plain-language recording quality feedback for ordinary users."""
     if quality.valid:
         st.markdown(
-            '<div class="vx-card" style="background:var(--vx-teal-light); '
-            'border-color:rgba(13,122,112,0.25); margin-bottom:1rem;">'
+            '<div class="vx-card" style="background:#F2F6FF; '
+            'border-color:#BFDBFE; margin-bottom:1rem;">'
             '<div style="display:flex; align-items:center; gap:0.5rem; '
-            'color:var(--vx-teal-dark); font-weight:700; margin-bottom:0.35rem;">'
+            'color:#1E40AF; font-weight:700; margin-bottom:0.35rem;">'
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" '
             'stroke="currentColor" stroke-width="2.5">'
             '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>'
             '<polyline points="22 4 12 14.01 9 11.01"/></svg>'
-            "Recording Quality: Clear &amp; Valid"
+            "Audio quality checks passed — not a health result"
             "</div>"
-            f'<p style="color:#1E3A34; font-size:0.92rem; margin:0;">'
-            f"Your voice recording ({quality.duration_seconds:.1f} s at {record.sample_rate:,} Hz) "
-            f"has sufficient volume and steady sound quality for acoustic measurement."
-            f"</p>"
-            f"</div>",
+            '<p style="color:#1E3A34; font-size:0.92rem; margin:0;">'
+            "The file passed technical checks needed to calculate acoustic measurements. "
+            "This does not indicate Parkinson's disease or any other health condition."
+            "</p>"
+            "</div>",
             unsafe_allow_html=True,
         )
     else:
@@ -557,10 +558,10 @@ def render_plain_quality_summary(quality: Any, record: Any) -> None:
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" '
             'stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/>'
             '<line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-            "We could not hear your voice clearly"
+            "Audio quality checks did not pass"
             "</div>"
             '<p style="color:#78350F; font-size:0.92rem; margin-bottom:0.5rem;">'
-            "This recording did not meet our clarity screening standards for reliable analysis:"
+            "This file did not meet technical requirements for acoustic analysis:"
             "</p>"
             f'<ul style="color:#78350F; font-size:0.88rem; margin:0 0 0.5rem 0; '
             f'padding-left:1.25rem;">{err_items}</ul>'
@@ -574,131 +575,104 @@ def render_plain_quality_summary(quality: Any, record: Any) -> None:
 
 
 def render_prediction_outcome_card(prediction: PredictionResult) -> None:
-    """Render the primary result card for Cases A, B, C, or D per Section 7."""
-    st.markdown('<div class="vx-result-container">', unsafe_allow_html=True)
-
+    """Render one complete result card without split HTML wrappers or false probabilities."""
     if prediction.abstained:
-        reason_text = html.escape(
-            prediction.abstention_reason
-            or "No reliable automated prediction could be produced for this recording."
+        reason = html.escape(
+            prediction.abstention_reason or "The model did not meet its inference requirements."
         )
-        st.markdown(
-            '<div class="vx-card vx-card-case-c" style="padding:1.5rem;">'
-            '<div style="display:flex; align-items:center; gap:0.5rem; color:#92400E; '
-            'font-size:1.15rem; font-weight:700; margin-bottom:0.65rem;">'
-            '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" '
-            'stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/>'
-            '<line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-            "We could not provide a reliable result"
-            "</div>"
-            f'<p style="font-size:0.95rem; color:#451A03; line-height:1.6; margin-bottom:0.85rem;">'
-            f"{reason_text}"
-            f"</p>"
-            '<div style="background:rgba(255,255,255,0.7); border-radius:8px; '
-            'padding:0.85rem 1rem; border:1px solid rgba(217,119,6,0.2);">'
-            '<strong style="color:#92400E; font-size:0.88rem;">Why did this happen?</strong>'
-            '<p style="color:#78350F; font-size:0.86rem; margin:0.35rem 0 0 0; line-height:1.5;">'
-            "To protect against misleading predictions, VoxNeuro withholds disease likelihood "
-            "estimates whenever a recording is made on an uncalibrated device, background noise "
-            "is detected, or scientific external validation for this microphone type is ongoing."
-            "</p>"
-            "</div>"
-            "</div>",
-            unsafe_allow_html=True,
+        codes = ", ".join(html.escape(code) for code in prediction.abstention_reasons)
+        card = (
+            '<div class="vx-card vx-card-case-c" role="status" style="padding:1.5rem;">'
+            '<div class="vx-hero-eyebrow" style="color:#92400E;">'
+            "INDIVIDUAL CLASSIFICATION UNAVAILABLE</div>"
+            f'<p style="font-size:0.96rem; color:#451A03; line-height:1.6;">{reason}</p>'
+            f'<p style="font-size:0.78rem; color:#78350F; margin:0;">Reason code: {codes}</p>'
+            '<p style="font-size:0.84rem; color:#78350F; margin:0.7rem 0 0;">'
+            "Acoustic measurements and the downloadable report remain available."
+            "</p></div>"
         )
-
+    elif prediction.status == "EXPLORATORY_NOT_DOMAIN_VALIDATED":
+        score = prediction.research_score
+        score_text = "unavailable" if score is None else f"{score:+.6f}"
+        threshold = prediction.decision_threshold
+        threshold_text = "unavailable" if threshold is None else f"{threshold:+.6f}"
+        classification = html.escape(prediction.research_classification or "Candidate unavailable")
+        domain = html.escape(prediction.acquisition_domain_id)
+        domain_source = html.escape(prediction.acquisition_domain_source)
+        ood = html.escape(prediction.ood_status)
+        metrics = prediction.model_evaluation_metrics
+        metric_rows = "".join(
+            f"<li>{html.escape(name.replace('_', ' ').title())}: {value:.3f}</li>"
+            for name, value in sorted(metrics.items())
+            if isinstance(value, (int, float)) and math.isfinite(float(value))
+        )
+        metric_list = (
+            f"<ul>{metric_rows}</ul>"
+            if metric_rows
+            else ("<p>Current nested evaluation summary is unavailable.</p>")
+        )
+        card = (
+            '<div class="vx-card vx-card-case-b" role="status" style="padding:1.5rem;">'
+            '<div class="vx-hero-eyebrow" style="color:#1D6FBD;">'
+            "EXPLORATORY RESULT · NOT DOMAIN VALIDATED</div>"
+            f'<h3 style="margin:0.4rem 0 0.8rem;">{classification}</h3>'
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));'
+            'gap:.75rem;">'
+            f'<div class="vx-quality-card"><div class="vx-qc-label">Raw decision score · '
+            f'{html.escape(prediction.score_kind)}</div><div class="vx-qc-value">{score_text}</div>'
+            f'<div class="vx-qc-sub">Fixed threshold: {threshold_text}; '
+            "not a probability</div></div>"
+            f'<div class="vx-quality-card"><div class="vx-qc-label">OOD screen</div>'
+            f'<div class="vx-qc-value">{ood}</div>'
+            f'<div class="vx-qc-sub">Device: {domain} ({domain_source})</div></div></div>'
+            '<details style="margin-top:.9rem;"><summary>Model evaluation evidence</summary>'
+            f"{metric_list}</details>"
+            '<p style="margin:.9rem 0 0;line-height:1.55;">'
+            "This candidate is generated by an uncalibrated research model trained on a small "
+            "telephone-recorded cohort. It is not a personal disease probability, diagnosis, or "
+            "clinical finding. Device compatibility and clinical performance are unvalidated.</p>"
+            "</div>"
+        )
     elif (
-        prediction.calibration_status == "EXTERNALLY_VALIDATED_CALIBRATED"
+        prediction.score_kind == "calibrated_probability"
+        and prediction.calibration_status == "EXTERNALLY_VALIDATED_CALIBRATED"
         and prediction.research_score is not None
+        and 0 <= prediction.research_score <= 1
     ):
         pct = round(prediction.research_score * 100, 1)
-        st.markdown(
-            '<div class="vx-card vx-card-case-a" style="padding:1.75rem;">'
-            '<div class="vx-hero-eyebrow">Calibrated Voice Assessment</div>'
-            '<div class="vx-gauge-wrapper">'
+        card = (
+            '<div class="vx-card vx-card-case-a" role="status" style="padding:1.5rem;">'
+            '<div class="vx-hero-eyebrow">Externally validated research estimate</div>'
             f'<div class="vx-gauge-val" style="color:var(--vx-teal);">{pct}%</div>'
-            '<div class="vx-gauge-label">'
-            "Estimated likelihood of Parkinson's disease patterns</div>"
-            '<div class="vx-gauge-sub">Based on this sustained vowel voice assessment</div>'
+            "<p>This calibrated estimate is a research output, not a medical diagnosis.</p>"
             "</div>"
-            '<div style="background:var(--vx-teal-soft); border-radius:10px; '
-            'padding:0.85rem 1.15rem; margin-top:1rem; text-align:center;">'
-            '<p style="margin:0; font-size:0.90rem; color:var(--vx-teal-dark); font-weight:500;">'
-            "This estimate reflects statistical vocal pattern similarity to clinical study "
-            "participants. It is an algorithmic estimate, <strong>not a medical diagnosis</strong>."
-            "</p>"
-            "</div>"
-            "</div>",
-            unsafe_allow_html=True,
         )
-
     elif prediction.research_score is not None:
-        pct = round(prediction.research_score * 100, 1)
-        sim_word = "moderate"
-        if prediction.research_score >= 0.67:
-            sim_word = "stronger"
-        elif prediction.research_score < 0.33:
-            sim_word = "weaker"
-
-        st.markdown(
-            '<div class="vx-card vx-card-case-b" style="padding:1.75rem;">'
-            '<div style="display:flex; justify-content:space-between; align-items:center; '
-            'flex-wrap:wrap; margin-bottom:0.75rem;">'
-            '<div class="vx-hero-eyebrow" style="color:#1D6FBD; margin:0;">'
-            "Voice Assessment Result</div>"
-            '<span class="vx-pill-badge" style="background:#EFF6FF; color:#1D6FBD; '
-            'border-color:#BFDBFE;">Research Index</span>'
-            "</div>"
-            f'<h3 style="margin:0 0 0.5rem 0; color:var(--vx-ink); font-size:1.35rem;">'
-            f"Your voice pattern showed a {sim_word} similarity to patterns observed in the study"
-            f"</h3>"
-            '<div class="vx-gauge-wrapper" style="padding:1rem 0;">'
-            f'<div class="vx-gauge-val" style="color:#1D6FBD; font-size:2.8rem;">{pct}%</div>'
-            '<div class="vx-gauge-label">Acoustic Similarity Index</div>'
-            f'<div class="vx-gauge-sub">Experimental research score · Model version '
-            f"{html.escape(prediction.model_version)}</div>"
-            "</div>"
-            '<div style="background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; '
-            'padding:0.85rem 1rem;">'
-            '<p style="margin:0; font-size:0.88rem; color:#1E40AF; line-height:1.5;">'
-            "<strong>Please note:</strong> This score describes acoustic properties only and is "
-            "<strong>not a personal disease probability</strong>. It reflects similarity to "
-            "telephone-based research recordings and has not been validated for clinical decisions."
-            "</p>"
-            "</div>"
-            "</div>",
-            unsafe_allow_html=True,
+        score = html.escape(f"{prediction.research_score:+.6f}")
+        classification = html.escape(prediction.research_classification or "Unclassified")
+        card = (
+            '<div class="vx-card vx-card-case-b" role="status" style="padding:1.5rem;">'
+            '<div class="vx-hero-eyebrow">Uncalibrated research output</div>'
+            f"<h3>{classification}</h3><p>Raw score ({html.escape(prediction.score_kind)}): "
+            f"<code>{score}</code></p><p>This is not a probability or diagnosis.</p></div>"
         )
-
     else:
-        st.markdown(
-            '<div class="vx-card vx-card-case-d" style="padding:1.5rem;">'
-            '<h4 style="color:var(--vx-muted); margin:0 0 0.35rem 0;">'
-            "This assessment is currently unavailable</h4>"
-            '<p style="color:var(--vx-ink-secondary); font-size:0.92rem; margin:0;">'
-            "Automated voice pattern scoring is currently disabled because prospective clinical "
-            "validation for your capture method is ongoing. "
-            "Descriptive measurements remain available."
-            "</p>"
-            "</div>",
-            unsafe_allow_html=True,
+        card = (
+            '<div class="vx-card vx-card-case-d" role="status" style="padding:1.5rem;">'
+            '<h4 style="margin-top:0;">No model result available</h4>'
+            "<p>Acoustic measurements remain available. Check the detailed reason above or "
+            "in the report.</p>"
+            "</div>"
         )
-
+    st.markdown(card, unsafe_allow_html=True)
     st.markdown(
-        '<div class="vx-next-steps">'
-        "<h4>Recommended Next Steps</h4>"
-        "<ul>"
-        "<li><strong>Consult a Healthcare Professional:</strong> Voice changes alone cannot "
-        "confirm or rule out Parkinson's disease. A qualified neurologist or physician can "
-        "evaluate physical signs, symptoms, medical history, and clinical findings.</li>"
-        "<li><strong>Understand Voice Variability:</strong> Temporary factors such as hydration, "
-        "fatigue, colds, or ambient noise can alter acoustic steadiness.</li>"
-        "<li><strong>Keep a Record:</strong> You can download your detailed summary report below "
-        "to share with your care team if desired.</li>"
-        "</ul>"
-        "</div>",
+        '<div class="vx-next-steps"><h4>Recommended Next Steps</h4><ul>'
+        "<li>Voice measures alone cannot confirm or rule out Parkinson's disease. Consult a "
+        "qualified clinician for health concerns.</li>"
+        "<li>Hydration, fatigue, illness, room acoustics and recording devices can alter "
+        "voice measurements.</li>"
+        "<li>Download the report to review the acoustic measurements and model limitations.</li>"
+        "</ul></div>",
         unsafe_allow_html=True,
     )
-
-    st.markdown("</div>", unsafe_allow_html=True)
     render_medical_disclaimer()

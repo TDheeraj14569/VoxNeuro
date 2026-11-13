@@ -1,74 +1,58 @@
-# VoxNeuro experimental model card
+# VoxNeuro UAMS research-model card
 
-**Status: research only.** No clinical validation or authorization has occurred. VoxNeuro's application does not classify a new microphone recording. The numeric results below are measured internal cross-validation results, not diagnostic accuracy.
+**Status: experimental research reference. Not clinically validated, not a medical device, and not approved for diagnosis, screening, rule-out, monitoring, prognosis, or treatment decisions.** Current UAMS metrics were generated locally from the licensed research data on 2026-11-13 and were not regenerated from this source-only release because participant data and model artifacts are excluded.
 
-## Intended use and users
+## Intended research use
 
-This model is for software and signal-processing researchers auditing sustained-vowel acoustic measurements from the UAMS development cohort. It is not for Parkinson screening, diagnosis, rule-out, monitoring, prognosis, treatment selection, or patient management.
+The model is a reproducible software reference for exploring Core39 acoustic measurements from sustained `/a/` recordings. The app may show a clearly labeled exploratory candidate only when a locally generated artifact and current provenance/evaluation receipts pass all checks. This candidate is a classifier output, not an individual medical result. The validated-domain prediction gate remains disabled.
 
-## Data and input
+## Data and features
 
-- Source: UAMS voice samples, Figshare DOI [10.6084/m9.figshare.23849127.v1](https://doi.org/10.6084/m9.figshare.23849127.v1), CC BY 4.0; see [UAMS dataset report](../dataset/UAMS_DATASET_REPORT.md).
-- Original cohort: 81 people (41 healthy controls, 40 PD), one sustained /a/ telephone recording each, reported at 8 kHz.
-- Analysis cohort: 78 people (41 HC, 37 PD). Three clipped recordings, all from the PD group, were excluded under the documented reviewed policy. This class-specific missingness can bias the results.
-- Voice input: 39 Core39 measurements in schema voxneuro.voice.v3, extracted with Praat/Parselmouth and Librosa. The feature schema and configuration fingerprints are stored with generated data and the model bundle. Age and sex are excluded from voice-only models.
-- UCI #470 is a separate pre-extracted feature-table benchmark. Its features are not interchangeable with Core39 and are never fed from raw WAV recordings.
+- Dataset: UAMS voice samples, Figshare DOI [10.6084/m9.figshare.23849127.v1](https://doi.org/10.6084/m9.figshare.23849127.v1), CC BY 4.0.
+- Initial cohort: 81 people (41 HC, 40 PD), one telephone-collected sustained vowel each, reported at 8 kHz.
+- Model cohort: 78 people (41 HC, 37 PD). Three PD recordings failed the reviewed clipping policy. This class-specific exclusion can bias results.
+- Voice-only inputs: 39 ordered Core39 measurements in `voxneuro.voice.v3`. Age and sex are not voice-model inputs. The bundle pins feature schema/configuration and preprocessing fingerprints.
+- UCI #470 is a separate pre-extracted feature benchmark. It is not used as raw audio, is not mixed with the UAMS data, and does not validate the WAV pipeline.
 
-## UAMS validation design
+## Evaluation design
 
-The current model comparison uses repeated nested participant-grouped cross-validation: five outer folds, three inner folds, and three prespecified repeats (seeds 2026–2028). The inner folds choose hyperparameters by balanced accuracy. Imputation and scaling are fit only within the corresponding training folds. Outer-fold participants are not used for that fold's tuning.
+The current UAMS comparison used 5-fold participant-grouped outer cross-validation, 3-fold grouped inner tuning, and three prespecified repeats (seeds 2026–2028). All transforms and hyperparameter selection were restricted to the corresponding outer-training partitions. Reported values are means and standard deviations across three repeat-level out-of-fold estimates. These are internal estimates from a small retrospective cohort; they are not external-validation or clinical performance estimates. No clinical threshold was selected and no probability calibration is used for the app's exploratory candidate.
 
-The voice-only comparison includes L2 and elastic-net logistic regression, linear and RBF SVM, random forest, Extra Trees, and histogram gradient boosting. It also includes a prior dummy baseline and age-only / age-plus-voice logistic comparators. Voice-only models receive the 39 acoustic predictors only.
+## Current locally measured UAMS results
 
-The table reports mean ± standard deviation across the three repeated participant-level out-of-fold estimates. The BA interval is a 95% class-stratified participant bootstrap over the primary-seed OOF predictions; it is conditional on the already fitted outer-fold models and is not an external-validity or clinical confidence interval. Sensitivity, specificity, precision, and the other measures use the default model decision rule. No clinical threshold was selected. Probability outputs, where available, are uncalibrated.
+| Candidate | Balanced accuracy (mean ± repeat SD) | Precision | Sensitivity | Specificity | ROC-AUC | Average precision |
+|---|---:|---:|---:|---:|---:|---:|
+| Voice-only L2 logistic | 0.739 ± 0.007 | 0.723 | 0.730 | 0.748 | 0.770 | 0.717 |
+| Voice-only Extra Trees | 0.766 ± 0.008 | 0.734 | 0.793 | 0.740 | 0.785 | 0.727 |
+| Age-only logistic comparator | 0.839 ± 0.007 | 0.807 | 0.865 | 0.813 | 0.849 | 0.799 |
+| Age + voice logistic comparator | 0.771 ± 0.012 | 0.736 | 0.802 | 0.740 | 0.814 | 0.784 |
 
-## Measured UAMS results
+The age-only comparator scores higher than the voice-only candidates. Adding voice to age did not improve this cohort's internal balanced accuracy over age alone. The marked age imbalance (HC mean 47.73 years; PD mean 67.04 years; SMD −1.61) and PD-only quality exclusions prevent a disease-specific interpretation. These results do not establish a useful voice biomarker or individual-level disease accuracy.
 
-| Candidate | Accuracy | Precision | Sensitivity | Specificity | Balanced accuracy | Primary-seed BA bootstrap 95% interval | ROC-AUC | Trapezoidal PR-AUC | Average precision |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Prior dummy | 0.526 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 1.000 ± 0.000 | 0.500 ± 0.000 | 0.500–0.500 | 0.474 ± 0.000 | 0.506 ± 0.000 | 0.461 ± 0.000 |
-| L2 logistic | 0.739 ± 0.007 | 0.723 ± 0.011 | 0.730 ± 0.000 | 0.748 ± 0.014 | 0.739 ± 0.007 | 0.632–0.821 | 0.771 ± 0.006 | 0.707 ± 0.023 | 0.717 ± 0.022 |
-| Elastic-net logistic | 0.735 ± 0.030 | 0.717 ± 0.035 | 0.730 ± 0.027 | 0.740 ± 0.037 | 0.735 ± 0.029 | 0.616–0.821 | 0.776 ± 0.018 | 0.747 ± 0.018 | 0.753 ± 0.017 |
-| Linear SVM | 0.705 ± 0.022 | 0.682 ± 0.035 | 0.712 ± 0.016 | 0.699 ± 0.051 | 0.705 ± 0.021 | 0.591–0.793 | 0.756 ± 0.014 | 0.704 ± 0.019 | 0.715 ± 0.015 |
-| RBF SVM | 0.739 ± 0.007 | 0.705 ± 0.014 | 0.775 ± 0.016 | 0.707 ± 0.024 | 0.741 ± 0.007 | 0.641–0.835 | 0.766 ± 0.014 | 0.695 ± 0.020 | 0.707 ± 0.021 |
-| Random forest | 0.752 ± 0.015 | 0.709 ± 0.012 | 0.811 ± 0.027 | 0.699 ± 0.014 | 0.755 ± 0.015 | 0.671–0.862 | 0.786 ± 0.017 | 0.701 ± 0.062 | 0.715 ± 0.055 |
-| Extra Trees | 0.761 ± 0.020 | 0.727 ± 0.017 | 0.793 ± 0.041 | 0.732 ± 0.024 | **0.762 ± 0.020** | 0.664–0.850 | 0.784 ± 0.014 | 0.713 ± 0.067 | 0.724 ± 0.060 |
-| Histogram gradient boosting | 0.705 ± 0.013 | 0.667 ± 0.016 | 0.757 ± 0.000 | 0.659 ± 0.024 | 0.708 ± 0.012 | 0.606–0.812 | 0.739 ± 0.027 | 0.697 ± 0.069 | 0.705 ± 0.065 |
-| Age-only logistic comparator | **0.838 ± 0.007** | **0.807 ± 0.012** | **0.865 ± 0.000** | **0.813 ± 0.014** | **0.839 ± 0.007** | 0.754–0.911 | **0.849 ± 0.013** | **0.793 ± 0.015** | **0.799 ± 0.014** |
-| Age + sex logistic comparator | 0.838 ± 0.008 | 0.807 ± 0.012 | 0.847 ± 0.016 | 0.829 ± 0.014 | 0.838 ± 0.008 | 0.746–0.912 | 0.849 ± 0.013 | 0.793 ± 0.015 | 0.799 ± 0.014 |
-| Age + voice logistic comparator | 0.769 ± 0.013 | 0.736 ± 0.025 | 0.802 ± 0.016 | 0.740 ± 0.037 | 0.771 ± 0.012 | 0.658–0.851 | 0.817 ± 0.024 | 0.777 ± 0.021 | 0.782 ± 0.021 |
-| Age + sex + voice logistic comparator | 0.761 ± 0.045 | 0.736 ± 0.025 | 0.784 ± 0.041 | 0.740 ± 0.037 | 0.762 ± 0.045 | 0.659–0.848 | 0.813 ± 0.024 | 0.777 ± 0.021 | 0.782 ± 0.021 |
-| Matched voice SVM | &mdash; | &mdash; | &mdash; | &mdash; | **NOT ESTIMABLE** | &mdash; | &mdash; | &mdash; | &mdash; |
+In the primary-seed paired analysis, adding voice to age changed balanced accuracy by -0.0758 (95% participant-bootstrap interval [-0.1842, +0.0284]); adding voice to age plus sex changed it by -0.0745 (95% interval [-0.1843, +0.0310]). Across the repeated nested evaluation, the corresponding mean differences were -0.0681 and -0.0762. Confidence intervals include zero and positive effects; the true incremental contribution remains uncertain, and this cohort does not establish a supported positive benefit from the voice features beyond demographic comparators.
 
-These are small-cohort internal estimates. Extra Trees had the highest mean balanced accuracy among voice-only candidates, but its primary-seed interval is wide. The age-only comparator was higher (0.839 versus 0.762 BA). In primary-seed paired testing, adding voice to age (Age + Voice) yields $\Delta\text{BA} = -0.0758$ (95% bootstrap CI [$-0.1842, +0.0284$], supplementary McNemar exact $p = 0.2632$; repeated-CV $\Delta = -0.0681$); adding voice to age and sex (Age + Sex + Voice) yields $\Delta\text{BA} = -0.0745$ (95% bootstrap CI [$-0.1843, +0.0310$], supplementary McNemar exact $p = 0.2632$; repeated-CV $\Delta = -0.0762$). Enforcing a 0.2 SD age caliper with exact sex matching retains only 5 pairs (10 participants, 87.2% discarded), making matched-cohort cross-validation formally NOT ESTIMABLE per SAP Rule 5. The retrospective cohort did not establish statistically supported positive incremental predictive benefit from the voice features beyond demographic comparators. The confidence intervals include zero and positive effects; therefore, the true incremental contribution remains uncertain. Average precision is distinct from trapezoidal PR-AUC.
+The bundled local reference is an L2 logistic model retained for transparent, reproducible behavior, not because it was the highest-scoring candidate. Its default `decision_function` output is an **uncalibrated score** with a fixed research threshold of 0.0. It is not a probability. The final refit uses the development cohort, so its individual scores are not held-out estimates. The nested metrics above come from held-out participants within cross-validation, not from scoring the final all-data artifact.
+
+## What the app displays
+
+- Approved prediction: unavailable. `allow_user_microphone_inference` is false and the trusted domain-validation hash allowlist is empty.
+- Exploratory candidate: a distinct unvalidated result is possible only from a local current bundle after data/evaluation/code/schema provenance, input quality/task, device category, completeness, and training-derived OOD checks pass. Capture origin is separate from the user-declared acquisition category. A self-report does not prove the actual hardware or domain.
+- Abstention: if any required gate fails, the app gives a specific reason and retains available acoustic analysis and reports.
+
+The OOD reference is derived only from the model's training feature table. It does not establish that a device domain is validated or that a score is clinically meaningful. The local source archive omits datasets, trained binaries, and generated receipts; a clean checkout therefore cannot produce an exploratory candidate until the documented local workflow has been completed.
 
 ## Separate UCI feature-table benchmark
 
-The current fixed-pipeline, five-fold participant-grouped UCI run used 756 rows, 252 participants, and 752 acoustic predictors. One exact duplicate row was assessed in a separate sensitivity run. These figures do not evaluate VoxNeuro's WAV preprocessing or microphone compatibility.
-
-| Candidate | Balanced accuracy | Sensitivity | Specificity | ROC-AUC | Average precision |
-|---|---:|---:|---:|---:|---:|
-| Logistic regression | 0.766 ± 0.043 | 0.878 ± 0.014 | 0.655 ± 0.093 | 0.826 ± 0.036 | 0.924 ± 0.032 |
-| Random forest | 0.727 ± 0.056 | 0.910 ± 0.031 | 0.545 ± 0.135 | 0.848 ± 0.043 | 0.942 ± 0.019 |
-| RBF SVM | 0.715 ± 0.052 | 0.883 ± 0.015 | 0.547 ± 0.111 | 0.827 ± 0.039 | 0.929 ± 0.022 |
-
-The class distribution is imbalanced and sensitivity is higher than specificity. These results are a separate benchmark and must not be combined with the UAMS results.
-
-## Bundled reference model
-
-The saved UAMS artifact is an L2 logistic regression reference whose regularization strength is tuned by participant-grouped cross-validation and then refit on all 78 development participants. It is retained for interpretability and reproducibility, not because it is the top-scoring voice model. Its performance estimate comes from the nested cross-validation table above, not from its final all-data fit.
-
-The bundle records the data checksum, schema/configuration fingerprints, source fingerprint, software versions, nested evaluation receipt, training settings, and timestamp. Its SHA-256 sidecar detects artifact changes but is not a digital signature; only internally generated trusted bundles may be loaded.
+The local UCI #470 grouped benchmark (252 participants, 756 repeated rows, 752 acoustic predictors) reported balanced accuracy of 0.766 ± 0.043 for logistic regression, 0.727 ± 0.056 for random forest, and 0.715 ± 0.052 for RBF SVM. It is a separate experiment using pre-extracted features and must not be presented as confirmation of the Core39 raw-audio workflow.
 
 ## Limitations and safeguards
 
-- The UAMS healthy-control mean age is 47.73 years (SD 14.33); the PD mean is 67.04 (SD 8.98), standardized mean difference -1.61, Mann–Whitney p=1.75e-8.
-- All three quality exclusions are PD recordings. This class-dependent exclusion can bias the training cohort.
-- The development dataset is small, retrospective, telephone-collected, and limited to sustained /a/. Language, device, channel, room, task, medication, fatigue, age, and other conditions can affect voice.
-- Compatibility with laptop, smartphone, browser-microphone, or other recording domains is unverified. The application withholds disease classification for new recordings.
-- Milestone 4 establishes the formal recording domain validation framework (`VOXNEURO-M4-EXT-VAL-2026-V1`) and candidate assessment dossier schema (`voxneuro.domain_assessment.v1`). External raw audio datasets (NeuroVoz, PC-GITA, Italian Parkinson's) remain `ACCESS_PENDING` under institutional DUAs; authoritative status is `FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING`. Prediction compatibility remains disabled (`allow_user_microphone_inference: false`, empty allowlist `TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256 = frozenset()`).
-- No calibrated clinical probability, decision threshold, external test, prospective cohort, Indian-population evaluation, clinician feedback, ethics review, or regulatory authorization has been established.
-- NeuroVoz and other external cohorts were not used because their access processes require formal institutional Data Use Agreements (DUAs) and ethics clearances that were not completed.
-- Voice is potentially identifying biometric data. Recordings are held in application memory and are not saved by default.
+- Small, retrospective UAMS cohort; no independent external cohort, prospective study, or representative clinical population.
+- Strong age imbalance and three PD-only clipping exclusions may distort apparent performance.
+- Telephone recording compatibility with browser, laptop, smartphone, headset, other rooms, languages, or tasks is not established.
+- Sustained vowels do not represent connected speech or all clinically relevant speech behavior.
+- Scores are uncalibrated and no clinical decision threshold, sensitivity target, or negative predictive value has been established.
+- No clinical expert/user validation, ethics approval for a prospective study, Indian-population validation, or regulatory authorization is claimed.
+- Voice is potentially identifying data. App audio stays in memory by default; users should handle downloaded reports carefully.
 
-Do not use this model to make or change clinical decisions. A generated nested-results report is available locally at artifacts/reports/model_evaluation/uams_nested.html; reproducibility details are in [model evaluation methodology](../methodology/model_evaluation.md).
+Do not use this model or an exploratory candidate to make or change clinical decisions. See [evaluation methodology](../methodology/model_evaluation.md), [validation protocol](../VALIDATION_PROTOCOL.md), and [known limitations](../KNOWN_LIMITATIONS.md).

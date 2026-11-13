@@ -61,7 +61,7 @@ uv run python scripts/verify_project.py
 
 The extraction option accepts only the three reviewed PD clipping exclusions listed in project configuration. Without those exact exclusions, partial extraction is rejected. Training is blocked when the extraction/evaluation receipts do not match current files, settings, schema, and code.
 
-The trained artifact is written to `artifacts/models/uams_logistic_research.joblib` with a SHA-256 sidecar. It is an offline research reference and is not enabled for user microphone inference. The app abstains because input-domain compatibility is unverified.
+The trained artifact is written to `artifacts/models/uams_logistic_research.joblib` with a SHA-256 sidecar. It is a local research reference, not an approved predictor. If it and current matching evaluation receipts exist, the app may display a separately labeled, unvalidated exploratory candidate after task, quality, schema, declared-device, and training-only OOD checks pass. The approved user-microphone inference gate remains disabled because input-domain compatibility is unverified.
 
 ## Packaging Verification
 

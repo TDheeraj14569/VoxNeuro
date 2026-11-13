@@ -139,6 +139,43 @@ def test_source_archive_fails_when_mandatory_provenance_file_missing(tmp_path):
     assert ".streamlit/config.toml" in str(exc_info.value)
 
 
+def test_release_manifest_refresh_preserves_verification_claims(tmp_path, monkeypatch):
+    import json
+
+    import scripts.build_source_archive as archive_builder
+
+    manifest_path = tmp_path / "RELEASE_MANIFEST.json"
+    original = {
+        "status": "ENGINEERING_VERIFIED_RESEARCH_ONLY",
+        "provenance": {"project_code_fingerprint": "old"},
+        "verification": {
+            "total_tests": 611,
+            "passed_tests": 611,
+            "failed_tests": 0,
+            "github_actions_status": "PENDING",
+        },
+    }
+    manifest_path.write_text(json.dumps(original), encoding="utf-8")
+    monkeypatch.setattr(archive_builder, "project_code_fingerprint", lambda: "new-code-hash")
+
+    archive_builder.update_release_manifest(
+        manifest_path,
+        {
+            "path": str(tmp_path / "VoxNeuro_PRODUCTION_RELEASE.zip"),
+            "sha256": "a" * 64,
+            "bytes": 1234,
+            "members": 321,
+        },
+    )
+
+    updated = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert updated["status"] == original["status"]
+    assert updated["verification"] == original["verification"]
+    assert updated["provenance"]["project_code_fingerprint"] == "new-code-hash"
+    assert updated["archive"]["sha256"] == "a" * 64
+    assert updated["archive"]["file_count"] == 321
+
+
 def test_clean_extraction_contains_all_provenance_inputs_and_computes_fingerprint(tmp_path):
     import subprocess
     import sys

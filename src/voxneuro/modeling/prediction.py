@@ -1,4 +1,8 @@
-"""Domain-gated research inference; new microphone recordings are always withheld."""
+"""Strict, approved-domain prediction gate; exploratory scoring lives in its own module.
+
+This module does not authorize a user microphone or uploaded recording. The distinct exploratory
+candidate path is implemented by ``modeling.exploratory`` and remains unvalidated and non-clinical.
+"""
 
 from __future__ import annotations
 

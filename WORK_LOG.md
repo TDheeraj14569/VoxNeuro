@@ -1,7 +1,20 @@
 # VoxNeuro defect repair and release verification
 
+**Historical log:** most entries below describe snapshots from 2026-11-06 through 2026-11-08. Their test totals, coverage, CI status, and inference behavior are not the current release status. See [`docs/testing/VERIFICATION_REPORT.md`](docs/testing/VERIFICATION_REPORT.md) for the current checked snapshot.
+
 **Date:** 2026-11-06 to 2026-11-08  
 **Workspace:** Local project root
+
+## Current GitHub-main follow-up — 2026-11-13
+
+- Investigated the three supplied result screenshots against the local UAMS manifest. All are PD-labeled research recordings: two pass technical quality checks and one is rejected for clipping.
+- Clarified the UI so an audio-quality pass is explicitly not a health or Parkinson's result, and changed the pass notice from success-green to neutral blue.
+- Added an original-WAV SHA-256 overlap gate. An exact WAV already in the development manifest cannot receive an individual score from the full-refit model; it gets `KNOWN_TRAINING_RECORDING`. A missing fingerprint fails closed.
+- Re-ran the UAMS archive verification, manifest build/audit, extraction, fixed grouped evaluation, three-repeat nested participant-grouped evaluation, model training, and model verification. All passed; 78/81 recordings were accepted under the reviewed exclusions.
+- Nested L2 logistic evaluation had 27 true positives and 10 false negatives among 37 PD participants in each of three repeats. This does not support forcing a PD output for every PD-labeled WAV. The user's two usable screenshot WAVs are blocked from in-sample scoring; the clipped WAV is rejected before inference.
+- Full CPython 3.12.14 suite: 611 passed, 0 failed; coverage 85.7% (7,108/8,294 statements). Ruff lint, Ruff format (303 files), and `verify_project.py` passed.
+- The supplied browser screenshots establish that the user-visible page rendered before these last copy/safety edits. A new post-edit browser click-through and physical microphone permission check were not independently performed.
+- Rebuilt source and production-named source archives: 351 files, 2,405,217 bytes, matching SHA-256 `0158e49781420b00d2f2713d54035ae6afb3db5e4efae171292f66a743f9bf6b`; ZIP CRC and exclusion checks passed. Raw WAVs, generated cohort tables, models, and environments remain excluded.
 
 ## External audit resolution & release hardening (2026-11-08)
 
@@ -50,7 +63,7 @@
 - Used the configured frame duration in silence trimming, corrected supported WAV/WAVEX instructions, and fixed the traceability test paths.
 - Reconciled verification and test documentation with the current source snapshot; earlier pass reports are marked as historical.
 
-## Latest verification completed — 2026-11-07 (296-test suite)
+## Historical verification completed — 2026-11-07 (310-test suite)
 
 - **Test Suite & Coverage:** Expanded to **310 passed tests** (302 non-UI tests plus 8 Streamlit AppTests) with **87.05% statement coverage** across 2,232 statements in `src/voxneuro`.
 - **Feature Extraction Array Validation:** Enforced strict non-boolean, non-complex, finite numeric array requirements, bounded extraction parameters, and integer sample rate validation (8–48 kHz) in standalone `extract_features()`. Added comprehensive regression tests.
@@ -89,6 +102,6 @@
 - Re-extracted the AI review ZIP and reran all 224 tests with its `src/` first on `PYTHONPATH`; all passed at 87% coverage.
 - Current source/model provenance fingerprint: `e73319356c3512350d251de512393ccc95f034d49fee25e0043338a608167259`.
 
-## Limits retained
+## Historical limits recorded on 2026-11-07
 
-No physical microphone recording, browser/OS permission test, external clinical cohort, clinician or participant study, ethics approval, regulatory opinion, or clinical-use claim is represented as completed. The app extracts and reports acoustic features; it does not diagnose or classify new recordings. The source ZIP excludes raw datasets, participant-linked processed files, and trained model artifacts.
+No physical microphone recording, browser/OS permission test, external clinical cohort, clinician or participant study, ethics approval, regulatory opinion, or clinical-use claim was represented as completed. The app extracted and reported acoustic features and did not classify new recordings in that historical snapshot. Current behavior and current verification evidence are in `docs/testing/VERIFICATION_REPORT.md`. The source ZIP excludes raw datasets, participant-linked processed files, and trained model artifacts.

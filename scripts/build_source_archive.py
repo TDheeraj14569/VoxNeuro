@@ -176,6 +176,8 @@ def source_files(root: Path, output: Path) -> list[Path]:
         for filename in filenames:
             path = current / filename
             relative = path.relative_to(root)
+            if ".git" in relative.parts:
+                continue
             if len(relative.parts) == 1 and (
                 filename == REVIEW_BUNDLE_README
                 or filename == "RELEASE_MANIFEST.json"
@@ -297,6 +299,21 @@ def build_archive(
     }
 
 
+def update_release_manifest(manifest_path: Path, archive_report: dict[str, object]) -> None:
+    """Refresh archive metadata without inventing or overwriting verification results."""
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    archive_path = Path(str(archive_report["path"]))
+    data["archive"] = {
+        "filename": archive_path.name,
+        "sha256": archive_report["sha256"],
+        "bytes": archive_report["bytes"],
+        "file_count": archive_report["members"],
+        "checksum_sidecar": f"{archive_path.name}.sha256",
+    }
+    data.setdefault("provenance", {})["project_code_fingerprint"] = project_code_fingerprint()
+    manifest_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Build and verify the compact source-only project review archive."
@@ -336,20 +353,8 @@ def main() -> int:
 
         manifest_path = ROOT / "RELEASE_MANIFEST.json"
         if manifest_path.is_file():
-            data = json.loads(manifest_path.read_text(encoding="utf-8"))
-            data["archive"] = {
-                "filename": PRODUCTION_OUTPUT.name,
-                "sha256": prod_report["sha256"],
-                "bytes": prod_report["bytes"],
-                "file_count": prod_report["members"],
-                "checksum_sidecar": f"{PRODUCTION_OUTPUT.name}.sha256",
-            }
-            data["provenance"]["project_code_fingerprint"] = project_code_fingerprint()
-            data["verification"]["total_tests"] = 600
-            data["verification"]["passed_tests"] = 600
-            data["verification"]["failed_tests"] = 0
-            manifest_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-            print("Updated RELEASE_MANIFEST.json with current production release archive metadata.")
+            update_release_manifest(manifest_path, prod_report)
+            print("Updated RELEASE_MANIFEST.json archive metadata and project-code fingerprint.")
     return 0
 
 

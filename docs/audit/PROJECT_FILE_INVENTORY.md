@@ -218,6 +218,8 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-13. 
 - `src/voxneuro/modeling/domain_shift.py`
 - `src/voxneuro/modeling/domains.py`
 - `src/voxneuro/modeling/evaluation.py`
+- `src/voxneuro/modeling/exploratory.py`
+- `src/voxneuro/modeling/inference_provenance.py`
 - `src/voxneuro/modeling/m6_experiment.py`
 - `src/voxneuro/modeling/m6_training_ops.py`
 - `src/voxneuro/modeling/model_bundle.py`
@@ -302,6 +304,7 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-13. 
 - `tests/unit/test_domain_registry.py`
 - `tests/unit/test_domain_shift.py`
 - `tests/unit/test_evidence_generator.py`
+- `tests/unit/test_exploratory_prediction.py`
 - `tests/unit/test_external_evaluation.py`
 - `tests/unit/test_feature_extraction.py`
 - `tests/unit/test_features.py`
@@ -351,4 +354,4 @@ Generated from `scripts/build_source_archive.py` inclusion rules on 2026-11-13. 
 - `uv.lock`
 - `WORK_LOG.md`
 
-Total included source/documentation files: **348**.
+Total included source/documentation files: **351**.

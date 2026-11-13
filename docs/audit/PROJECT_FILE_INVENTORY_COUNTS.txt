@@ -17,9 +17,9 @@ pyproject.toml: 1
 README.md: 1
 requirements-lock.txt: 1
 scripts: 23
-src: 85
-tests: 85
+src: 87
+tests: 86
 uv.lock: 1
 WORK_LOG.md: 1
 
-Total: 348
+Total: 351

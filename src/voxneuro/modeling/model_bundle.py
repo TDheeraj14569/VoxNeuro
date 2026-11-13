@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
+import math
 import re
 from datetime import UTC, datetime
 from pathlib import Path
@@ -46,6 +48,8 @@ def make_bundle(
     domain_validation_report: Path | None = None,
     allowed_missing_features: tuple[str, ...] = DEFAULT_ALLOWED_MISSING_FEATURES,
     training_details: dict[str, Any] | None = None,
+    training_distribution_manifest: dict[str, Any] | None = None,
+    score_contract: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Wrap a fitted pipeline with complete data, feature, and domain metadata."""
     if validated_input_domains is not None and not isinstance(
@@ -99,8 +103,33 @@ def make_bundle(
         raise ValueError("Audio and feature extraction configurations must be mappings.")
     if training_details is not None and not isinstance(training_details, dict):
         raise ValueError("Training details must be a mapping when provided.")
+    if training_distribution_manifest is not None and not isinstance(
+        training_distribution_manifest, dict
+    ):
+        raise ValueError("Training-distribution manifest must be a mapping when provided.")
+    if score_contract is not None and not isinstance(score_contract, dict):
+        raise ValueError("Score contract must be a mapping when provided.")
     if allow_user_microphone_inference:
         raise ValueError("Microphone inference cannot be enabled in this prototype.")
+    distribution_digest = None
+    if training_distribution_manifest is not None:
+        distribution_digest = hashlib.sha256(
+            json.dumps(
+                training_distribution_manifest,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            ).encode("utf-8")
+        ).hexdigest()
+    contract = dict(
+        score_contract
+        or {
+            "method": "predict_proba",
+            "kind": "uncalibrated_probability_score",
+            "threshold": 0.5,
+            "positive_class_label": "PD",
+        }
+    )
     return {
         "bundle_version": 4,
         "model_version": "0.4.0-research",
@@ -121,6 +150,9 @@ def make_bundle(
         "feature_config": dict(feature_config),
         "feature_config_fingerprint": feature_config_fingerprint(feature_config),
         "training_details": dict(training_details or {}),
+        "training_distribution_manifest": training_distribution_manifest,
+        "training_distribution_manifest_sha256": distribution_digest,
+        "score_contract": contract,
         "allowed_missing_features": allowed_missing,
         "research_only": True,
         "domain_compatibility_verified": bool(
@@ -183,6 +215,9 @@ def load_bundle(path: Path) -> dict:
         "domain_validation_evidence_sha256",
         "allow_user_microphone_inference",
         "allowed_missing_features",
+        "training_distribution_manifest",
+        "training_distribution_manifest_sha256",
+        "score_contract",
     }
     missing = required - bundle.keys()
     if missing:
@@ -241,6 +276,61 @@ def load_bundle(path: Path) -> dict:
         or not bundle["preprocessing_config"]
     ):
         raise ValueError("Model bundle is missing software or feature-extraction provenance.")
+    distribution = bundle["training_distribution_manifest"]
+    distribution_digest = bundle["training_distribution_manifest_sha256"]
+    if (distribution is None) != (distribution_digest is None):
+        raise ValueError(
+            "Training-distribution manifest and fingerprint must be supplied together."
+        )
+    if distribution is not None:
+        if not isinstance(distribution, dict):
+            raise ValueError("Training-distribution manifest must be a mapping.")
+        actual_distribution_digest = hashlib.sha256(
+            json.dumps(distribution, sort_keys=True, separators=(",", ":"), allow_nan=False).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        if actual_distribution_digest != distribution_digest:
+            raise ValueError("Training-distribution manifest SHA-256 is invalid.")
+        if (
+            distribution.get("schema_version") != "voxneuro.training_distribution.v1"
+            or distribution.get("feature_schema_version") != SCHEMA_VERSION
+            or distribution.get("feature_schema_fingerprint") != schema_fingerprint()
+            or distribution.get("feature_names") != list(FEATURE_NAMES)
+        ):
+            raise ValueError(
+                "Training-distribution manifest is incompatible with this feature schema."
+            )
+        statistics = distribution.get("statistics")
+        if not isinstance(statistics, dict) or set(statistics) != set(FEATURE_NAMES):
+            raise ValueError("Training-distribution statistics do not cover the complete schema.")
+        required_statistics = {"n", "missing_rate", "mean", "std", "min", "max", "q01", "q99"}
+        for name, stat in statistics.items():
+            if not isinstance(stat, dict) or required_statistics - stat.keys():
+                raise ValueError(f"Training-distribution statistics are incomplete for {name}.")
+            if isinstance(stat["n"], bool) or not isinstance(stat["n"], int) or stat["n"] < 1:
+                raise ValueError(f"Training-distribution sample count is invalid for {name}.")
+            numeric_values = [stat[key] for key in required_statistics - {"n"}]
+            if any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(float(value))
+                for value in numeric_values
+            ):
+                raise ValueError(f"Training-distribution values are invalid for {name}.")
+    contract = bundle["score_contract"]
+    if not isinstance(contract, dict) or contract.get("method") not in {
+        "decision_function",
+        "predict_proba",
+    }:
+        raise ValueError("Model score contract is invalid.")
+    threshold = contract.get("threshold")
+    if (
+        isinstance(threshold, bool)
+        or not isinstance(threshold, (int, float))
+        or not math.isfinite(float(threshold))
+    ):
+        raise ValueError("Model decision threshold must be a finite number.")
     if bundle["feature_config_fingerprint"] != feature_config_fingerprint(bundle["feature_config"]):
         raise ValueError("Model bundle feature configuration fingerprint is invalid.")
     if bundle["preprocessing_config_fingerprint"] != configuration_fingerprint(

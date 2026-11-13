@@ -1,6 +1,6 @@
 # VoxNeuro user guide
 
-VoxNeuro is a local research tool for technical quality checks, signal plots, and acoustic feature extraction from a sustained vowel. It does not determine whether a person has Parkinson's disease and does not classify new user recordings.
+VoxNeuro is a local research tool for technical quality checks, signal plots, acoustic feature extraction, and—only when fresh local research evidence is available—a clearly separated exploratory model candidate. It is not a clinically validated Parkinson's disease test and must not be used to make care decisions.
 
 ## Start the application
 
@@ -17,17 +17,18 @@ The browser opens the Overview page. The sidebar selects Overview, Voice assessm
 
 ## Analyze a recording
 
-1. Open **Voice assessment** and choose **Record with microphone** or **Upload WAV**.
+1. Open **Voice assessment** and choose **Record with microphone** or **Upload WAV**. Choose the acquisition device category separately (for example, laptop, smartphone, headset, or telephone). Upload origin does not identify which device recorded the WAV. The category is self-reported and does not verify the hardware.
 2. If recording, hold `/a/` steadily for roughly 3–5 seconds in a quiet room. Keep the microphone at a steady distance. This is a task instruction, not a health threshold. Browser microphone access is requested only when you activate the recording control; WAV upload is an alternative.
 3. VoxNeuro decodes the actual WAV metadata and checks duration, finite values, level, clipping, voiced frames, and stereo phase cancellation. An error message explains why a recording cannot continue.
 4. A passing recording is converted according to the configured mono policy, DC corrected, silence trimmed, revalidated, and resampled to 16 kHz. Audio that fails quality checks does not proceed to feature analysis.
-5. The feature workflow reports technical measurements and analysis status. A quality pass means only that software accepted the signal for analysis.
+5. The feature workflow reports technical measurements and analysis status. **Audio quality checks passed** means only that software accepted the signal for measurement; it does not mean the person is healthy or has Parkinson's disease.
+6. Review **Individual model result**. A clean source-only checkout has no included participant data, model binary, or evaluation receipts, so it should show an explicit abstention reason while keeping the acoustic analysis. If a locally generated model passes current provenance, grouped-evaluation receipt, quality, task/schema, acquisition-context, completeness, and out-of-distribution checks, the app may show an **EXPLORATORY — NOT DOMAIN VALIDATED** candidate. That candidate contains a raw uncalibrated decision score and a fixed research threshold, never a disease probability. A self-reported category does not establish domain compatibility. Do not interpret any candidate as diagnosis, screening, or evidence of health.
 
 ## Review results
 
 - **Signal analysis** shows source and processed recording information, playback controls, a movable 0.5-second 3D waveform detail window, a 3D spectrogram, orbit/zoom/reset controls, and 2D plots. The 3D spectrogram uses the configured STFT window/hop and frequency cap; its displayed magnitude is dB re 1.0, not calibrated sound pressure. These views describe the audio signal and do not enter the model pipeline.
 - **Feature analysis** groups the 39 versioned measures by pitch, voice stability, MFCC, and spectral summaries. Undefined measurements remain missing. VoxNeuro does not label values normal or abnormal.
-- **Reports** makes JSON and CSV outputs available for explicit download. The report preserves the feature-schema version and fingerprints. It avoids filenames, local paths, diagnosis, and disease-risk scores.
+- **Reports** makes JSON and CSV outputs available for explicit download. The report preserves the feature-schema version and fingerprints, and records whether the model abstained or produced an exploratory candidate, including the exact reason or score contract. It avoids filenames, local paths, diagnosis, and disease-risk probabilities.
 - **Research model** displays grouped internal UAMS results from local research artifacts when available. It is not connected to the current recording. Age-only, voice-only, and age-plus-voice logistic comparators use the same participant folds; the combined baseline is exploratory and does not establish an independent voice effect. Group/exclusion counts, fold spread, and lack of external validation are shown.
 - **Method & privacy** explains processing, local handling, and what the project has not established.
 
@@ -44,4 +45,6 @@ See the root README for source download instructions. UAMS and UCI have independ
 - If microphone access is denied, select **Upload WAV** and choose a supported WAV or WAVEX file.
 - If upload fails, check that the file is WAV, finite, non-empty, within configured duration, and below the configured 25 MB limit.
 - If quality validation fails, read the displayed reason. Do not bypass the check or interpret it medically.
+- If the individual model abstains, read its exact reason. A model candidate requires local datasets and current, matching extraction/evaluation/model receipts; generated outputs and model artifacts are not included in the source ZIP. The approved prediction gate remains disabled because no recording domain has clinical/external compatibility validation.
+- Exact WAV files already present in the model-development dataset are withheld from individual scoring. A full-refit model has already seen those files; their reference labels are not predictions. Use participant-grouped out-of-fold evaluation to assess those research recordings. The small UAMS voice-only model does not correctly classify every held-out PD recording.
 - If research metrics are unavailable, check `docs/testing/VERIFICATION_REPORT.md`. Metrics require local datasets and current, matching evaluation receipts; generated results are not included in the source ZIP.

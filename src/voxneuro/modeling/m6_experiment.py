@@ -387,6 +387,74 @@ def compute_training_feature_distribution(
     return stats
 
 
+def build_training_distribution_manifest(
+    X: pd.DataFrame,
+    participant_ids: np.ndarray | pd.Series,
+    *,
+    dataset_id: str,
+    dataset_version: str,
+    dataset_sha256: str,
+    feature_schema_fingerprint: str,
+    feature_config_fingerprint: str,
+    preprocessing_config_fingerprint: str,
+    task: str = "sustained_vowel",
+) -> dict[str, Any]:
+    """Create versioned per-feature reference statistics from final-fit participants only."""
+    if list(X.columns) != list(FEATURE_NAMES):
+        raise ValueError("Training-distribution input must follow the exact Core39 feature order.")
+    if len(X) == 0 or len(participant_ids) != len(X):
+        raise ValueError("Training-distribution input must have aligned, non-empty participants.")
+    if any(
+        not isinstance(value, str) or len(value) != 64
+        for value in (
+            dataset_sha256,
+            feature_schema_fingerprint,
+            feature_config_fingerprint,
+            preprocessing_config_fingerprint,
+        )
+    ):
+        raise ValueError("Training-distribution provenance values must be SHA-256 fingerprints.")
+    statistics: dict[str, dict[str, int | float]] = {}
+    for name in FEATURE_NAMES:
+        raw = pd.to_numeric(X[name], errors="coerce").to_numpy(dtype=float)
+        finite = raw[np.isfinite(raw)]
+        if not len(finite):
+            raise ValueError(
+                f"Cannot build training statistics for entirely missing feature {name}."
+            )
+        statistics[name] = {
+            "n": int(len(finite)),
+            "missing_rate": round(float(1.0 - len(finite) / len(raw)), 6),
+            "mean": round(float(np.mean(finite)), 6),
+            "std": round(float(max(np.std(finite), 1e-6)), 6),
+            "min": round(float(np.min(finite)), 6),
+            "max": round(float(np.max(finite)), 6),
+            "q01": round(float(np.quantile(finite, 0.01)), 6),
+            "q99": round(float(np.quantile(finite, 0.99)), 6),
+        }
+    return {
+        "schema_version": "voxneuro.training_distribution.v1",
+        "dataset_id": dataset_id,
+        "dataset_version": dataset_version,
+        "dataset_sha256": dataset_sha256,
+        "task": task,
+        "training_participant_count": int(pd.Series(participant_ids).nunique()),
+        "training_recording_count": int(len(X)),
+        "source_scope": "final_refit_training_participants_only",
+        "feature_schema_version": SCHEMA_VERSION,
+        "feature_schema_fingerprint": feature_schema_fingerprint,
+        "feature_config_fingerprint": feature_config_fingerprint,
+        "preprocessing_config_fingerprint": preprocessing_config_fingerprint,
+        "feature_names": list(FEATURE_NAMES),
+        "statistics": statistics,
+        "interpretation": (
+            "Per-feature training-cohort reference statistics. The 1st and 99th percentiles "
+            "describe observed training support; this is a conservative screening aid, not an "
+            "external-domain validation or clinical reference range."
+        ),
+    }
+
+
 def run_m6_comparative_experiments(
     *,
     random_seed: int = 2026,

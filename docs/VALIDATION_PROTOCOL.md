@@ -29,5 +29,6 @@ Report repeat mean and standard deviation separately from the class-stratified p
 - The age imbalance and PD-only clipping exclusions must appear alongside any UAMS result.
 - A higher score in internal CV cannot establish disease-specific voice information, a biomarker, or clinical benefit.
 - External validation requires a compatible task and acquisition protocol, frozen features/model, participant-disjoint evaluation, and no tuning on external labels.
-- The app must abstain from disease classification for new microphone audio until recording-domain compatibility has been supported by approved evidence and separately reviewed. A matching feature schema alone does not satisfy this gate.
+- The approved prediction path must abstain for new microphone audio until recording-domain compatibility is supported by independent approved evidence and separately reviewed. A matching feature schema or user-declared device category alone does not satisfy this gate.
+- If the software offers a separate exploratory candidate, it must remain labeled unvalidated; require current artifact/evaluation provenance, valid task and quality, complete exact-schema inputs, explicit declared device category, and training-only out-of-distribution checks. Show a raw uncalibrated score and fixed research threshold, never a probability; preserve explicit abstention reasons and available acoustic results. This output is not a disease result and must not guide care.
 - No diagnostic threshold, calibrated probability, prospective performance, or medical-device status is claimed.

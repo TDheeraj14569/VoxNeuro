@@ -128,6 +128,7 @@ def render_voice_report_html(
     features = report.get("features", {})
     provenance = report.get("feature_provenance", {})
     model = report.get("model_assessment", {})
+    recording = report.get("recording_metadata", {})
     rows = []
     for definition in FEATURE_DEFINITIONS:
         value, status = _display_value(features.get(definition.name))
@@ -191,6 +192,57 @@ def render_voice_report_html(
                 f"<tr><th scope='row'>{html.escape(str(key).replace('_', ' '))}</th>"
                 f"<td>{html.escape(shown)}</td></tr>"
             )
+    recording_rows = []
+    for label, key in (
+        ("Capture origin", "capture_origin"),
+        ("Acquisition domain", "acquisition_domain_id"),
+        ("Domain source", "acquisition_domain_source"),
+        ("Task", "task_type"),
+        ("Duration (s)", "duration_seconds"),
+        ("Original sample rate (Hz)", "original_sample_rate_hz"),
+        ("Channels", "channels"),
+        ("Repetitions", "repetition_count"),
+    ):
+        value = recording.get(key)
+        shown = str(value) if isinstance(value, str) else _display_value(value)[0]
+        recording_rows.append(
+            f"<tr><th scope='row'>{html.escape(label)}</th><td>{html.escape(shown)}</td></tr>"
+        )
+    classification = html.escape(str(model.get("research_classification") or "Unavailable"))
+    score = model.get("research_score")
+    score_text = (
+        f"{float(score):+.6f} ({html.escape(str(model.get('score_kind', 'unknown')))}; "
+        "not a probability)"
+        if isinstance(score, (int, float)) and math.isfinite(float(score))
+        else "Unavailable"
+    )
+    threshold = model.get("decision_threshold")
+    threshold_text = (
+        f"{float(threshold):+.6f}"
+        if isinstance(threshold, (int, float)) and math.isfinite(float(threshold))
+        else "Unavailable"
+    )
+    model_rows = [
+        ("Assessment status", str(model.get("status", "Unavailable"))),
+        ("Candidate class", classification),
+        ("Raw score", score_text),
+        ("Decision threshold", threshold_text),
+        ("OOD screen", str(model.get("ood_status", "Not evaluated"))),
+        ("Domain validation", str(model.get("domain_validation_status", "Unknown"))),
+        ("Abstention reason", str(model.get("abstention_reason") or "None")),
+    ]
+    model_rows_html = "".join(
+        f"<tr><th scope='row'>{html.escape(label)}</th><td>{html.escape(value)}</td></tr>"
+        for label, value in model_rows
+    )
+    evaluation_metrics = model.get("model_evaluation_metrics")
+    if isinstance(evaluation_metrics, dict) and evaluation_metrics:
+        for label, value in sorted(evaluation_metrics.items()):
+            if isinstance(value, (int, float)) and math.isfinite(float(value)):
+                model_rows_html += (
+                    f"<tr><th scope='row'>Cohort {html.escape(str(label).replace('_', ' '))}</th>"
+                    f"<td>{float(value):.4f}</td></tr>"
+                )
     report_id = html.escape(str(report.get("generated_utc", "session")))
     status = html.escape(str(model.get("status", "No model assessment available.")))
     disclaimer = html.escape(str(report.get("clinical_disclaimer", "Research use only.")))
@@ -381,6 +433,10 @@ footer {
 <div class="scroll"><table><tbody>${QUALITY_ROWS}</tbody></table></div>
 <p style="margin-top:14px;"><b>Quality outcome:</b> ${QUALITY_STATUS}</p>
 <ul>${WARNINGS}</ul></section>
+<section><h2>Recording context</h2>
+<p class="muted">Device category is self-reported unless otherwise stated; this does not
+establish model compatibility.</p>
+<div class="scroll"><table><tbody>${RECORDING_ROWS}</tbody></table></div></section>
 <section><h2>Preprocessing</h2>
 <div class="scroll"><table><tbody>${PREPROCESSING_ROWS}</tbody></table></div>
 </section>
@@ -411,9 +467,12 @@ Undefined values remain unavailable; no clinical normal range is applied.</p>
 </tbody></table></div>
 </section>
 <section><h2>Model assessment</h2><p>${MODEL_STATUS}</p>
+<div class="scroll"><table><tbody>${MODEL_ROWS}</tbody></table></div>
+<p><strong>Candidate class:</strong> ${CLASSIFICATION}</p>
 <div class="notice"><p style="margin:0;">${DISCLAIMER}</p></div>
-<p style="margin-top:12px;">No calibrated disease probability, clinical threshold,
-diagnosis, or rule-out result is provided.</p></section>
+<p style="margin-top:12px;">The raw score and threshold are model decision values, not a
+calibrated disease probability. This software cannot diagnose or rule out Parkinson's disease.</p>
+</section>
 <footer>Report contents are generated from this session's measured audio and feature values.
 The application does not store recordings or reports by default.
 Non-diagnostic research software.</footer>
@@ -427,6 +486,7 @@ Non-diagnostic research software.</footer>
         PREPROCESSING_CONFIG_FINGERPRINT=preprocessing_config_fingerprint,
         AUDIO_SHA256=audio_sha256_val,
         QUALITY_ROWS="".join(quality_rows),
+        RECORDING_ROWS="".join(recording_rows),
         QUALITY_STATUS=(
             "Passed technical audio checks." if quality.get("valid") else "Not passed."
         ),
@@ -439,5 +499,7 @@ Non-diagnostic research software.</footer>
         FEATURE_COUNT=str(len(FEATURE_NAMES)),
         FEATURE_ROWS="".join(rows),
         MODEL_STATUS=status,
+        MODEL_ROWS=model_rows_html,
+        CLASSIFICATION=classification,
         DISCLAIMER=disclaimer,
     )

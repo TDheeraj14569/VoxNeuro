@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-13 — Individual exploratory-result and provenance-gate repair
+
+- Separated recording capture origin (upload/live browser microphone) from the acquisition-device category declared by the user; uploads no longer masquerade as a known hardware domain.
+- Preserved the approved inference gate: `allow_user_microphone_inference` remains false, the trusted domain-validation allowlist is empty, and no clinical prediction is authorized.
+- Added a separate exploratory candidate path that requires a locally generated trusted model, current extraction/evaluation/nested-evaluation receipts, current code/data/schema/configuration provenance, valid quality/task, exact complete Core39 features, explicit domain declaration, and training-only OOD checks. Severe or unevaluable OOD, missing or stale evidence, invalid inputs, or an unknown domain yield a specific abstention.
+- Exploratory output is labeled **EXPLORATORY — NOT DOMAIN VALIDATED** and shows a raw uncalibrated decision score with a fixed research threshold, not a probability. Reports retain the outcome and reason, and acoustic findings remain available on abstention.
+- Fixed the blank result panel by rendering the result card as a single HTML block. Updated current guides, model card, reports, risk note, and verification evidence to match actual behavior and current measured metrics.
+- Generated and verified the research model only from the locally available authorized UAMS dataset; raw audio, participant-level records, model binaries, and receipts remain excluded from the GitHub source release.
+
 ## 2026-11-07 — Nested research-model evaluation and provenance verification
 
 - Added repeated nested participant-grouped evaluation for seven voice-only model families, with grouped inner tuning, participant-level out-of-fold metrics, bootstrap intervals, and selected-parameter reporting.

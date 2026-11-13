@@ -2,7 +2,7 @@
   "source": "UCI Machine Learning Repository, dataset 470, DOI 10.24432/C5MS4X",
   "official_url": "https://archive.ics.uci.edu/dataset/470/parkinson%2Bs%2Bdisease%2Bclassification",
   "official_download_url": "https://archive.ics.uci.edu/static/public/470/parkinson%2Bs%2Bdisease%2Bclassification.zip",
-  "schema_manifest_sha256": "0aae68277c6eb82da346d5bccd3f09ab25cc51fe703324cc0cdbb5be5e0a1a1e",
+  "schema_manifest_sha256": "cf4066e21b4f7b9960980f2c4a8b0c4b0ab45fc9e3276dd97644e0242f97d7ba",
   "ordered_header_sha256": "55311b3a9f947d378df1a92b83dd322aff98553c951048cba127dc55cb0a647b",
   "publisher_archive_sha256": null,
   "archive_hash_note": "The archive SHA-256 is a local integrity fingerprint; the UCI dataset record does not publish an archive SHA-256.",

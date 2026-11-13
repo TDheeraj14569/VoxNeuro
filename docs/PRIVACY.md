@@ -5,7 +5,7 @@
 - Streamlit binds to `127.0.0.1` by default, with CORS/XSRF protections enabled and telemetry disabled.
 - Browser microphone audio is provided only after the user activates the recording control and grants browser/OS permission. WAV upload is an alternative.
 - The app processes audio in the local Streamlit process and keeps current recording/results in session memory. It does not write raw recordings or reports to a persistent folder by default.
-- JSON/CSV files are created for download only when the user activates a download control. Reports omit source filename/path and contain no diagnosis or disease-risk score.
+- JSON/CSV files are created for download only when the user activates a download control. Reports omit the source filename/path and do not provide a diagnosis or calibrated disease-risk probability. If local model evidence passes all checks, a report may include an explicitly unvalidated exploratory candidate with its raw uncalibrated score, fixed threshold, evidence state, and domain status; that score must not guide care.
 - Closing the session clears its in-memory application state. The assessment view also offers a clear-results action.
 
 ## Research data and generated artifacts

@@ -1,54 +1,62 @@
 {
-  "release_name": "VoxNeuro Production Release",
-  "release_version": "1.0.0-production",
-  "release_date": "2026-11-12",
-  "status": "PRODUCTION_VERIFIED",
+  "release_name": "VoxNeuro research prototype source release",
+  "release_version": "unreleased-main",
+  "release_date": "2026-11-13",
+  "status": "ENGINEERING_VERIFIED_RESEARCH_ONLY",
   "archive": {
     "filename": "VoxNeuro_PRODUCTION_RELEASE.zip",
-    "sha256": "68c89ba9d77b676e86fe76f0466b94b52c7556c8b9791c35b12f8d075354e950",
-    "bytes": 2383897,
-    "file_count": 348,
+    "sha256": "0158e49781420b00d2f2713d54035ae6afb3db5e4efae171292f66a743f9bf6b",
+    "bytes": 2405217,
+    "file_count": 351,
     "checksum_sidecar": "VoxNeuro_PRODUCTION_RELEASE.zip.sha256"
   },
   "provenance": {
-    "project_code_fingerprint": "4ab924000588906cb863eb852e7af219ede8a3ca20fbe753cf1c15e5331fd816",
+    "project_code_fingerprint": "5ae1e21b93232cb9c98fe87331cbe327cbdf695c860b82b0ee0bcb23b74b315a",
     "feature_schema_version": "voxneuro.voice.v3",
     "database_schema_version": "006_study_operations",
-    "python_version": "3.12.16",
+    "python_version": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0"
   },
   "verification": {
-    "total_tests": 600,
-    "passed_tests": 600,
+    "total_tests": 611,
+    "passed_tests": 611,
     "failed_tests": 0,
+    "coverage_percent": 85.7,
+    "coverage_covered_statements": 7108,
+    "coverage_total_statements": 8294,
+    "python_suite_status": "PASS",
     "ruff_lint_status": "PASS",
     "ruff_format_status": "PASS",
     "verify_project_status": "PASS",
-    "verify_model_status": "PASS"
+    "verify_model_status": "PASS",
+    "uams_nested_evaluation_status": "PASS",
+    "frontend_tests_status": "PASS",
+    "browser_verification_status": "LIMITED_USER_SUPPLIED_SCREENSHOTS_NO_POST_CHANGE_CLICKTHROUGH",
+    "github_actions_status": "PENDING_AFTER_PUSH",
+    "source_archive_integrity_status": "PASS",
+    "source_archive_sha256_matches_sidecar": true
   },
   "clinical_safety_gates": {
+    "approved_prediction_enabled": false,
     "allow_user_microphone_inference": false,
     "domain_compatibility_verified": false,
     "clinical_diagnostic_claims": false,
-    "four_case_decision_engine_enforced": true
+    "exact_training_recording_scoring_blocked": true,
+    "audio_quality_status_is_not_health_assessment": true
   },
-  "screenshots": [
-    "docs/screenshots/01_landing_hero.png",
-    "docs/screenshots/02_how_it_works.png",
-    "docs/screenshots/03_voice_assessment_intro.png",
-    "docs/screenshots/04_results_page.png",
-    "docs/screenshots/05_about_page.png",
-    "docs/screenshots/06_account_portal.png",
-    "docs/screenshots/07_researcher_model_portal.png",
-    "docs/screenshots/08_signal_analysis.png",
-    "docs/screenshots/09_reports_portal.png"
-  ],
   "reports": [
     "docs/reports/MODEL_CARD.md",
     "docs/reports/MODEL_EVALUATION_REPORT.md",
-    "docs/reports/PROBABILITY_CALIBRATION_REPORT.md",
-    "docs/API_DOCUMENTATION.md",
     "docs/USER_GUIDE.md",
+    "docs/INFERENCE_GUIDE.md",
+    "docs/testing/VERIFICATION_REPORT.md",
     "docs/audit/PRODUCTION_RELEASE_COMPLETION_REPORT.md"
-  ]
+  ],
+  "source_review_archive": {
+    "filename": "VoxNeuro_source_audit.zip",
+    "sha256": "0158e49781420b00d2f2713d54035ae6afb3db5e4efae171292f66a743f9bf6b",
+    "bytes": 2405217,
+    "file_count": 351,
+    "checksum_sidecar": "VoxNeuro_source_audit.zip.sha256"
+  }
 }

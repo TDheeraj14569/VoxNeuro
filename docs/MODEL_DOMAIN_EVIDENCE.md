@@ -1,6 +1,6 @@
 # Model recording-domain evidence gate
 
-VoxNeuro does not currently expose a disease prediction for new microphone audio. Model bundles are marked research-only, user-microphone inference is disabled, and the source-controlled `TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256` allowlist is empty.
+VoxNeuro does not expose an approved or clinically validated disease prediction for new microphone audio. Model bundles are research-only, `allow_user_microphone_inference` is disabled, and the source-controlled `TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256` allowlist is empty. A separate exploratory software path may show a research candidate from a local model only after current provenance, task, quality, schema, explicit user-declared device category, and training-derived out-of-distribution checks pass. That display does **not** verify the recording domain, populate the trusted allowlist, or change the approved-inference status.
 
 ## Requirements for a future review
 
@@ -33,7 +33,7 @@ Milestone 4 introduces the candidate domain assessment schema (`voxneuro.domain_
 
 1. **Candidate Dossier vs. Approved Compatibility Report:** Candidate dossiers evaluate prospective external cohorts, recording quality attrition, and feature-level domain shift (SMD, KS tests, FDR/Bonferroni). Crucially, candidate dossiers are structurally and cryptographically rejected by `load_domain_validation_report()` and cannot be used by `make_bundle()` to mark a model compatible.
 2. **Explicit Input Capture Context:** In addition to domain identifiers, `predict_research()` enforces an explicit acquisition context (`InputCaptureContext`). User uploads, live browser streams, and unknown origins fail closed, preventing neutral domain names from masking live microphone inputs.
-3. **Current Evaluation Status:** In Milestone 4, candidate external domains (`neurovoz_studio`, `pc_gita_condenser`, `italian_parkinsons_headset`) are awaiting licensed raw audio access under institutional DUAs. The official status is `FRAMEWORK_VERIFIED_DOMAIN_VALIDATION_PENDING`. The trusted allowlist remains strictly empty (`TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256 = frozenset()`), and prediction compatibility remains disabled.
+3. **Current Evaluation Status:** Candidate external domains (`neurovoz_studio`, `pc_gita_condenser`, `italian_parkinsons_headset`) are awaiting licensed raw-audio access under institutional DUAs. The trusted allowlist remains strictly empty (`TRUSTED_DOMAIN_VALIDATION_REPORT_SHA256 = frozenset()`), and approved prediction compatibility remains disabled. An exploratory candidate from a self-declared category is a separate unvalidated research display only.
 
 For comprehensive architectural and safety specifications, see:
 - [`docs/M4_DOMAIN_ARCHITECTURE.md`](M4_DOMAIN_ARCHITECTURE.md)
